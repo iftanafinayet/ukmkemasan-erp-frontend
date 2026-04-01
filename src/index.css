@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ini cara mendaftarkan warna primary di Tailwind v4 */
+  --color-primary: #4dbace;
+  --color-primary-dark: #3a8fa3;
+}
+
+/* Base styling agar background abu-abu terang muncul */
+@layer base {
+  body {
+    @apply bg-gray-50 text-slate-900 antialiased;
+  }
+}
