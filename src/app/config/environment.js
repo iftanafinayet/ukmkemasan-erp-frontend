@@ -32,7 +32,7 @@ export const API_CONFIG = {
 
   // Production
   [ENV_MODES.PRODUCTION]: {
-    baseURL: import.meta.env.VITE_API_URL || 'https://api.erpukm.com/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://ukmkemasan-erp-backend-production.up.railway.app/api',
     timeout: 15000,
     withCredentials: true
   },

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { storage } from '../config/environment';
+import { storage, getCurrentAPIConfig } from '../config/environment';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: getCurrentAPIConfig().baseURL,
 });
 
 // Interceptor ini wajib ada agar setiap klik "Simpan", token ikut terkirim

@@ -63,7 +63,7 @@ export default function LoginPage() {
         errorMessage = err.response.data?.message || 'Email atau password salah';
       } else if (err.request) {
         // Server tidak bisa dihubungi
-        errorMessage = 'Server tidak merespons. Pastikan backend di port 5000 sudah aktif.';
+        errorMessage = 'Server tidak merespons. Silakan periksa koneksi internet atau status server.';
       } else {
         // Error lainnya (misal: validasi input)
         errorMessage = err.message;
