@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, User, Phone, Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { storage, ENDPOINTS, getAPIUrl } from '../config/environment';
