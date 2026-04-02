@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Coffee, Mail, Lock, User, Phone, MapPin, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, User, Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { storage, ENDPOINTS, getAPIUrl } from '../config/environment';
+import logoUrl from '../../assets/LogoUKM.svg';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -85,8 +86,8 @@ export default function RegisterPage() {
             <div className="w-full max-w-md">
                 {/* Branding */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center p-4 bg-primary rounded-2xl mb-4 shadow-xl shadow-primary/20 transition-transform hover:scale-105">
-                        <Coffee className="w-12 h-12 text-white" />
+                    <div className="inline-flex items-center justify-center mb-4 transition-transform hover:scale-105">
+                        <img src={logoUrl} alt="Logo UKM Kemasan" className="h-20 w-auto object-contain" />
                     </div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">
                         ERP UKM Kemasan
