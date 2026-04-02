@@ -3,7 +3,7 @@ import {
     LayoutDashboard, ShoppingCart, Package, Settings, LogOut, Menu, X, User
 } from 'lucide-react';
 import { storage } from '../config/environment';
-import logoUrl from '../../assets/LOGO NEONBOX.png';
+import logoUrl from '../../assets/LogoUKM.svg';
 
 /**
  * Sidebar khusus Customer
@@ -57,8 +57,8 @@ export default function CustomerSidebar({ activeMenu = 'dashboard', onMenuChange
                     {/* Logo */}
                     <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-primary/5 to-white">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center rounded-xl shadow-lg bg-white overflow-hidden flex-shrink-0">
-                                <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                            <div className="flex items-center justify-center flex-shrink-0">
+                                <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg text-primary/90 uppercase tracking-wider leading-none">Customer</h1>

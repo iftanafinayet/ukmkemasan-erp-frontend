@@ -12,7 +12,7 @@ import {
   Clock // Tambah ini untuk Monitoring Mesin
 } from 'lucide-react';
 import { storage } from '../config/environment';
-import logoUrl from '../../assets/LOGO NEONBOX.png';
+import logoUrl from '../../assets/LogoUKM.svg';
 
 /**
  * Sidebar Component Admin ERP
@@ -74,8 +74,8 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
           {/* Logo & Branding */}
           <div className="p-6 border-b border-slate-100 bg-slate-50/50">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg bg-white overflow-hidden flex-shrink-0">
-                <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
+              <div className="flex items-center justify-center flex-shrink-0">
+                <img src={logoUrl} alt="Logo" className="h-10 w-auto object-contain" />
               </div>
               <div>
                 <h1 className="font-bold text-xl text-primary uppercase tracking-widest text-slate-800 font-color-primary leading-none">UKM Kemasan</h1>
