@@ -63,6 +63,16 @@ export default function CustomerDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
+  const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
+  const [editingWarehouse, setEditingWarehouse] = useState(null);
+  const [warehouseForm, setWarehouseForm] = useState({
+    name: '',
+    location: '',
+    type: 'Main',
+    isActive: true
+  });
+  const [savingWarehouse, setSavingWarehouse] = useState(false);
+  const [deletingWarehouseId, setDeletingWarehouseId] = useState('');
   const [adjustmentForm, setAdjustmentForm] = useState({
     productId: '',
     warehouseId: '',
@@ -86,6 +96,7 @@ export default function CustomerDashboard() {
     'Flatbottom Rice Papper Square', 'Sachet', 'Dripbag', 'Vacuum Pack', 'Roll', 'Lain Lain'
   ];
   const orderStatuses = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
+  const currentWarehouseType = activeMenu === 'warehouse-retail' ? 'Retail' : 'Main';
 
   // === FETCH DATA ===
   const fetchData = async () => {
@@ -129,6 +140,7 @@ export default function CustomerDashboard() {
           break;
         
         case 'inventory':
+        case 'inventory-items':
           response = await api.get(ENDPOINTS.PRODUCTS);
           setData(response.data || []);
           break;
@@ -140,14 +152,15 @@ export default function CustomerDashboard() {
           break;
 
         case 'inventory-adjustment':
-          // Fetch products for dropdown if not loaded
-          if (data.length === 0) {
-            response = await api.get(ENDPOINTS.PRODUCTS);
-            setData(response.data || []);
-          }
-          // Fetch warehouses for dropdown
+          response = await api.get(ENDPOINTS.PRODUCTS);
+          setData(response.data || []);
           response = await api.get(ENDPOINTS.WAREHOUSES);
           setWarehouses(response.data || []);
+          break;
+
+        case 'item-categories':
+          response = await api.get(ENDPOINTS.PRODUCTS);
+          setData(response.data || []);
           break;
 
         case 'customers':
@@ -357,6 +370,80 @@ export default function CustomerDashboard() {
     }
   };
 
+  const resetWarehouseForm = (type = currentWarehouseType) => {
+    setWarehouseForm({
+      name: '',
+      location: '',
+      type,
+      isActive: true
+    });
+    setEditingWarehouse(null);
+  };
+
+  const openCreateWarehouse = () => {
+    resetWarehouseForm(currentWarehouseType);
+    setIsWarehouseModalOpen(true);
+  };
+
+  const openEditWarehouse = (warehouse) => {
+    setEditingWarehouse(warehouse);
+    setWarehouseForm({
+      name: warehouse.name || '',
+      location: warehouse.location || '',
+      type: warehouse.type || currentWarehouseType,
+      isActive: warehouse.isActive !== false
+    });
+    setIsWarehouseModalOpen(true);
+  };
+
+  const handleSaveWarehouse = async (e) => {
+    e.preventDefault();
+    if (!warehouseForm.name.trim()) {
+      return toast.error('Nama gudang wajib diisi.');
+    }
+
+    setSavingWarehouse(true);
+    try {
+      const payload = {
+        name: warehouseForm.name.trim(),
+        location: warehouseForm.location.trim(),
+        type: warehouseForm.type,
+        isActive: warehouseForm.isActive
+      };
+
+      if (editingWarehouse?._id) {
+        await api.put(ENDPOINTS.WAREHOUSE_BY_ID(editingWarehouse._id), payload);
+        toast.success('Gudang berhasil diperbarui.');
+      } else {
+        await api.post(ENDPOINTS.WAREHOUSES, payload);
+        toast.success('Gudang berhasil ditambahkan.');
+      }
+
+      setIsWarehouseModalOpen(false);
+      resetWarehouseForm(currentWarehouseType);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Gagal menyimpan gudang.');
+    } finally {
+      setSavingWarehouse(false);
+    }
+  };
+
+  const handleDeleteWarehouse = async (warehouseId) => {
+    if (!window.confirm('Yakin ingin menghapus gudang ini?')) return;
+
+    setDeletingWarehouseId(warehouseId);
+    try {
+      await api.delete(ENDPOINTS.WAREHOUSE_BY_ID(warehouseId));
+      toast.success('Gudang berhasil dihapus.');
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Gagal menghapus gudang.');
+    } finally {
+      setDeletingWarehouseId('');
+    }
+  };
+
   const handleRemoveExistingImage = (publicId) => {
     setDeleteImageIds(prev => [...prev, publicId]);
     setExistingImages(prev => prev.filter(img => img.publicId !== publicId));
@@ -507,6 +594,7 @@ export default function CustomerDashboard() {
         entry?.credit
       );
       const fallbackQty = toNumber(entry?.quantity ?? entry?.qty ?? entry?.amount);
+      const quantityChange = toNumber(entry?.quantityChange ?? entry?.change ?? entry?.delta);
       const typeValue = String(
         entry?.type ??
         entry?.referenceType ??
@@ -515,8 +603,8 @@ export default function CustomerDashboard() {
         ''
       ).toLowerCase();
 
-      const normalizedIn = qtyIn || ((!qtyOut && fallbackQty > 0 && /^(in|masuk|add|increase)$/i.test(typeValue)) ? fallbackQty : 0);
-      const normalizedOut = qtyOut || ((!qtyIn && fallbackQty > 0 && /^(out|keluar|remove|decrease)$/i.test(typeValue)) ? fallbackQty : 0);
+      const normalizedIn = qtyIn || (quantityChange > 0 ? quantityChange : 0) || ((!qtyOut && fallbackQty > 0 && /^(in|masuk|add|increase)$/i.test(typeValue)) ? fallbackQty : 0);
+      const normalizedOut = qtyOut || (quantityChange < 0 ? Math.abs(quantityChange) : 0) || ((!qtyIn && fallbackQty > 0 && /^(out|keluar|remove|decrease)$/i.test(typeValue)) ? fallbackQty : 0);
 
       return {
         id: entry?._id || entry?.id || `${entry?.referenceNo || entry?.reference || 'row'}-${index}`,
@@ -528,6 +616,7 @@ export default function CustomerDashboard() {
         balance: toNumber(
           entry?.balance ??
           entry?.runningBalance ??
+          entry?.balanceAfter ??
           entry?.stockAfter ??
           entry?.currentStock ??
           entry?.saldo
@@ -573,7 +662,7 @@ export default function CustomerDashboard() {
       case 'warehouse':
       case 'warehouse-retail': return renderWarehouse();
       case 'inventory-adjustment': return renderInventoryAdjustment();
-      case 'item-categories': return <EmptyState text="Item Categories Page" />;
+      case 'item-categories': return renderItemCategories();
       case 'sales-orders': return renderOrders();
       case 'sales-processing': return <EmptyState text="Sales Processing Page" />;
       case 'invoice': return renderInvoice();
@@ -827,7 +916,7 @@ export default function CustomerDashboard() {
                   onChange={(e) => { setInvPerPage(Number(e.target.value)); setInvPage(1); }}
                   className="appearance-none border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-bold text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
                 >
-                  {[25, 50, 100, 200].map(n => <option key={n} value={n}>{n}</option>)}
+                  {[25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
 
                 {/* Prev */}
@@ -869,34 +958,169 @@ export default function CustomerDashboard() {
               </div>
             </div>
           )}
+
+          {total === 0 && (
+            <div className="px-6 py-16">
+              <EmptyState text="Tidak ada data packaging ditemukan." />
+            </div>
+          )}
         </div>
       </div>
     );
   };
 
   // === WAREHOUSE ===
-  const renderWarehouse = () => (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center bg-white p-8 rounded-3xl border border-slate-100">
-        <div>
-          <h3 className="text-xl font-black text-slate-800">Manajemen Gudang</h3>
-          <p className="text-slate-500 text-sm">Kelola lokasi penyimpanan barang {activeMenu === 'warehouse-retail' ? 'Retail' : 'Pusat'}.</p>
-        </div>
-        <button className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-2">
-          <Plus size={16} /> Tambah Gudang
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-4 bg-blue-50 rounded-2xl"><Warehouse className="text-blue-500" /></div>
+  const renderWarehouse = () => {
+    const filteredWarehouses = warehouses.filter((warehouse) => warehouse.type === currentWarehouseType);
+    const activeWarehouses = filteredWarehouses.filter((warehouse) => warehouse.isActive !== false);
+
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex justify-between items-center bg-white p-8 rounded-3xl border border-slate-100">
           <div>
-            <p className="font-black text-slate-800">{activeMenu === 'warehouse-retail' ? 'Gudang Retail' : 'Gudang Utama'}</p>
-            <p className="text-xs text-slate-400">Jl. Industri No. 12, Bekasi</p>
+            <h3 className="text-xl font-black text-slate-800">Manajemen Gudang</h3>
+            <p className="text-slate-500 text-sm">Kelola lokasi penyimpanan barang {currentWarehouseType === 'Retail' ? 'Retail' : 'Pusat'}.</p>
+          </div>
+          <button
+            onClick={openCreateWarehouse}
+            className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-2"
+          >
+            <Plus size={16} /> Tambah Gudang
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Gudang</p>
+            <p className="text-3xl font-black text-slate-800 mt-2">{filteredWarehouses.length}</p>
+          </div>
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Gudang Aktif</p>
+            <p className="text-3xl font-black text-emerald-600 mt-2">{activeWarehouses.length}</p>
+          </div>
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tipe</p>
+            <p className="text-3xl font-black text-primary mt-2">{currentWarehouseType}</p>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredWarehouses.map((warehouse) => (
+            <div key={warehouse._id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className={`p-4 rounded-2xl ${warehouse.isActive !== false ? 'bg-blue-50' : 'bg-slate-100'}`}>
+                    <Warehouse className={warehouse.isActive !== false ? 'text-blue-500' : 'text-slate-400'} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-black text-slate-800">{warehouse.name}</p>
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${warehouse.isActive !== false ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                        {warehouse.isActive !== false ? 'Aktif' : 'Nonaktif'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">{warehouse.location || 'Lokasi belum diisi'}</p>
+                    <p className="text-[10px] text-primary font-black mt-3 uppercase tracking-widest">{warehouse.type}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => openEditWarehouse(warehouse)}
+                    className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-colors"
+                    title="Edit gudang"
+                  >
+                    <Edit3 size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteWarehouse(warehouse._id)}
+                    disabled={deletingWarehouseId === warehouse._id}
+                    className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors disabled:opacity-50"
+                    title="Hapus gudang"
+                  >
+                    {deletingWarehouseId === warehouse._id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredWarehouses.length === 0 && (
+          <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-16">
+            <EmptyState text={`Belum ada gudang ${currentWarehouseType.toLowerCase()} terdaftar.`} />
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  };
+
+  const renderItemCategories = () => {
+    const products = Array.isArray(data) ? data : [];
+    const categoryMap = products.reduce((acc, product) => {
+      const key = product.category || 'Tanpa Kategori';
+      if (!acc[key]) {
+        acc[key] = {
+          name: key,
+          totalItems: 0,
+          totalStock: 0,
+          minPrice: Number.POSITIVE_INFINITY,
+          maxPrice: 0
+        };
+      }
+
+      acc[key].totalItems += 1;
+      acc[key].totalStock += toNumber(product.stockPolos);
+      acc[key].minPrice = Math.min(acc[key].minPrice, toNumber(product.priceB2B || product.priceB2C));
+      acc[key].maxPrice = Math.max(acc[key].maxPrice, toNumber(product.priceB2C || product.priceB2B));
+      return acc;
+    }, {});
+
+    const categories = Object.values(categoryMap).sort((a, b) => b.totalItems - a.totalItems);
+
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="bg-white p-8 rounded-3xl border border-slate-100">
+          <h3 className="text-xl font-black text-slate-800">Kategori Packaging</h3>
+          <p className="text-slate-500 text-sm mt-1">Ringkasan kategori dari seluruh master packaging yang ada di inventory.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {categories.map((category) => (
+            <div key={category.name} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kategori</p>
+                  <h4 className="text-xl font-black text-slate-800 mt-2">{category.name}</h4>
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                  <Package size={20} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Items</p>
+                  <p className="text-2xl font-black text-slate-800 mt-2">{category.totalItems}</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Stok</p>
+                  <p className="text-2xl font-black text-slate-800 mt-2">{category.totalStock.toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rentang Harga</p>
+                <p className="font-black text-primary mt-2">{formatCurrency(category.minPrice)}</p>
+                <p className="text-sm text-slate-500 font-medium">sampai {formatCurrency(category.maxPrice)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {categories.length === 0 && <EmptyState text="Belum ada kategori packaging." />}
+      </div>
+    );
+  };
 
   // === INVENTORY ADJUSTMENT ===
   const renderInventoryAdjustment = () => (
@@ -1578,6 +1802,65 @@ export default function CustomerDashboard() {
             </div>
             <button type="submit" className="w-full py-5 bg-primary text-white font-black rounded-3xl shadow-xl shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all mt-4">
               {editingProduct ? 'Update Produk' : 'Simpan ke Sistem'}
+            </button>
+          </form>
+        </ModalWrapper>
+      )}
+
+      {isWarehouseModalOpen && (
+        <ModalWrapper onClose={() => { setIsWarehouseModalOpen(false); resetWarehouseForm(currentWarehouseType); }}>
+          <div className="mb-8">
+            <h3 className="text-2xl font-black text-slate-800 tracking-tight">{editingWarehouse ? 'Edit Gudang' : 'Tambah Gudang'}</h3>
+            <p className="text-slate-500 text-sm font-medium">{editingWarehouse ? 'Perbarui informasi gudang.' : 'Tambahkan lokasi gudang baru ke sistem.'}</p>
+          </div>
+          <form onSubmit={handleSaveWarehouse} className="space-y-5">
+            <FormInput
+              label="Nama Gudang"
+              value={warehouseForm.name}
+              onChange={(value) => setWarehouseForm({ ...warehouseForm, name: value })}
+              required
+              placeholder="Gudang Utama Bekasi"
+            />
+            <FormInput
+              label="Lokasi"
+              value={warehouseForm.location}
+              onChange={(value) => setWarehouseForm({ ...warehouseForm, location: value })}
+              placeholder="Jl. Industri No. 12, Bekasi"
+            />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Gudang</label>
+              <select
+                value={warehouseForm.type}
+                onChange={(e) => setWarehouseForm({ ...warehouseForm, type: e.target.value })}
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-bold"
+              >
+                <option value="Main">Main</option>
+                <option value="Retail">Retail</option>
+              </select>
+            </div>
+            <div className="flex items-center justify-between rounded-2xl border border-slate-200 px-5 py-4 bg-slate-50">
+              <div>
+                <p className="font-black text-slate-800 text-sm">Status Gudang</p>
+                <p className="text-xs text-slate-500">Gudang nonaktif tetap tersimpan tapi tidak dipakai untuk operasional.</p>
+              </div>
+              <label className="inline-flex items-center gap-3 cursor-pointer">
+                <span className={`text-xs font-black uppercase tracking-widest ${warehouseForm.isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {warehouseForm.isActive ? 'Aktif' : 'Nonaktif'}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={warehouseForm.isActive}
+                  onChange={(e) => setWarehouseForm({ ...warehouseForm, isActive: e.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                />
+              </label>
+            </div>
+            <button
+              type="submit"
+              disabled={savingWarehouse}
+              className="w-full py-5 bg-primary text-white font-black rounded-3xl shadow-xl shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:translate-y-0"
+            >
+              {savingWarehouse ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (editingWarehouse ? 'Update Gudang' : 'Simpan Gudang')}
             </button>
           </form>
         </ModalWrapper>

@@ -149,6 +149,7 @@ export const ENDPOINTS = {
 
   // Inventory logic
   WAREHOUSES: '/inventory/warehouses',
+  WAREHOUSE_BY_ID: (id) => `/inventory/warehouses/${id}`,
   ADJUSTMENTS: '/inventory/adjustments',
   STOCK_CARDS: (productId) => `/inventory/stock-cards/${productId}`
 };
