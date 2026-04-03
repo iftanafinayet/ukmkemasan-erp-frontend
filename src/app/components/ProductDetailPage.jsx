@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import Sidebar from './Sidebar';
@@ -24,11 +24,7 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [activeImageIdx, setActiveImageIdx] = useState(0);
 
-    useEffect(() => {
-        fetchProduct();
-    }, [id]);
-
-    const fetchProduct = async () => {
+    const fetchProduct = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(ENDPOINTS.PRODUCT_BY_ID(id));
@@ -43,7 +39,11 @@ export default function ProductDetailPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchProduct();
+    }, [fetchProduct]);
 
     const handleDelete = async () => {
         if (!window.confirm('Yakin ingin menghapus produk ini?')) return;
@@ -69,7 +69,7 @@ export default function ProductDetailPage() {
     const goBack = () => navigate(isAdmin ? '/admin' : '/portal');
 
     // Sidebar menu handler — navigate back to portal with the right section
-    const handleMenuChange = (menuId) => {
+    const handleMenuChange = () => {
         if (isAdmin) {
             navigate('/admin');
         } else {
@@ -297,13 +297,17 @@ export default function ProductDetailPage() {
 }
 
 // === SUB-COMPONENTS ===
-const SpecCard = ({ icon: Icon, label, value, highlight }) => (
-    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-        <Icon className="w-5 h-5 text-primary mx-auto mb-2" />
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-        <p className={`text-sm font-bold mt-1 ${highlight ? 'text-red-500' : 'text-slate-800'}`}>{value}</p>
-    </div>
-);
+const SpecCard = ({ icon, label, value, highlight }) => {
+    const Icon = icon;
+
+    return (
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+            <Icon className="w-5 h-5 text-primary mx-auto mb-2" />
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+            <p className={`text-sm font-bold mt-1 ${highlight ? 'text-red-500' : 'text-slate-800'}`}>{value}</p>
+        </div>
+    );
+};
 
 const PriceRow = ({ label, value, highlight, accent }) => (
     <div className="flex justify-between items-center">

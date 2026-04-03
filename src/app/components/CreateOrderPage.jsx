@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import { ENDPOINTS, storage } from '../config/environment';
@@ -32,11 +32,7 @@ export default function CreateOrderPage() {
         useValve: false
     });
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoadingProducts(true);
         try {
             const res = await api.get(ENDPOINTS.PRODUCTS);
@@ -46,12 +42,16 @@ export default function CreateOrderPage() {
             if (!initialProductId && res.data.length > 0) {
                 setOrderForm(prev => ({ ...prev, productId: res.data[0]._id }));
             }
-        } catch (err) {
+        } catch {
             toast.error('Gagal memuat daftar produk.');
         } finally {
             setLoadingProducts(false);
         }
-    };
+    }, [initialProductId]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleCreateOrder = async (e) => {
         e.preventDefault();

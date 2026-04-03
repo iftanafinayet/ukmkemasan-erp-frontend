@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import CustomerSidebar from './CustomerSidebar';
@@ -38,7 +38,7 @@ export default function CustomerPortal() {
     const [savingPassword, setSavingPassword] = useState(false);
 
     // Fetch
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             switch (activeMenu) {
@@ -85,9 +85,9 @@ export default function CustomerPortal() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [activeMenu]);
 
-    useEffect(() => { fetchData(); }, [activeMenu]);
+    useEffect(() => { fetchData(); }, [fetchData]);
 
     // Helpers
     const formatCurrency = (amt) => {
@@ -584,17 +584,21 @@ const Modal = ({ children, onClose, wide }) => (
     </div>
 );
 
-const FieldInput = ({ icon: Icon, label, value, onChange, type = 'text', required, placeholder }) => (
-    <div className="space-y-2">
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-        <div className="relative">
-            <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input type={type} required={required} placeholder={placeholder || ''}
-                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-bold"
-                value={value} onChange={(e) => onChange(e.target.value)} />
+const FieldInput = ({ icon, label, value, onChange, type = 'text', required, placeholder }) => {
+    const Icon = icon;
+
+    return (
+        <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+            <div className="relative">
+                <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input type={type} required={required} placeholder={placeholder || ''}
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-bold"
+                    value={value} onChange={(e) => onChange(e.target.value)} />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const InfoLine = ({ label, value, color }) => (
     <div>
@@ -602,4 +606,3 @@ const InfoLine = ({ label, value, color }) => (
         <p className={`font-bold ${color || 'text-slate-800'}`}>{value || '-'}</p>
     </div>
 );
-
