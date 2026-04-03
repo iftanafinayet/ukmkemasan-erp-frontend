@@ -62,6 +62,10 @@ export default function CustomerDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
+  // Inventory Pagination
+  const [invPage, setInvPage] = useState(1);
+  const [invPerPage, setInvPerPage] = useState(100);
+
   // Constants
   const productCategories = [
     'Standing Pouch', 'Gusset Side Seal', 'Gusset Quad Seal',
@@ -161,8 +165,13 @@ export default function CustomerDashboard() {
   useEffect(() => {
     setSearchTerm('');
     setStatusFilter('all');
+    setInvPage(1);
     fetchData();
   }, [activeMenu]);
+
+  useEffect(() => {
+    setInvPage(1);
+  }, [searchTerm]);
 
   // === FILTERED DATA ===
   const getFilteredData = () => {
@@ -523,6 +532,28 @@ export default function CustomerDashboard() {
   // === INVENTORY ===
   const renderInventory = () => {
     const filtered = getFilteredData();
+    const total = Array.isArray(filtered) ? filtered.length : 0;
+    const totalPages = Math.max(1, Math.ceil(total / invPerPage));
+    const safePage = Math.min(invPage, totalPages);
+    const startIdx = (safePage - 1) * invPerPage;
+    const endIdx = Math.min(startIdx + invPerPage, total);
+    const paginated = Array.isArray(filtered) ? filtered.slice(startIdx, endIdx) : [];
+
+    // Generate page numbers to display (always show first, last, and up to 3 around current)
+    const getPageNumbers = () => {
+      const pages = [];
+      if (totalPages <= 5) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (safePage > 3) pages.push('...');
+        for (let i = Math.max(2, safePage - 1); i <= Math.min(totalPages - 1, safePage + 1); i++) pages.push(i);
+        if (safePage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+      }
+      return pages;
+    };
+
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
         <div className="flex justify-between items-center gap-4">
@@ -549,7 +580,7 @@ export default function CustomerDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {Array.isArray(filtered) && filtered.map(product => (
+              {paginated.map(product => (
                 <tr key={product._id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="p-5">
                     {product.images?.length > 0 ? (
@@ -594,6 +625,66 @@ export default function CustomerDashboard() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination Bar */}
+          {total > 0 && (
+            <div className="flex items-center justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/50">
+              {/* Info */}
+              <span className="text-sm text-slate-500 font-medium">
+                Showing <span className="font-black text-slate-700">{startIdx + 1}</span> –{' '}
+                <span className="font-black text-slate-700">{endIdx}</span> of{' '}
+                <span className="font-black text-slate-700">{total}</span> entries
+              </span>
+
+              <div className="flex items-center gap-3">
+                {/* Per-page selector */}
+                <select
+                  value={invPerPage}
+                  onChange={(e) => { setInvPerPage(Number(e.target.value)); setInvPage(1); }}
+                  className="appearance-none border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-bold text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                >
+                  {[25, 50, 100, 200].map(n => <option key={n} value={n}>{n}</option>)}
+                </select>
+
+                {/* Prev */}
+                <button
+                  onClick={() => setInvPage(p => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  className="w-8 h-8 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 disabled:opacity-30 transition-all text-sm font-bold"
+                >
+                  ‹
+                </button>
+
+                {/* Page numbers */}
+                {getPageNumbers().map((pg, idx) =>
+                  pg === '...' ? (
+                    <span key={`ellipsis-${idx}`} className="w-8 h-8 flex items-center justify-center text-slate-400 text-sm">…</span>
+                  ) : (
+                    <button
+                      key={pg}
+                      onClick={() => setInvPage(pg)}
+                      className={`w-8 h-8 flex items-center justify-center rounded-xl text-sm font-black transition-all ${
+                        pg === safePage
+                          ? 'bg-primary text-white shadow-md shadow-primary/30'
+                          : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {pg}
+                    </button>
+                  )
+                )}
+
+                {/* Next */}
+                <button
+                  onClick={() => setInvPage(p => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages}
+                  className="w-8 h-8 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 disabled:opacity-30 transition-all text-sm font-bold"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
