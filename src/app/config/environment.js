@@ -139,6 +139,12 @@ export const ENDPOINTS = {
   UPDATE_ORDER_STATUS: (id) => `/orders/${id}/status`,
   UPDATE_ORDER_DESIGN: (id) => `/orders/${id}/design`,
 
+  // Sales
+  SALES_OVERVIEW: '/sales/overview',
+  SALES_INVOICES: '/sales/invoices',
+  SALES_PAYMENTS: '/sales/payments',
+  SALES_RETURNS: '/sales/returns',
+
   // Products
   PRODUCTS: '/products',
   PRODUCT_BY_ID: (id) => `/products/${id}`,

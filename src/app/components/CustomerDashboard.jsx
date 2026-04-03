@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import Sidebar from './Sidebar';
+import AdminSalesWorkspace from './AdminSalesWorkspace';
 import { OrderCard } from './OrderCard';
 import { ENDPOINTS, storage } from '../config/environment';
 import {
@@ -97,6 +98,26 @@ export default function CustomerDashboard() {
   ];
   const orderStatuses = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
   const currentWarehouseType = activeMenu === 'warehouse-retail' ? 'Retail' : 'Main';
+  const pageTitles = {
+    dashboard: 'Dashboard',
+    inventory: 'Inventory',
+    orders: 'Sales Orders',
+    warehouse: 'Warehouse',
+    'warehouse-retail': 'Warehouse Retail',
+    'inventory-items': 'Inventory Items',
+    'inventory-adjustment': 'Inventory Adjustment',
+    'item-categories': 'Item Categories',
+    customers: 'Customers',
+    'sales-processing': 'Sales Processing',
+    invoice: 'Invoice',
+    'payment-received': 'Payment Receive',
+    'sales-return': 'Sales Return',
+    'stock-card': 'Stock Card',
+    'stock-card-retail': 'Stock Card Retail',
+    'stock-opname': 'Stock Opname',
+    reports: 'Reports',
+    settings: 'Settings'
+  };
 
   // === FETCH DATA ===
   const fetchData = async () => {
@@ -166,6 +187,14 @@ export default function CustomerDashboard() {
         case 'customers':
           response = await api.get(ENDPOINTS.CUSTOMERS);
           setData(response.data || []);
+          break;
+
+        case 'sales-processing':
+        case 'invoice':
+        case 'payment-received':
+        case 'sales-return':
+          response = await api.get(ENDPOINTS.SALES_OVERVIEW);
+          setData(response.data || {});
           break;
 
         case 'reports':
@@ -499,7 +528,7 @@ export default function CustomerDashboard() {
     e.preventDefault();
     setCreatingOrder(true);
     try {
-      const res = await api.post(ENDPOINTS.ORDERS, orderForm);
+      await api.post(ENDPOINTS.ORDERS, orderForm);
       toast.success('Pesanan berhasil dibuat!');
       setIsCreateOrderOpen(false);
       fetchData();
@@ -664,10 +693,25 @@ export default function CustomerDashboard() {
       case 'inventory-adjustment': return renderInventoryAdjustment();
       case 'item-categories': return renderItemCategories();
       case 'sales-orders': return renderOrders();
-      case 'sales-processing': return <EmptyState text="Sales Processing Page" />;
-      case 'invoice': return renderInvoice();
-      case 'payment-received': return <EmptyState text="Payment Received Page" />;
-      case 'sales-return': return <EmptyState text="Sales Return Page" />;
+      case 'sales-processing':
+      case 'invoice':
+      case 'payment-received':
+      case 'sales-return':
+        return (
+          <AdminSalesWorkspace
+            activeMenu={activeMenu}
+            overview={data}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onRefresh={fetchData}
+            onViewOrder={handleViewOrder}
+            onUpdateOrderStatus={handleUpdateOrderStatus}
+            updatingStatus={updatingStatus}
+            formatCurrency={formatCurrency}
+            formatDate={formatDate}
+            formatDateTime={formatDateTime}
+          />
+        );
       case 'stock-card':
       case 'stock-card-retail': return renderStockCard();
       case 'stock-opname': return <EmptyState text="Stock Opname Page" />;
@@ -1249,32 +1293,6 @@ export default function CustomerDashboard() {
     </div>
   );
 
-  // === INVOICE ===
-  const renderInvoice = () => (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-black text-slate-800">Daftar Invoice</h3>
-        <button className="bg-primary text-white p-3 rounded-2xl shadow-lg shadow-primary/30"><Plus size={20}/></button>
-      </div>
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left border-b border-slate-100">
-            <tr>
-              <th className="p-5">No. Invoice</th>
-              <th className="p-5">Customer</th>
-              <th className="p-5">Jatuh Tempo</th>
-              <th className="p-5 text-right">Total Tagihan</th>
-              <th className="p-5 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50 uppercase text-[10px] font-bold text-slate-500">
-            <tr><td className="p-10 text-center col-span-5 opacity-30 italic" colSpan="5">Belum ada invoice yang diterbitkan.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
   // === STOCK CARD ===
   const renderStockCard = () => {
     const stockProducts = Array.isArray(data) ? data : [];
@@ -1700,7 +1718,7 @@ export default function CustomerDashboard() {
         <div className="max-w-7xl mx-auto p-8">
           <header className="flex justify-between items-center mb-12">
             <div>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tighter capitalize">{activeMenu}</h1>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tighter">{pageTitles[activeMenu] || activeMenu}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <p className="text-slate-500 text-sm font-medium italic">{isAdmin ? 'Admin Panel' : 'Customer Portal'} · UKM Kemasan v1.0</p>
