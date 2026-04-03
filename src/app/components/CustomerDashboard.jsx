@@ -68,9 +68,9 @@ export default function CustomerDashboard() {
 
   // Constants
   const productCategories = [
-    'Standing Pouch', 'Gusset Side Seal', 'Gusset Quad Seal',
+    'Standing Pouch', 'Gusset Side Seal', 'Gusset Quad Seal', 'Gusset',
     'Flat Bottom', 'Flatbottom Square', 'Flatbottom Rice Papper',
-    'Flatbottom Rice Papper Square', 'Sachet', 'Dripbag'
+    'Flatbottom Rice Papper Square', 'Sachet', 'Dripbag', 'Vacuum Pack', 'Roll', 'Lain Lain'
   ];
   const orderStatuses = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
 
@@ -213,7 +213,7 @@ export default function CustomerDashboard() {
     e.preventDefault();
     try {
       const formData = new FormData();
-      if (newProduct.sku) formData.append('sku', newProduct.sku);
+      formData.append('sku', newProduct.sku || '');
       formData.append('name', newProduct.name);
       formData.append('category', newProduct.category);
       formData.append('material', newProduct.material);
