@@ -9,7 +9,8 @@ import {
   BarChart3, Clock, AlertCircle, Plus, X,
   TrendingUp, DollarSign, ShoppingCart, Award,
   Edit3, Trash2, Save, User, Lock, Mail, Phone, MapPin,
-  ChevronDown, ImagePlus, Eye, Layers, Ruler, Box
+  ChevronDown, ImagePlus, Eye, Layers, Ruler, Box,
+  ArrowRightLeft, Warehouse, ClipboardList, CalendarDays
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -61,6 +62,18 @@ export default function CustomerDashboard() {
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [warehouses, setWarehouses] = useState([]);
+  const [adjustmentForm, setAdjustmentForm] = useState({
+    productId: '',
+    warehouseId: '',
+    type: 'In',
+    quantity: '',
+    reason: ''
+  });
+  const [savingAdjustment, setSavingAdjustment] = useState(false);
+  const [stockCardProductId, setStockCardProductId] = useState('');
+  const [stockCardRows, setStockCardRows] = useState([]);
+  const [stockCardLoading, setStockCardLoading] = useState(false);
 
   // Inventory Pagination
   const [invPage, setInvPage] = useState(1);
@@ -114,10 +127,27 @@ export default function CustomerDashboard() {
           response = isAdmin ? await api.get(ENDPOINTS.ALL_ORDERS) : await api.get(ENDPOINTS.MY_ORDERS);
           setData(response.data || []);
           break;
-
+        
         case 'inventory':
           response = await api.get(ENDPOINTS.PRODUCTS);
           setData(response.data || []);
+          break;
+        
+        case 'warehouse':
+        case 'warehouse-retail':
+          response = await api.get(ENDPOINTS.WAREHOUSES);
+          setWarehouses(response.data || []);
+          break;
+
+        case 'inventory-adjustment':
+          // Fetch products for dropdown if not loaded
+          if (data.length === 0) {
+            response = await api.get(ENDPOINTS.PRODUCTS);
+            setData(response.data || []);
+          }
+          // Fetch warehouses for dropdown
+          response = await api.get(ENDPOINTS.WAREHOUSES);
+          setWarehouses(response.data || []);
           break;
 
         case 'customers':
@@ -133,6 +163,25 @@ export default function CustomerDashboard() {
             } catch { setData({}); }
           }
           break;
+
+        case 'stock-card':
+        case 'stock-card-retail': {
+          response = await api.get(ENDPOINTS.PRODUCTS);
+          const products = response.data || [];
+          const nextProductId = products.some(product => product._id === stockCardProductId)
+            ? stockCardProductId
+            : products[0]?._id || '';
+
+          setData(products);
+          setStockCardProductId(nextProductId);
+
+          if (nextProductId) {
+            await fetchStockCardRows(nextProductId);
+          } else {
+            setStockCardRows([]);
+          }
+          break;
+        }
 
         case 'settings':
           try {
@@ -282,6 +331,32 @@ export default function CustomerDashboard() {
     setExistingImages([]);
   };
 
+  const handleSaveAdjustment = async (e) => {
+    e.preventDefault();
+    if (!adjustmentForm.productId || !adjustmentForm.warehouseId || !adjustmentForm.quantity) {
+      return toast.error('Mohon lengkapi semua field wajib.');
+    }
+
+    setSavingAdjustment(true);
+    try {
+      await api.post(ENDPOINTS.ADJUSTMENTS, {
+        productId: adjustmentForm.productId,
+        warehouseId: adjustmentForm.warehouseId,
+        type: adjustmentForm.type,
+        quantity: Number(adjustmentForm.quantity),
+        reason: adjustmentForm.reason
+      });
+      toast.success('Stok berhasil disesuaikan!');
+      setAdjustmentForm({ ...adjustmentForm, quantity: '', reason: '' });
+      fetchData(); // Refresh data products
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Gagal menyimpan penyesuaian.');
+    } finally {
+      setSavingAdjustment(true); // Wait, should be false
+      setSavingAdjustment(false);
+    }
+  };
+
   const handleRemoveExistingImage = (publicId) => {
     setDeleteImageIds(prev => [...prev, publicId]);
     setExistingImages(prev => prev.filter(img => img.publicId !== publicId));
@@ -388,6 +463,99 @@ export default function CustomerDashboard() {
     return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
   };
 
+  const formatDateTime = (dateString) => {
+    if (!dateString) return '-';
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(dateString));
+  };
+
+  const toNumber = (value) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : 0;
+  };
+
+  const normalizeStockCardRows = (payload) => {
+    const rawRows = Array.isArray(payload)
+      ? payload
+      : payload?.data ||
+        payload?.stockCards ||
+        payload?.movements ||
+        payload?.items ||
+        payload?.history ||
+        [];
+
+    if (!Array.isArray(rawRows)) return [];
+
+    return rawRows.map((entry, index) => {
+      const qtyIn = toNumber(
+        entry?.qtyIn ??
+        entry?.in ??
+        entry?.quantityIn ??
+        entry?.stockIn ??
+        entry?.debit
+      );
+      const qtyOut = toNumber(
+        entry?.qtyOut ??
+        entry?.out ??
+        entry?.quantityOut ??
+        entry?.stockOut ??
+        entry?.credit
+      );
+      const fallbackQty = toNumber(entry?.quantity ?? entry?.qty ?? entry?.amount);
+      const typeValue = String(
+        entry?.type ??
+        entry?.referenceType ??
+        entry?.transactionType ??
+        entry?.movementType ??
+        ''
+      ).toLowerCase();
+
+      const normalizedIn = qtyIn || ((!qtyOut && fallbackQty > 0 && /^(in|masuk|add|increase)$/i.test(typeValue)) ? fallbackQty : 0);
+      const normalizedOut = qtyOut || ((!qtyIn && fallbackQty > 0 && /^(out|keluar|remove|decrease)$/i.test(typeValue)) ? fallbackQty : 0);
+
+      return {
+        id: entry?._id || entry?.id || `${entry?.referenceNo || entry?.reference || 'row'}-${index}`,
+        date: entry?.date || entry?.createdAt || entry?.transactionDate || entry?.updatedAt || null,
+        refType: entry?.referenceType || entry?.transactionType || entry?.type || entry?.source || 'Mutasi',
+        refNo: entry?.referenceNo || entry?.reference || entry?.orderNumber || entry?.invoiceNumber || entry?._id || '-',
+        qtyIn: normalizedIn,
+        qtyOut: normalizedOut,
+        balance: toNumber(
+          entry?.balance ??
+          entry?.runningBalance ??
+          entry?.stockAfter ??
+          entry?.currentStock ??
+          entry?.saldo
+        ),
+        note: entry?.note || entry?.reason || entry?.description || '',
+        warehouseName: entry?.warehouse?.name || entry?.warehouseName || ''
+      };
+    });
+  };
+
+  const fetchStockCardRows = async (productId) => {
+    if (!productId) {
+      setStockCardRows([]);
+      return;
+    }
+
+    setStockCardLoading(true);
+    try {
+      const response = await api.get(ENDPOINTS.STOCK_CARDS(productId));
+      setStockCardRows(normalizeStockCardRows(response.data));
+    } catch (err) {
+      setStockCardRows([]);
+      toast.error(err.response?.data?.message || 'Gagal memuat histori stock card.');
+    } finally {
+      setStockCardLoading(false);
+    }
+  };
+
   // === RENDER ===
   const renderPage = () => {
     if (loading) return (
@@ -400,7 +568,20 @@ export default function CustomerDashboard() {
     switch (activeMenu) {
       case 'dashboard': return renderDashboard();
       case 'orders': return renderOrders();
-      case 'inventory': return renderInventory();
+      case 'inventory': 
+      case 'inventory-items': return renderInventory();
+      case 'warehouse':
+      case 'warehouse-retail': return renderWarehouse();
+      case 'inventory-adjustment': return renderInventoryAdjustment();
+      case 'item-categories': return <EmptyState text="Item Categories Page" />;
+      case 'sales-orders': return renderOrders();
+      case 'sales-processing': return <EmptyState text="Sales Processing Page" />;
+      case 'invoice': return renderInvoice();
+      case 'payment-received': return <EmptyState text="Payment Received Page" />;
+      case 'sales-return': return <EmptyState text="Sales Return Page" />;
+      case 'stock-card':
+      case 'stock-card-retail': return renderStockCard();
+      case 'stock-opname': return <EmptyState text="Stock Opname Page" />;
       case 'customers': return renderCustomers();
       case 'reports': return renderReports();
       case 'settings': return renderSettings();
@@ -688,6 +869,382 @@ export default function CustomerDashboard() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+    );
+  };
+
+  // === WAREHOUSE ===
+  const renderWarehouse = () => (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center bg-white p-8 rounded-3xl border border-slate-100">
+        <div>
+          <h3 className="text-xl font-black text-slate-800">Manajemen Gudang</h3>
+          <p className="text-slate-500 text-sm">Kelola lokasi penyimpanan barang {activeMenu === 'warehouse-retail' ? 'Retail' : 'Pusat'}.</p>
+        </div>
+        <button className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-2">
+          <Plus size={16} /> Tambah Gudang
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+          <div className="p-4 bg-blue-50 rounded-2xl"><Warehouse className="text-blue-500" /></div>
+          <div>
+            <p className="font-black text-slate-800">{activeMenu === 'warehouse-retail' ? 'Gudang Retail' : 'Gudang Utama'}</p>
+            <p className="text-xs text-slate-400">Jl. Industri No. 12, Bekasi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // === INVENTORY ADJUSTMENT ===
+  const renderInventoryAdjustment = () => (
+    <div className="space-y-6 animate-in fade-in duration-500 overflow-hidden">
+      <div className="bg-white p-8 rounded-3xl border border-slate-100">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-primary/10 rounded-2xl">
+            <ArrowRightLeft className="text-primary w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">Penyesuaian Stok</h3>
+            <p className="text-slate-400 text-xs font-medium">Tambah atau kurangi stok secara manual.</p>
+          </div>
+        </div>
+        <form onSubmit={handleSaveAdjustment} className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="space-y-6">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <Plus size={12} /> Input Transaksi
+            </h4>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilih Produk</label>
+                <select 
+                  required
+                  value={adjustmentForm.productId}
+                  onChange={(e) => setAdjustmentForm({ ...adjustmentForm, productId: e.target.value })}
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800"
+                >
+                  <option value="">-- Cari Produk --</option>
+                  {(activeMenu === 'inventory-adjustment' ? (Array.isArray(data) ? data : []) : []).map(p => (
+                    <option key={p._id} value={p._id}>{p.name} (Stok: {p.stockPolos})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Gudang Tujuan</label>
+                <select 
+                  required
+                  value={adjustmentForm.warehouseId}
+                  onChange={(e) => setAdjustmentForm({ ...adjustmentForm, warehouseId: e.target.value })}
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800"
+                >
+                  <option value="">-- Pilih Gudang --</option>
+                  {warehouses.map(w => (
+                    <option key={w._id} value={w._id}>{w.name}</option>
+                  ))}
+                </select>
+                {warehouses.length === 0 && (
+                  <p className="text-[10px] text-amber-500 font-bold mt-1">⚠️ Belum ada gudang terdaftar. Tambah di menu Warehouse.</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Mutasi</label>
+                  <div className="flex bg-slate-100 p-1 rounded-2xl">
+                    <button 
+                      type="button"
+                      onClick={() => setAdjustmentForm({ ...adjustmentForm, type: 'In' })}
+                      className={`flex-1 py-3 rounded-xl text-xs font-black transition-all ${adjustmentForm.type === 'In' ? 'bg-white text-emerald-500 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      MASUK (+)
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setAdjustmentForm({ ...adjustmentForm, type: 'Out' })}
+                      className={`flex-1 py-3 rounded-xl text-xs font-black transition-all ${adjustmentForm.type === 'Out' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      KELUAR (-)
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Jumlah (Pcs)</label>
+                  <input 
+                    type="number" 
+                    required
+                    value={adjustmentForm.quantity}
+                    onChange={(e) => setAdjustmentForm({ ...adjustmentForm, quantity: e.target.value })}
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800" 
+                    placeholder="0" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Alasan Penyesuaian</label>
+                <input 
+                  type="text" 
+                  required
+                  value={adjustmentForm.reason}
+                  onChange={(e) => setAdjustmentForm({ ...adjustmentForm, reason: e.target.value })}
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800" 
+                  placeholder="Misal: Barang Rusak, Hasil Opname..." 
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={savingAdjustment || warehouses.length === 0}
+                className="w-full py-5 bg-slate-900 text-white rounded-3xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-200 hover:bg-slate-800 hover:-translate-y-1 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:translate-y-0"
+              >
+                {savingAdjustment ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Proses Penyesuaian Stok'}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-6">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Informasi Penting</h4>
+            <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 border-dashed">
+              <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                Setiap transaksi penyesuaian stok akan tercatat secara permanen di <strong>Stock Card</strong>. 
+                Pastikan data yang diinput sudah sesuai dengan fisik barang di gudang untuk menghindari selisih laporan.
+              </p>
+            </div>
+            <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 flex flex-col items-center justify-center text-center py-20">
+              <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-4 shadow-sm">
+                <ClipboardList className="text-slate-200 w-10 h-10" />
+              </div>
+              <p className="font-bold text-slate-400 text-xs uppercase tracking-widest">Histori Real-time</p>
+              <p className="text-slate-300 text-[10px] mt-2">Pilih produk untuk melihat mutasi terakhir.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  // === INVOICE ===
+  const renderInvoice = () => (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center">
+        <h3 className="text-xl font-black text-slate-800">Daftar Invoice</h3>
+        <button className="bg-primary text-white p-3 rounded-2xl shadow-lg shadow-primary/30"><Plus size={20}/></button>
+      </div>
+      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left border-b border-slate-100">
+            <tr>
+              <th className="p-5">No. Invoice</th>
+              <th className="p-5">Customer</th>
+              <th className="p-5">Jatuh Tempo</th>
+              <th className="p-5 text-right">Total Tagihan</th>
+              <th className="p-5 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50 uppercase text-[10px] font-bold text-slate-500">
+            <tr><td className="p-10 text-center col-span-5 opacity-30 italic" colSpan="5">Belum ada invoice yang diterbitkan.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  // === STOCK CARD ===
+  const renderStockCard = () => {
+    const stockProducts = Array.isArray(data) ? data : [];
+    const selectedProduct = stockProducts.find(product => product._id === stockCardProductId);
+    const totalIn = stockCardRows.reduce((sum, row) => sum + toNumber(row.qtyIn), 0);
+    const totalOut = stockCardRows.reduce((sum, row) => sum + toNumber(row.qtyOut), 0);
+    const latestMutation = stockCardRows[0]?.date || stockCardRows[stockCardRows.length - 1]?.date;
+
+    const handleSelectProduct = async (productId) => {
+      setStockCardProductId(productId);
+      await fetchStockCardRows(productId);
+    };
+
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-8 py-7 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-cyan-50">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 border border-slate-200 text-[10px] font-black uppercase tracking-[0.24em] text-slate-500 mb-4">
+                  <Layers className="w-3.5 h-3.5 text-primary" />
+                  Stock Card
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Histori mutasi stok yang lebih rapi dan terbaca.</h3>
+                <p className="text-sm text-slate-500 font-medium mt-2">
+                  Pilih produk untuk melihat pergerakan stok masuk, keluar, dan saldo akhirnya secara kronologis.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 lg:min-w-[380px]">
+                <div className="relative flex-1">
+                  <select
+                    value={stockCardProductId}
+                    onChange={(e) => handleSelectProduct(e.target.value)}
+                    className="appearance-none w-full px-5 pr-11 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-sm text-slate-800 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  >
+                    <option value="">Pilih produk...</option>
+                    {stockProducts.map(product => (
+                      <option key={product._id} value={product._id}>
+                        {product.name} {product.sku ? `(${product.sku})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fetchStockCardRows(stockCardProductId)}
+                  disabled={!stockCardProductId || stockCardLoading}
+                  className="px-5 py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.22em] shadow-lg shadow-slate-200 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+                >
+                  {stockCardLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  Muat Ulang
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Produk</p>
+                  <Package className="w-4 h-4 text-slate-300" />
+                </div>
+                <p className="text-lg font-black text-slate-900 leading-tight">{selectedProduct?.name || 'Belum dipilih'}</p>
+                <p className="text-xs text-slate-500 font-medium mt-1">{selectedProduct?.sku || selectedProduct?.category || 'Pilih produk dari dropdown di atas.'}</p>
+              </div>
+
+              <div className="rounded-3xl border border-emerald-100 bg-emerald-50 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-600">Stok Saat Ini</p>
+                  <ArrowRightLeft className="w-4 h-4 text-emerald-400" />
+                </div>
+                <p className="text-3xl font-black text-emerald-700">{toNumber(selectedProduct?.stockPolos).toLocaleString()}</p>
+                <p className="text-xs text-emerald-700/80 font-bold mt-1">pcs tersedia di master produk</p>
+              </div>
+
+              <div className="rounded-3xl border border-sky-100 bg-sky-50 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-sky-600">Mutasi Tercatat</p>
+                  <CalendarDays className="w-4 h-4 text-sky-400" />
+                </div>
+                <p className="text-3xl font-black text-sky-700">{stockCardRows.length}</p>
+                <p className="text-xs text-sky-700/80 font-bold mt-1">
+                  {latestMutation ? `Update terakhir ${formatDateTime(latestMutation)}` : 'Belum ada histori mutasi'}
+                </p>
+              </div>
+            </div>
+
+            {selectedProduct && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Total Masuk</p>
+                  <p className="text-2xl font-black text-emerald-600 mt-2">{totalIn.toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 font-medium mt-1">pcs dari seluruh histori</p>
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Total Keluar</p>
+                  <p className="text-2xl font-black text-rose-600 mt-2">{totalOut.toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 font-medium mt-1">pcs dari seluruh histori</p>
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Saldo Akhir Histori</p>
+                  <p className="text-2xl font-black text-slate-800 mt-2">{toNumber(stockCardRows[stockCardRows.length - 1]?.balance || stockCardRows[0]?.balance).toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 font-medium mt-1">pcs berdasarkan baris terakhir yang tersedia</p>
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-[1.75rem] border border-slate-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[760px] text-left">
+                  <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.22em] border-b border-slate-100">
+                    <tr>
+                      <th className="px-5 py-4">Tanggal</th>
+                      <th className="px-5 py-4">Ref Tipe</th>
+                      <th className="px-5 py-4">Ref No</th>
+                      <th className="px-5 py-4">Catatan</th>
+                      <th className="px-5 py-4 text-center">Masuk</th>
+                      <th className="px-5 py-4 text-center">Keluar</th>
+                      <th className="px-5 py-4 text-right">Saldo</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {!stockCardProductId && (
+                      <tr>
+                        <td className="px-6 py-20 text-center italic uppercase text-[10px] font-black tracking-[0.22em] text-slate-300" colSpan={7}>
+                          Silakan pilih produk untuk melihat histori mutasi stok.
+                        </td>
+                      </tr>
+                    )}
+
+                    {stockCardProductId && stockCardLoading && (
+                      <tr>
+                        <td className="px-6 py-16" colSpan={7}>
+                          <div className="flex items-center justify-center gap-3 text-slate-400 font-bold text-sm">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Memuat histori stock card...
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {stockCardProductId && !stockCardLoading && stockCardRows.length === 0 && (
+                      <tr>
+                        <td className="px-6 py-20 text-center" colSpan={7}>
+                          <div className="flex flex-col items-center gap-3 text-slate-400">
+                            <div className="w-16 h-16 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                              <ClipboardList className="w-7 h-7 text-slate-300" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Belum ada histori</p>
+                              <p className="text-sm font-medium text-slate-400 mt-1">Produk ini belum memiliki mutasi stok yang tercatat.</p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {stockCardProductId && !stockCardLoading && stockCardRows.map((row) => (
+                      <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="px-5 py-4">
+                          <p className="font-bold text-slate-800 text-sm">{formatDate(row.date)}</p>
+                          <p className="text-[11px] text-slate-400 font-medium mt-1">{formatDateTime(row.date)}</p>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="inline-flex px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-[0.18em]">
+                            {row.refType}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 font-bold text-slate-700 text-sm">{row.refNo}</td>
+                        <td className="px-5 py-4">
+                          <p className="text-sm font-medium text-slate-600">{row.note || '-'}</p>
+                          {row.warehouseName && <p className="text-[11px] text-slate-400 font-medium mt-1">{row.warehouseName}</p>}
+                        </td>
+                        <td className="px-5 py-4 text-center">
+                          <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyIn > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                            {row.qtyIn > 0 ? `+${row.qtyIn.toLocaleString()}` : '-'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-center">
+                          <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyOut > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-100 text-slate-400'}`}>
+                            {row.qtyOut > 0 ? `-${row.qtyOut.toLocaleString()}` : '-'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right font-black text-slate-800 text-sm">{row.balance.toLocaleString()} pcs</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

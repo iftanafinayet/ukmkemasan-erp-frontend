@@ -145,7 +145,12 @@ export const ENDPOINTS = {
 
   // Customers
   CUSTOMERS: '/customers',
-  CUSTOMER_BY_ID: (id) => `/customers/${id}`
+  CUSTOMER_BY_ID: (id) => `/customers/${id}`,
+
+  // Inventory logic
+  WAREHOUSES: '/inventory/warehouses',
+  ADJUSTMENTS: '/inventory/adjustments',
+  STOCK_CARDS: (productId) => `/inventory/stock-cards/${productId}`
 };
 
 /**
