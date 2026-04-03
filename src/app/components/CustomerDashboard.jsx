@@ -38,7 +38,7 @@ export default function CustomerDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
-    name: '', category: 'Standing Pouch', material: '', priceBase: '', priceB2C: '', priceB2B: '', stockPolos: '', description: ''
+    sku: '', name: '', category: 'Standing Pouch', material: '', priceBase: '', priceB2C: '', priceB2B: '', stockPolos: '', description: ''
   });
   const [imageFiles, setImageFiles] = useState([]);
   const [deleteImageIds, setDeleteImageIds] = useState([]);
@@ -64,7 +64,7 @@ export default function CustomerDashboard() {
 
   // Inventory Pagination
   const [invPage, setInvPage] = useState(1);
-  const [invPerPage, setInvPerPage] = useState(100);
+  const [invPerPage, setInvPerPage] = useState(25);
 
   // Constants
   const productCategories = [
@@ -213,6 +213,7 @@ export default function CustomerDashboard() {
     e.preventDefault();
     try {
       const formData = new FormData();
+      if (newProduct.sku) formData.append('sku', newProduct.sku);
       formData.append('name', newProduct.name);
       formData.append('category', newProduct.category);
       formData.append('material', newProduct.material);
@@ -253,7 +254,7 @@ export default function CustomerDashboard() {
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setNewProduct({
-      name: product.name, category: product.category, material: product.material,
+      sku: product.sku || '', name: product.name, category: product.category, material: product.material,
       priceBase: product.priceBase, priceB2C: product.priceB2C, priceB2B: product.priceB2B,
       stockPolos: product.stockPolos, description: product.description || ''
     });
@@ -275,7 +276,7 @@ export default function CustomerDashboard() {
   };
 
   const resetProductForm = () => {
-    setNewProduct({ name: '', category: 'Standing Pouch', material: '', priceBase: '', priceB2C: '', priceB2B: '', stockPolos: '', description: '' });
+    setNewProduct({ sku: '', name: '', category: 'Standing Pouch', material: '', priceBase: '', priceB2C: '', priceB2B: '', stockPolos: '', description: '' });
     setImageFiles([]);
     setDeleteImageIds([]);
     setExistingImages([]);
@@ -570,6 +571,7 @@ export default function CustomerDashboard() {
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Gambar</th>
+                <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">SKU</th>
                 <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Produk</th>
                 <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kategori</th>
                 <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Material</th>
@@ -591,6 +593,7 @@ export default function CustomerDashboard() {
                       </div>
                     )}
                   </td>
+                  <td className="p-5 text-sm text-slate-500 font-bold">{product.sku || '-'}</td>
                   <td className="p-5 font-bold text-slate-800">
                     <button onClick={() => navigate('/admin/products/' + product._id)}
                       className="hover:text-primary transition-colors text-left">
@@ -940,7 +943,10 @@ export default function CustomerDashboard() {
             <p className="text-slate-500 text-sm font-medium">{editingProduct ? 'Perbarui data produk.' : 'Input stok kemasan polos baru ke gudang.'}</p>
           </div>
           <form onSubmit={handleAddProduct} className="space-y-5">
-            <FormInput label="Nama Produk" value={newProduct.name} onChange={(v) => setNewProduct({ ...newProduct, name: v })} required placeholder="Standing Pouch 500g..." />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <FormInput label="SKU" value={newProduct.sku} onChange={(v) => setNewProduct({ ...newProduct, sku: v })} placeholder="SPR-001..." />
+              <FormInput label="Nama Produk" value={newProduct.name} onChange={(v) => setNewProduct({ ...newProduct, name: v })} required placeholder="Standing Pouch 500g..." />
+            </div>
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori</label>

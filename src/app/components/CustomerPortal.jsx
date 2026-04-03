@@ -328,6 +328,7 @@ export default function CustomerPortal() {
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
+                                        {product.sku && <p className="text-[9px] font-black text-primary/70 uppercase tracking-widest mb-1">{product.sku}</p>}
                                         <h4 className="font-black text-slate-800 leading-tight">{product.name}</h4>
                                         <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{product.category}</p>
                                     </div>

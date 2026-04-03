@@ -196,7 +196,8 @@ export default function ProductDetailPage() {
                                     {/* Specifications */}
                                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
                                         <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Spesifikasi</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+                                            <SpecCard icon={Package} label="SKU" value={product.sku || '-'} />
                                             <SpecCard icon={Layers} label="Kategori" value={product.category} />
                                             <SpecCard icon={Ruler} label="Material" value={product.material || '-'} />
                                             <SpecCard icon={Box} label="Min. Order" value={`${product.minOrder?.toLocaleString() || '100'} pcs`} />
