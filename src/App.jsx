@@ -1,5 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './app/components/LoginPage';
 import RegisterPage from './app/components/RegisterPage';
 import CustomerDashboard from './app/components/CustomerDashboard';
@@ -21,78 +22,144 @@ function RoleRedirect() {
   return <Navigate to="/portal" replace />;
 }
 
+const AUTH_ROUTE_ORDER = {
+  '/login': 0,
+  '/register': 1,
+};
+
+const authPageVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? '6%' : '-6%',
+  }),
+  center: {
+    x: 0,
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? '-4%' : '4%',
+  }),
+};
+
+const authPageTransition = {
+  x: {
+    type: 'tween',
+    duration: 0.92,
+    ease: [0.16, 1, 0.3, 1],
+  },
+};
+
+function AppRoutes() {
+  const location = useLocation();
+  const previousAuthIndex = useRef(AUTH_ROUTE_ORDER[location.pathname] ?? 0);
+  const isAuthRoute = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname);
+  const currentAuthIndex = AUTH_ROUTE_ORDER[location.pathname] ?? previousAuthIndex.current;
+  const direction = currentAuthIndex >= previousAuthIndex.current ? 1 : -1;
+
+  useEffect(() => {
+    if (Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname)) {
+      previousAuthIndex.current = AUTH_ROUTE_ORDER[location.pathname];
+    }
+  }, [location.pathname]);
+
+  const routes = (
+    <Routes location={location}>
+      {/* Rute publik */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+
+      {/* Admin Dashboard — khusus admin */}
+      <Route
+        path="/admin"
+        element={
+          <AuthWrapper>
+            <CustomerDashboard />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Admin Product Detail */}
+      <Route
+        path="/admin/products/:id"
+        element={
+          <AuthWrapper>
+            <ProductDetailPage />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Customer Create Order */}
+      <Route
+        path="/portal/orders/create"
+        element={
+          <AuthWrapper>
+            <CreateOrderPage />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Customer Portal — khusus customer */}
+      <Route
+        path="/portal"
+        element={
+          <AuthWrapper>
+            <CustomerPortal />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Customer Product Detail */}
+      <Route
+        path="/portal/products/:id"
+        element={
+          <AuthWrapper>
+            <ProductDetailPage />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Legacy /dashboard redirect berdasarkan role */}
+      <Route
+        path="/dashboard"
+        element={
+          <AuthWrapper>
+            <RoleRedirect />
+          </AuthWrapper>
+        }
+      />
+
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+
+  if (!isAuthRoute) {
+    return routes;
+  }
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      <AnimatePresence initial={false} mode="sync" custom={direction}>
+        <motion.div
+          key={location.pathname}
+          custom={direction}
+          variants={authPageVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={authPageTransition}
+          className="absolute inset-0 overflow-y-auto will-change-transform"
+        >
+          {routes}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Rute publik */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
-        {/* Admin Dashboard — khusus admin */}
-        <Route
-          path="/admin"
-          element={
-            <AuthWrapper>
-              <CustomerDashboard />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Admin Product Detail */}
-        <Route
-          path="/admin/products/:id"
-          element={
-            <AuthWrapper>
-              <ProductDetailPage />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Customer Create Order */}
-        <Route
-          path="/portal/orders/create"
-          element={
-            <AuthWrapper>
-              <CreateOrderPage />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Customer Portal — khusus customer */}
-        <Route
-          path="/portal"
-          element={
-            <AuthWrapper>
-              <CustomerPortal />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Customer Product Detail */}
-        <Route
-          path="/portal/products/:id"
-          element={
-            <AuthWrapper>
-              <ProductDetailPage />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Legacy /dashboard redirect berdasarkan role */}
-        <Route
-          path="/dashboard"
-          element={
-            <AuthWrapper>
-              <RoleRedirect />
-            </AuthWrapper>
-          }
-        />
-
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+      <AppRoutes />
       <Toaster position="top-right" />
     </Router>
   );
