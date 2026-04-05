@@ -32,7 +32,7 @@ export function ProductModal({
           <FormInput label="Nama Produk" value={newProduct.name} onChange={(value) => setNewProduct({ ...newProduct, name: value })} required placeholder="Standing Pouch 500g..." />
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori</label>
             <select
@@ -49,13 +49,13 @@ export function ProductModal({
           <FormInput label="Material" value={newProduct.material} onChange={(value) => setNewProduct({ ...newProduct, material: value })} required placeholder="MET/PE" />
         </div>
 
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <FormInput label="Harga Base (Rp)" type="number" value={newProduct.priceBase} onChange={(value) => setNewProduct({ ...newProduct, priceBase: value })} required placeholder="2000" />
           <FormInput label="Harga B2C (Rp)" type="number" value={newProduct.priceB2C} onChange={(value) => setNewProduct({ ...newProduct, priceB2C: value })} required placeholder="2500" />
           <FormInput label="Harga B2B (Rp)" type="number" value={newProduct.priceB2B} onChange={(value) => setNewProduct({ ...newProduct, priceB2B: value })} required placeholder="2000" />
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormInput label="Stok Polos" type="number" value={newProduct.stockPolos} onChange={(value) => setNewProduct({ ...newProduct, stockPolos: value })} required placeholder="1000" />
           <FormInput label="Deskripsi" value={newProduct.description} onChange={(value) => setNewProduct({ ...newProduct, description: value })} placeholder="Opsional..." />
         </div>
@@ -170,7 +170,7 @@ export function WarehouseModal({
             <option value="Retail">Retail</option>
           </select>
         </div>
-        <div className="flex items-center justify-between rounded-2xl border border-slate-200 px-5 py-4 bg-slate-50">
+        <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-black text-slate-800 text-sm">Status Gudang</p>
             <p className="text-xs text-slate-500">Gudang nonaktif tetap tersimpan tapi tidak dipakai untuk operasional.</p>

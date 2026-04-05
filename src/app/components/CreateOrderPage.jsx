@@ -86,11 +86,11 @@ export default function CreateOrderPage() {
     const totalPrice = (basePrice + valvePrice) * qty;
 
     return (
-        <div className="flex h-screen bg-slate-50 font-sans selection:bg-primary/20">
+        <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
             <CustomerSidebar activeMenu="" onMenuChange={() => navigate('/portal')} />
 
-            <main className="flex-1 overflow-y-auto">
-                <div className="max-w-4xl mx-auto p-8 lg:p-12">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="mx-auto max-w-4xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:px-12 lg:py-8">
                     {/* Top Bar */}
                     <div className="flex items-center mb-10">
                         <button onClick={() => navigate(-1)}
@@ -101,7 +101,7 @@ export default function CreateOrderPage() {
                     </div>
 
                     <div className="mb-10">
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tighter capitalize flex items-center gap-4">
+                        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tighter text-slate-900 capitalize sm:gap-4 sm:text-4xl">
                             <ShoppingCart className="w-10 h-10 text-primary" />
                             Buat Pesanan Baru
                         </h1>
@@ -109,7 +109,7 @@ export default function CreateOrderPage() {
                     </div>
 
                     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                        <div className="p-8 lg:p-10">
+                        <div className="p-6 sm:p-8 lg:p-10">
                             {loadingProducts ? (
                                 <div className="flex flex-col items-center justify-center py-20">
                                     <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
@@ -187,7 +187,7 @@ export default function CreateOrderPage() {
 
                                     {/* Realtime Pricing Preview */}
                                     {selectedProduct && (
-                                        <div className="bg-gradient-to-r from-primary to-primary p-8 rounded-3xl text-white shadow-xl shadow-primary/20 mt-10">
+                                        <div className="bg-gradient-to-r from-primary to-primary p-6 rounded-3xl text-white shadow-xl shadow-primary/20 mt-10 sm:p-8">
                                             <div className="flex items-center gap-3 mb-6">
                                                 <DollarSign className="w-6 h-6 text-white/90" />
                                                 <p className="text-sm font-black uppercase tracking-widest text-white/90">Estimasi Biaya</p>
@@ -213,9 +213,9 @@ export default function CreateOrderPage() {
                                                 )}
                                             </div>
 
-                                            <div className="flex justify-between items-center pt-2">
+                                            <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
                                                 <p className="text-white/90 text-sm font-bold">Total Harga</p>
-                                                <p className="text-4xl font-black text-white tracking-tight">{formatCurrency(totalPrice)}</p>
+                                                <p className="text-3xl font-black text-white tracking-tight sm:text-4xl">{formatCurrency(totalPrice)}</p>
                                             </div>
                                         </div>
                                     )}

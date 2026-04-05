@@ -43,7 +43,7 @@ export function CreateOrderModal({
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormInput
             label="Jumlah (kelipatan 100)"
             type="number"
@@ -54,7 +54,7 @@ export function CreateOrderModal({
           />
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pakai Valve?</label>
-            <div className="flex gap-4 pt-2">
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="valve" checked={orderForm.useValve} onChange={() => setOrderForm({ ...orderForm, useValve: true })} className="accent-primary w-4 h-4" />
                 <span className="font-bold text-slate-700">Ya</span>
@@ -118,7 +118,7 @@ export function OrderDetailModal({
         <p className="text-slate-500 text-sm font-medium">{formatDate(selectedOrder.createdAt)}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="space-y-4">
           <InfoBlock label="Pelanggan" value={selectedOrder.customer?.name} sub={selectedOrder.customer?.email} />
           <InfoBlock label="Produk" value={selectedOrder.product?.name} sub={selectedOrder.product?.category} />
@@ -130,7 +130,7 @@ export function OrderDetailModal({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Status Produksi</p>
           <span className="px-4 py-2 bg-primary/10 rounded-full text-sm font-black text-primary">{selectedOrder.status}</span>

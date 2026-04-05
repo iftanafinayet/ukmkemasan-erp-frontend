@@ -320,7 +320,7 @@ export function ReportsPage({
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="text-center p-6 bg-green-50 rounded-2xl border border-green-100">
                 <p className="text-3xl font-black text-green-600">0</p>
                 <p className="text-xs font-bold text-green-500 uppercase mt-2">Dengan Valve</p>
@@ -376,18 +376,18 @@ export function SettingsPage({
           Profil Saya
         </h3>
         <form onSubmit={onSaveProfile} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <InputField icon={User} label="Nama" value={profile.name} onChange={(value) => setProfile({ ...profile, name: value })} required />
             <InputField icon={Mail} label="Email" type="email" value={profile.email} onChange={(value) => setProfile({ ...profile, email: value })} required />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <InputField icon={Phone} label="No. Telepon" value={profile.phone} onChange={(value) => setProfile({ ...profile, phone: value })} />
             <InputField icon={MapPin} label="Alamat" value={profile.address} onChange={(value) => setProfile({ ...profile, address: value })} />
           </div>
           <button
             type="submit"
             disabled={savingProfile}
-            className="bg-primary text-white px-8 py-3 rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 sm:w-auto"
           >
             {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Simpan Profil
@@ -409,7 +409,7 @@ export function SettingsPage({
             onChange={(value) => setPasswords({ ...passwords, currentPassword: value })}
             required
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <InputField
               icon={Lock}
               label="Password Baru"
@@ -431,7 +431,7 @@ export function SettingsPage({
           <button
             type="submit"
             disabled={savingPassword}
-            className="bg-slate-800 text-white px-8 py-3 rounded-2xl font-bold text-sm shadow-lg hover:bg-slate-700 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-800 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-slate-700 active:scale-95 disabled:opacity-50 sm:w-auto"
           >
             {savingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
             Ubah Password

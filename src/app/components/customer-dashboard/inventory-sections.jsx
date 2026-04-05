@@ -40,7 +40,7 @@ export function InventoryPage({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center gap-4">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex-1">
           <SearchBar value={searchTerm} onChange={onSearchChange} placeholder="Cari produk, kategori, material..." />
         </div>
@@ -48,7 +48,7 @@ export function InventoryPage({
           <button
             type="button"
             onClick={onOpenProductModal}
-            className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap"
+            className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
           >
             <Plus size={16} />
             Tambah Produk
@@ -57,7 +57,8 @@ export function InventoryPage({
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[960px] text-left">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Gambar</th>
@@ -116,15 +117,16 @@ export function InventoryPage({
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
 
         {total > 0 && (
-          <div className="flex items-center justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/50">
+          <div className="flex flex-col gap-4 border-t border-slate-100 bg-slate-50/50 px-5 py-4 xl:flex-row xl:items-center xl:justify-between">
             <span className="text-sm text-slate-500 font-medium">
               Showing <span className="font-black text-slate-700">{startIdx + 1}</span> - <span className="font-black text-slate-700">{endIdx}</span> of <span className="font-black text-slate-700">{total}</span> entries
             </span>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <select
                 value={invPerPage}
                 onChange={(event) => {
@@ -201,7 +203,7 @@ export function WarehousePage({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center bg-white p-8 rounded-3xl border border-slate-100">
+      <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h3 className="text-xl font-black text-slate-800">Manajemen Gudang</h3>
           <p className="text-slate-500 text-sm">Kelola lokasi penyimpanan barang {currentWarehouseType === 'Retail' ? 'Retail' : 'Pusat'}.</p>
@@ -209,7 +211,7 @@ export function WarehousePage({
         <button
           type="button"
           onClick={onCreateWarehouse}
-          className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-2"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30"
         >
           <Plus size={16} />
           Tambah Gudang
@@ -301,7 +303,7 @@ export function ItemCategoriesPage({ formatCurrency, products }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Items</p>
                 <p className="text-2xl font-black text-slate-800 mt-2">{category.totalItems}</p>
@@ -387,7 +389,7 @@ export function InventoryAdjustmentPage({
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Mutasi</label>
                   <div className="flex bg-slate-100 p-1 rounded-2xl">
