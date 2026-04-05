@@ -99,9 +99,10 @@ export const APP_CONFIG = {
   // Token
   TOKEN_KEY: 'token',
   USER_KEY: 'user',
+  TOKEN_EXPIRY_KEY: 'tokenExpiry',
 
   // Session
-  SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
 
   // API retry
   MAX_RETRIES: 3,
@@ -234,22 +235,90 @@ export const getAPIUrl = (endpoint) => {
 /**
  * Storage helpers
  */
+const getStoredTokenExpiry = () => {
+  const expiry = localStorage.getItem(APP_CONFIG.TOKEN_EXPIRY_KEY);
+  return expiry ? Number(expiry) : null;
+};
+
+const isSessionExpired = (expiry = getStoredTokenExpiry()) => {
+  if (!expiry || Number.isNaN(expiry)) {
+    return false;
+  }
+
+  return Date.now() >= expiry;
+};
+
+const clearStoredSession = () => {
+  localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
+  localStorage.removeItem(APP_CONFIG.USER_KEY);
+  localStorage.removeItem(APP_CONFIG.TOKEN_EXPIRY_KEY);
+};
+
 export const storage = {
-  getToken: () => localStorage.getItem(APP_CONFIG.TOKEN_KEY),
-  setToken: (token) => localStorage.setItem(APP_CONFIG.TOKEN_KEY, token),
-  removeToken: () => localStorage.removeItem(APP_CONFIG.TOKEN_KEY),
+  getToken: () => {
+    const token = localStorage.getItem(APP_CONFIG.TOKEN_KEY);
+    const expiry = getStoredTokenExpiry();
+
+    if (!token) {
+      return null;
+    }
+
+    // Backfill expiry for older sessions created before token expiry existed.
+    if (!expiry) {
+      const newExpiry = Date.now() + APP_CONFIG.SESSION_TIMEOUT;
+      localStorage.setItem(APP_CONFIG.TOKEN_EXPIRY_KEY, String(newExpiry));
+      return token;
+    }
+
+    if (isSessionExpired(expiry)) {
+      clearStoredSession();
+      return null;
+    }
+
+    return token;
+  },
+  setToken: (token) => {
+    localStorage.setItem(APP_CONFIG.TOKEN_KEY, token);
+    localStorage.setItem(
+      APP_CONFIG.TOKEN_EXPIRY_KEY,
+      String(Date.now() + APP_CONFIG.SESSION_TIMEOUT)
+    );
+  },
+  removeToken: () => {
+    localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
+    localStorage.removeItem(APP_CONFIG.TOKEN_EXPIRY_KEY);
+  },
+  getTokenExpiry: () => {
+    const token = localStorage.getItem(APP_CONFIG.TOKEN_KEY);
+    const expiry = getStoredTokenExpiry();
+
+    if (!token || !expiry) {
+      return null;
+    }
+
+    if (isSessionExpired(expiry)) {
+      clearStoredSession();
+      return null;
+    }
+
+    return expiry;
+  },
 
   getUser: () => {
+    const expiry = getStoredTokenExpiry();
+
+    if (expiry && isSessionExpired(expiry)) {
+      clearStoredSession();
+      return null;
+    }
+
     const user = localStorage.getItem(APP_CONFIG.USER_KEY);
     return user ? JSON.parse(user) : null;
   },
   setUser: (user) => localStorage.setItem(APP_CONFIG.USER_KEY, JSON.stringify(user)),
   removeUser: () => localStorage.removeItem(APP_CONFIG.USER_KEY),
 
-  clear: () => {
-    localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
-    localStorage.removeItem(APP_CONFIG.USER_KEY);
-  }
+  clear: clearStoredSession
 };
 
 /**

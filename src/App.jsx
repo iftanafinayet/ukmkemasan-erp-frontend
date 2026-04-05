@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from './app/components/LoginPage';
 import RegisterPage from './app/components/RegisterPage';
 import CustomerDashboard from './app/components/CustomerDashboard';
@@ -9,7 +9,7 @@ import CreateOrderPage from './app/components/CreateOrderPage';
 import ProductDetailPage from './app/components/ProductDetailPage';
 import AuthWrapper from './app/components/AuthWrapper';
 import { storage } from './app/config/environment';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 
 /**
  * RoleRedirect: redirect ke portal yang sesuai berdasarkan role user
@@ -49,6 +49,7 @@ const authPageTransition = {
 
 function AppRoutes() {
   const location = useLocation();
+  const navigate = useNavigate();
   const previousAuthIndex = useRef(AUTH_ROUTE_ORDER[location.pathname] ?? 0);
   const isAuthRoute = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname);
   const currentAuthIndex = AUTH_ROUTE_ORDER[location.pathname] ?? previousAuthIndex.current;
@@ -59,6 +60,33 @@ function AppRoutes() {
       previousAuthIndex.current = AUTH_ROUTE_ORDER[location.pathname];
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const expiry = storage.getTokenExpiry();
+
+    if (!expiry) {
+      return undefined;
+    }
+
+    const remainingTime = expiry - Date.now();
+
+    if (remainingTime <= 0) {
+      storage.clear();
+      if (!isAuthRoute) {
+        toast.error('Your session has expired. Please sign in again.');
+        navigate('/login', { replace: true });
+      }
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      storage.clear();
+      toast.error('Your session has expired. Please sign in again.');
+      navigate('/login', { replace: true });
+    }, remainingTime);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isAuthRoute, location.pathname, navigate]);
 
   const routes = (
     <Routes location={location}>
