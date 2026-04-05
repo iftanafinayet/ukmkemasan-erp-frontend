@@ -66,12 +66,12 @@ export function StatCard({ icon, color, label, value, border = false }) {
 
 export function ModalWrapper({ children, onClose, wide = false }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-      <div className={`bg-white rounded-[40px] p-10 w-full ${wide ? 'max-w-2xl' : 'max-w-lg'} shadow-2xl relative border border-white/20 max-h-[90vh] overflow-y-auto`}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/60 p-3 backdrop-blur-md animate-in fade-in duration-300 sm:items-center sm:p-4">
+      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-[28px] border border-white/20 bg-white p-5 pt-14 shadow-2xl sm:rounded-[40px] sm:p-10 ${wide ? 'max-w-2xl' : 'max-w-lg'}`}>
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+          className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 sm:right-6 sm:top-6"
         >
           <X size={20} />
         </button>

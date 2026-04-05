@@ -825,14 +825,14 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans selection:bg-primary/20">
+    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
       <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-8">
-          <header className="flex justify-between items-center mb-12">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
+          <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tighter">{PAGE_TITLES[activeMenu] || activeMenu}</h1>
+              <h1 className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">{PAGE_TITLES[activeMenu] || activeMenu}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <p className="text-slate-500 text-sm font-medium italic">
@@ -843,7 +843,7 @@ export default function CustomerDashboard() {
             <button
               type="button"
               onClick={fetchData}
-              className="p-4 bg-white border border-slate-200 rounded-2xl hover:bg-slate-100 hover:rotate-180 transition-all duration-500 shadow-sm text-slate-600"
+              className="self-end rounded-2xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto"
             >
               <RefreshCw size={24} className={loading ? 'animate-spin text-primary' : ''} />
             </button>

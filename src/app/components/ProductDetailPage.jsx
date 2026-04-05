@@ -80,12 +80,12 @@ export default function ProductDetailPage() {
     const SidebarComponent = isAdmin ? Sidebar : CustomerSidebar;
 
     return (
-        <div className="flex h-screen bg-slate-50 font-sans selection:bg-primary/20">
+        <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
             <SidebarComponent activeMenu="inventory" onMenuChange={handleMenuChange} />
-            <main className="flex-1 overflow-y-auto">
-                <div className="max-w-5xl mx-auto p-8">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
                     {/* Top Bar */}
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="mb-8 flex items-center justify-between gap-4">
                         <button onClick={goBack}
                             className="flex items-center gap-2 text-slate-500 hover:text-primary font-bold text-sm transition-colors group">
                             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -131,9 +131,9 @@ export default function ProductDetailPage() {
                                                                 className="w-full h-full object-cover"
                                                             />
                                                             {/* Overlay */}
-                                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-8 pt-20">
+                                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-6 pt-16 sm:p-8 sm:pt-20">
                                                                 <p className="text-white/60 text-xs font-black uppercase tracking-widest">{product.category}</p>
-                                                                <h1 className="text-white text-3xl md:text-4xl font-black tracking-tight mt-1">{product.name}</h1>
+                                                                <h1 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">{product.name}</h1>
                                                             </div>
                                                         </div>
                                                     </CarouselItem>
@@ -178,7 +178,7 @@ export default function ProductDetailPage() {
                             {(!product.images || product.images.length === 0) && (
                                 <div className="mb-6">
                                     <p className="text-primary text-xs font-black uppercase tracking-widest">{product.category}</p>
-                                    <h1 className="text-4xl font-black text-slate-900 tracking-tight mt-1">{product.name}</h1>
+                                    <h1 className="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">{product.name}</h1>
                                 </div>
                             )}
 
@@ -187,16 +187,16 @@ export default function ProductDetailPage() {
                                 <div className="lg:col-span-2 space-y-6">
                                     {/* Description */}
                                     {product.description && (
-                                        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sm:p-8">
                                             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Deskripsi</h3>
                                             <p className="text-slate-600 leading-relaxed">{product.description}</p>
                                         </div>
                                     )}
 
                                     {/* Specifications */}
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                                    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sm:p-8">
                                         <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Spesifikasi</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+                                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
                                             <SpecCard icon={Package} label="SKU" value={product.sku || '-'} />
                                             <SpecCard icon={Layers} label="Kategori" value={product.category} />
                                             <SpecCard icon={Ruler} label="Material" value={product.material || '-'} />

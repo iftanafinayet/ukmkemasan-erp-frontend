@@ -38,7 +38,7 @@ export function InvoiceModal({
         {selectedOrderForInvoice && (
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Ringkasan Order</p>
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <SummaryLine label="Customer" value={selectedOrderForInvoice.customer?.name || '-'} />
               <SummaryLine label="Produk" value={selectedOrderForInvoice.product?.name || '-'} />
               <SummaryLine label="Qty" value={`${toNumber(selectedOrderForInvoice.details?.quantity).toLocaleString()} pcs`} />
@@ -115,7 +115,7 @@ export function PaymentModal({
         {selectedInvoiceForPayment && (
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Ringkasan Invoice</p>
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <SummaryLine label="Customer" value={selectedInvoiceForPayment.customer?.name || '-'} />
               <SummaryLine label="Order" value={selectedInvoiceForPayment.order?.orderNumber || '-'} />
               <SummaryLine label="Total" value={formatCurrency(selectedInvoiceForPayment.totalAmount)} />
@@ -228,7 +228,7 @@ export function ReturnModal({
         {selectedOrderForReturn && (
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Ringkasan Order</p>
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <SummaryLine label="Produk" value={selectedOrderForReturn.product?.name || '-'} />
               <SummaryLine label="Order Qty" value={`${toNumber(selectedOrderForReturn.details?.quantity).toLocaleString()} pcs`} />
               <SummaryLine label="Sudah Diretur" value={`${toNumber(selectedOrderForReturn.returnQuantity).toLocaleString()} pcs`} />

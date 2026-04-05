@@ -8,7 +8,15 @@
 
 /* Base styling agar background abu-abu terang muncul */
 @layer base {
+  html {
+    min-height: 100%;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
   body {
-    @apply bg-gray-50 text-slate-900 antialiased;
+    @apply min-h-screen bg-gray-50 text-slate-900 antialiased overflow-x-hidden;
   }
 }
