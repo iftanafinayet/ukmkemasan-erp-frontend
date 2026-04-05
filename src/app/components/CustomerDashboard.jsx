@@ -102,6 +102,7 @@ export default function CustomerDashboard() {
   const [adminStats, setAdminStats] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [orderSort, setOrderSort] = useState('newest');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -151,6 +152,7 @@ export default function CustomerDashboard() {
     data,
     searchTerm,
     statusFilter,
+    orderSort,
   });
 
   const resetProductForm = () => {
@@ -358,6 +360,7 @@ export default function CustomerDashboard() {
   useEffect(() => {
     setSearchTerm('');
     setStatusFilter('all');
+    setOrderSort('newest');
     setInvPage(1);
     fetchData();
   }, [activeMenu, fetchData]);
@@ -678,9 +681,11 @@ export default function CustomerDashboard() {
             isAdmin={isAdmin}
             onCreateOrder={openCreateOrder}
             onSearchChange={setSearchTerm}
+            onSortChange={setOrderSort}
             onStatusFilterChange={setStatusFilter}
             onViewOrder={handleViewOrder}
             orderStatuses={ORDER_STATUSES}
+            orderSort={orderSort}
             searchTerm={searchTerm}
             statusFilter={statusFilter}
           />

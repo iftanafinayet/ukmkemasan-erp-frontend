@@ -141,31 +141,40 @@ export function OrdersPage({
   isAdmin,
   onCreateOrder,
   onSearchChange,
+  onSortChange,
   onStatusFilterChange,
   onViewOrder,
   orderStatuses,
+  orderSort,
   searchTerm,
   statusFilter,
 }) {
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex-1">
           <SearchBar
             value={searchTerm}
             onChange={onSearchChange}
             placeholder="Cari order, produk, customer..."
             showStatusFilter
+            showSortFilter
             statusFilter={statusFilter}
             onStatusFilterChange={onStatusFilterChange}
             statusOptions={orderStatuses}
+            sortValue={orderSort}
+            onSortChange={onSortChange}
+            sortOptions={[
+              { value: 'newest', label: 'Pesanan Terbaru' },
+              { value: 'oldest', label: 'Pesanan Terlama' },
+            ]}
           />
         </div>
         {!isAdmin && (
           <button
             type="button"
             onClick={onCreateOrder}
-            className="ml-4 bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap"
+            className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
           >
             <Plus size={16} />
             Buat Pesanan

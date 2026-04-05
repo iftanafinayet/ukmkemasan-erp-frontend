@@ -151,9 +151,13 @@ export function SearchBar({
   statusFilter = 'all',
   onStatusFilterChange,
   statusOptions = [],
+  showSortFilter = false,
+  sortValue = 'newest',
+  onSortChange,
+  sortOptions = [],
 }) {
   return (
-    <div className="flex gap-4 mb-6">
+    <div className="mb-6 flex flex-col gap-4 lg:flex-row">
       <div className="flex-1 relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
@@ -164,19 +168,37 @@ export function SearchBar({
           className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-800 text-sm"
         />
       </div>
-      {showStatusFilter && (
-        <div className="relative">
-          <select
-            value={statusFilter}
-            onChange={(event) => onStatusFilterChange(event.target.value)}
-            className="appearance-none px-5 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
-          >
-            <option value="all">Semua Status</option>
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>{status}</option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+      {(showStatusFilter || showSortFilter) && (
+        <div className="flex flex-col gap-4 sm:flex-row">
+          {showStatusFilter && (
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(event) => onStatusFilterChange(event.target.value)}
+                className="w-full appearance-none px-5 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+              >
+                <option value="all">Semua Status</option>
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            </div>
+          )}
+          {showSortFilter && (
+            <div className="relative">
+              <select
+                value={sortValue}
+                onChange={(event) => onSortChange?.(event.target.value)}
+                className="w-full appearance-none px-5 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            </div>
+          )}
         </div>
       )}
     </div>

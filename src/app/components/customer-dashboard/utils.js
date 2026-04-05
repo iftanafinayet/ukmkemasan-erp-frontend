@@ -32,15 +32,31 @@ export const toNumber = (value) => {
   return Number.isFinite(numeric) ? numeric : 0;
 };
 
-export const getFilteredData = ({ activeMenu, data, searchTerm, statusFilter }) => {
+const getOrderTimestamp = (order) => {
+  const orderDate = order?.createdAt || order?.orderDate || order?.updatedAt;
+
+  if (!orderDate) return null;
+
+  const timestamp = new Date(orderDate).getTime();
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+export const getFilteredData = ({
+  activeMenu,
+  data,
+  searchTerm,
+  statusFilter,
+  orderSort = 'newest',
+}) => {
   if (!Array.isArray(data)) return data;
 
   let filtered = [...data];
+  const isOrderMenu = activeMenu === 'orders' || activeMenu === 'sales-orders';
 
   if (searchTerm) {
     const term = searchTerm.toLowerCase();
 
-    if (activeMenu === 'orders') {
+    if (isOrderMenu) {
       filtered = filtered.filter((order) => (
         order.orderNumber?.toLowerCase().includes(term) ||
         order.product?.name?.toLowerCase().includes(term) ||
@@ -60,8 +76,23 @@ export const getFilteredData = ({ activeMenu, data, searchTerm, statusFilter }) 
     }
   }
 
-  if (statusFilter !== 'all' && activeMenu === 'orders') {
+  if (statusFilter !== 'all' && isOrderMenu) {
     filtered = filtered.filter((order) => order.status === statusFilter);
+  }
+
+  if (isOrderMenu) {
+    filtered.sort((left, right) => {
+      const leftTimestamp = getOrderTimestamp(left);
+      const rightTimestamp = getOrderTimestamp(right);
+
+      if (leftTimestamp === null && rightTimestamp === null) return 0;
+      if (leftTimestamp === null) return 1;
+      if (rightTimestamp === null) return -1;
+
+      return orderSort === 'oldest'
+        ? leftTimestamp - rightTimestamp
+        : rightTimestamp - leftTimestamp;
+    });
   }
 
   return filtered;
