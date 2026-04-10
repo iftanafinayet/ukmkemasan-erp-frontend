@@ -150,6 +150,9 @@ export const ENDPOINTS = {
   PRODUCTS: '/products',
   PRODUCT_BY_ID: (id) => `/products/${id}`,
 
+  // Landing Content
+  LANDING_CONTENT: '/landing-content',
+
   // Customers
   CUSTOMERS: '/customers',
   CUSTOMER_BY_ID: (id) => `/customers/${id}`,

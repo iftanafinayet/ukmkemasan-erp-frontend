@@ -44,6 +44,13 @@ import {
   getFilteredData,
   normalizeStockCardRows,
 } from './customer-dashboard/utils';
+import {
+  buildLandingContentPayload,
+  createEmptyActivity,
+  createEmptyArticle,
+  createEmptyLandingContent,
+  normalizeLandingContent,
+} from '../utils/landingContent';
 
 const EMPTY_PRODUCT_FORM = {
   name: '',
@@ -159,6 +166,8 @@ export default function CustomerDashboard() {
   const [passwords, setPasswords] = useState(EMPTY_PASSWORDS);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [landingContent, setLandingContent] = useState(createEmptyLandingContent);
+  const [savingLandingContent, setSavingLandingContent] = useState(false);
 
   const [warehouses, setWarehouses] = useState([]);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
@@ -362,13 +371,19 @@ export default function CustomerDashboard() {
 
         case 'settings':
           try {
-            response = await api.get(ENDPOINTS.PROFILE);
+            const [profileResponse, landingContentResponse] = await Promise.all([
+              api.get(ENDPOINTS.PROFILE),
+              isAdmin ? api.get(ENDPOINTS.LANDING_CONTENT) : Promise.resolve(null),
+            ]);
             setProfile({
-              name: response.data.name || '',
-              email: response.data.email || '',
-              phone: response.data.phone || '',
-              address: response.data.address || '',
+              name: profileResponse.data.name || '',
+              email: profileResponse.data.email || '',
+              phone: profileResponse.data.phone || '',
+              address: profileResponse.data.address || '',
             });
+            if (landingContentResponse?.data) {
+              setLandingContent(normalizeLandingContent(landingContentResponse.data));
+            }
           } catch {
             setProfile((currentProfile) => currentProfile);
           }
@@ -715,6 +730,109 @@ export default function CustomerDashboard() {
     }
   };
 
+  const updateArticleField = (clientId, field, value) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      articles: currentContent.articles.map((article) => (
+        article.clientId === clientId ? { ...article, [field]: value } : article
+      )),
+    }));
+  };
+
+  const updateActivityField = (clientId, field, value) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      activities: currentContent.activities.map((activity) => (
+        activity.clientId === clientId ? { ...activity, [field]: value } : activity
+      )),
+    }));
+  };
+
+  const handleAddLandingArticle = () => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      articles: [...currentContent.articles, createEmptyArticle()],
+    }));
+  };
+
+  const handleRemoveLandingArticle = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      articles: currentContent.articles.filter((article) => article.clientId !== clientId),
+    }));
+  };
+
+  const handleAddLandingActivity = () => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      activities: [...currentContent.activities, createEmptyActivity()],
+    }));
+  };
+
+  const handleRemoveLandingActivity = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      activities: currentContent.activities.filter((activity) => activity.clientId !== clientId),
+    }));
+  };
+
+  const handleLandingActivityImageChange = (clientId, file) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      activities: currentContent.activities.map((activity) => (
+        activity.clientId === clientId
+          ? {
+              ...activity,
+              imageFile: file || null,
+              imageRemoved: false,
+            }
+          : activity
+      )),
+    }));
+  };
+
+  const handleLandingActivityRemoveImage = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      activities: currentContent.activities.map((activity) => (
+        activity.clientId === clientId
+          ? {
+              ...activity,
+              imageFile: null,
+              imageUrl: '',
+              imagePublicId: '',
+              imageRemoved: true,
+            }
+          : activity
+      )),
+    }));
+  };
+
+  const handleSaveLandingContent = async () => {
+    setSavingLandingContent(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('payload', JSON.stringify(buildLandingContentPayload(landingContent)));
+
+      landingContent.activities.forEach((activity) => {
+        if (activity.imageFile) {
+          formData.append(`activityImage:${activity.clientId}`, activity.imageFile);
+        }
+      });
+
+      const response = await api.put(ENDPOINTS.LANDING_CONTENT, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setLandingContent(normalizeLandingContent(response.data));
+      toast.success('Konten landing page berhasil diperbarui.');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Gagal menyimpan konten landing page.');
+    } finally {
+      setSavingLandingContent(false);
+    }
+  };
+
   const renderPage = () => {
     if (loading) {
       return <LoadingState />;
@@ -867,10 +985,22 @@ export default function CustomerDashboard() {
       case 'settings':
         return (
           <SettingsPage
+            isAdmin={isAdmin}
+            landingContent={landingContent}
+            onActivityChange={updateActivityField}
+            onActivityImageChange={handleLandingActivityImageChange}
+            onActivityRemoveImage={handleLandingActivityRemoveImage}
+            onAddActivity={handleAddLandingActivity}
+            onAddArticle={handleAddLandingArticle}
             onChangePassword={handleChangePassword}
+            onRemoveActivity={handleRemoveLandingActivity}
+            onRemoveArticle={handleRemoveLandingArticle}
             onSaveProfile={handleSaveProfile}
+            onSaveLandingContent={handleSaveLandingContent}
+            onArticleChange={updateArticleField}
             passwords={passwords}
             profile={profile}
+            savingLandingContent={savingLandingContent}
             savingPassword={savingPassword}
             savingProfile={savingProfile}
             setPasswords={setPasswords}
