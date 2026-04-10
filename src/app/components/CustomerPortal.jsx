@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import {
     Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 } from './ui/carousel';
+import { buildCatalogGroups } from '../utils/catalog';
 
 export default function CustomerPortal() {
     const user = storage.getUser();
@@ -244,15 +245,16 @@ export default function CustomerPortal() {
 
     // Katalog Produk
     const renderCatalog = () => {
-        const categories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))];
-        const filteredProducts = selectedCategory === 'All'
-            ? products
-            : products.filter(p => p.category === selectedCategory);
+        const catalogGroups = buildCatalogGroups(products);
+        const categories = ['All', ...new Set(catalogGroups.map(catalog => catalog.category).filter(Boolean))];
+        const filteredCatalogs = selectedCategory === 'All'
+            ? catalogGroups
+            : catalogGroups.filter(catalog => catalog.category === selectedCategory);
 
         return (
             <div className="space-y-6 animate-in fade-in duration-500">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-slate-400 text-sm font-medium">{filteredProducts.length} produk tersedia</p>
+                    <p className="text-slate-400 text-sm font-medium">{filteredCatalogs.length} katalog tersedia</p>
                     <button onClick={() => navigate('/portal/orders/create')}
                         className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                         <Plus size={16} /> Pesan Sekarang
@@ -278,33 +280,36 @@ export default function CustomerPortal() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProducts.map(product => (
-                        <div key={product._id} className="bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
-                            onClick={() => navigate('/portal/products/' + product._id)}>
+                    {filteredCatalogs.map(catalog => (
+                        <div
+                            key={catalog.key}
+                            className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-100 bg-white transition-shadow hover:shadow-lg"
+                            onClick={() => navigate(`/portal/orders/create?catalog=${encodeURIComponent(catalog.key)}`)}
+                        >
                             {/* Image Carousel or Placeholder */}
-                            {product.images?.length > 0 ? (
+                            {catalog.images?.length > 0 ? (
                                 <div className="relative">
                                     <Carousel className="w-full" opts={{ loop: true }}>
                                         <CarouselContent>
-                                            {product.images.map((img, idx) => (
+                                            {catalog.images.map((img, idx) => (
                                                 <CarouselItem key={idx}>
                                                     <div className="relative aspect-[4/3] overflow-hidden">
                                                         <img
                                                             src={img.url}
-                                                            alt={img.alt || product.name}
+                                                            alt={img.alt || catalog.name}
                                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                             loading="lazy"
                                                         />
                                                         {/* Detail Overlay */}
                                                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-12">
-                                                            <p className="text-white text-[10px] font-black uppercase tracking-widest opacity-80">{product.category}</p>
-                                                            <p className="text-white/70 text-[9px] font-bold mt-0.5">{product.material}</p>
+                                                            <p className="text-white text-[10px] font-black uppercase tracking-widest opacity-80">{catalog.category}</p>
+                                                            <p className="text-white/70 text-[9px] font-bold mt-0.5">{catalog.materialLabel}</p>
                                                         </div>
                                                     </div>
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        {product.images.length > 1 && (
+                                        {catalog.images.length > 1 && (
                                             <>
                                                 <CarouselPrevious className="left-2 w-7 h-7 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:bg-white" />
                                                 <CarouselNext className="right-2 w-7 h-7 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:bg-white" />
@@ -312,9 +317,9 @@ export default function CustomerPortal() {
                                         )}
                                     </Carousel>
                                     {/* Image count badge */}
-                                    {product.images.length > 1 && (
+                                    {catalog.images.length > 1 && (
                                         <div className="absolute top-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-white text-[10px] font-bold z-10">
-                                            {product.images.length} foto
+                                            {catalog.images.length} foto
                                         </div>
                                     )}
                                 </div>
@@ -328,36 +333,48 @@ export default function CustomerPortal() {
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        {product.sku && <p className="text-[9px] font-black text-primary/70 uppercase tracking-widest mb-1">{product.sku}</p>}
-                                        <h4 className="font-black text-slate-800 leading-tight">{product.name}</h4>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{product.category}</p>
+                                        <p className="text-[9px] font-black text-primary/70 uppercase tracking-widest mb-1">Katalog Varian</p>
+                                        <h4 className="font-black text-slate-800 leading-tight">{catalog.name}</h4>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{catalog.category}</p>
                                     </div>
-                                    <span className="px-2 py-1 bg-slate-100 rounded-lg text-[10px] font-bold text-slate-500">{product.material}</span>
+                                    <span className="px-2 py-1 bg-slate-100 rounded-lg text-[10px] font-bold text-slate-500">{catalog.materialLabel}</span>
                                 </div>
-                                {product.description && (
-                                    <p className="text-xs text-slate-400 mb-4 line-clamp-2">{product.description}</p>
+                                {catalog.description && (
+                                    <p className="text-xs text-slate-400 mb-4 line-clamp-2">{catalog.description}</p>
                                 )}
+                                <div className="mb-4 flex flex-wrap gap-2">
+                                    {catalog.availableSizes.slice(0, 4).map((size) => (
+                                        <span key={size} className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
+                                            {size}
+                                        </span>
+                                    ))}
+                                    {catalog.availableSizes.length > 4 && (
+                                        <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
+                                            +{catalog.availableSizes.length - 4} ukuran
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="flex items-end justify-between pt-3 border-t border-slate-100">
                                     <div>
                                         <p className="text-[10px] text-slate-400 font-bold">Mulai dari</p>
-                                        <p className="text-lg font-black text-primary">{formatCurrency(product.priceB2B)}<span className="text-[10px] text-slate-400 font-bold">/pcs</span></p>
+                                        <p className="text-lg font-black text-primary">{formatCurrency(catalog.priceB2B)}<span className="text-[10px] text-slate-400 font-bold">/pcs</span></p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[10px] text-slate-400 font-bold">Stok</p>
-                                        <p className={`text-sm font-black ${product.stockPolos < 500 ? 'text-red-500' : 'text-slate-600'}`}>
-                                            {product.stockPolos?.toLocaleString()} pcs
+                                        <p className="text-[10px] text-slate-400 font-bold">Varian</p>
+                                        <p className="text-sm font-black text-slate-600">
+                                            {catalog.variants.length} opsi
                                         </p>
                                     </div>
                                 </div>
-                                {product.addons?.valvePrice > 0 && (
-                                    <p className="text-[10px] text-primary font-bold mt-2">+ Valve tersedia ({formatCurrency(product.addons.valvePrice)}/pcs)</p>
+                                {catalog.addons?.valvePrice > 0 && (
+                                    <p className="text-[10px] text-primary font-bold mt-2">+ Valve tersedia ({formatCurrency(catalog.addons.valvePrice)}/pcs)</p>
                                 )}
                             </div>
                         </div>
                     ))}
                 </div>
-                {filteredProducts.length === 0 && (
-                    <EmptyState text={`Tidak ada produk untuk kategori ${selectedCategory}.`} />
+                {filteredCatalogs.length === 0 && (
+                    <EmptyState text={`Tidak ada katalog untuk kategori ${selectedCategory}.`} />
                 )}
             </div>
         );
