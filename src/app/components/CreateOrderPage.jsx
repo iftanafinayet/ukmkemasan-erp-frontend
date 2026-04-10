@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, ShoppingCart, Info, Package, DollarSign, Layers } f
 import { toast } from 'sonner';
 import { buildCatalogGroups } from '../utils/catalog';
 import { getCartItems, upsertCartItem } from '../utils/cart';
+import VariantSelectorSection from './customer-order/VariantSelectorSection';
 
 export default function CreateOrderPage() {
     const navigate = useNavigate();
@@ -397,63 +398,22 @@ export default function CreateOrderPage() {
                                     {selectedCatalog && (
                                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                                             <div className="space-y-8">
-                                                <div className="space-y-3">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Varian Langsung</label>
-                                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                                        {selectedCatalog.variants.map((variant) => {
-                                                            const isSelected = String(selectedVariant?.variantId || '') === String(variant.variantId || '');
-                                                            const isOutOfStock = (variant.stock || 0) <= 0;
-
-                                                            return (
-                                                                <button
-                                                                    key={variant.variantId || `${variant.size}-${variant.color}-${variant.sku}`}
-                                                                    type="button"
-                                                                    onClick={() => handleSelectVariant(variant)}
-                                                                    className={`rounded-2xl border p-4 text-left transition-all ${
-                                                                        isSelected
-                                                                            ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                                                            : 'border-slate-200 bg-white hover:border-primary/30'
-                                                                    } ${isOutOfStock ? 'opacity-60' : ''}`}
-                                                                >
-                                                                    <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
-                                                                    <p className="mt-1 text-[11px] font-bold text-slate-400">{variant.sku || '-'}</p>
-                                                                    <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
-                                                                        {isOutOfStock ? 'Stok habis' : `${Number(variant.stock || 0).toLocaleString()} pcs`}
-                                                                    </p>
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-3">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Ukuran</label>
-                                                    <div className="flex flex-wrap gap-3">
-                                                        {selectedCatalog.availableSizes.map((size) => (
-                                                            <SelectionChip
-                                                                key={size}
-                                                                label={size}
-                                                                selected={selectedSize === size}
-                                                                disabled={isSizeDisabled(size)}
-                                                                onClick={() => handleSelectSize(size)}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                </div>
-
-                                                <div className="space-y-3">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Warna</label>
-                                                    <div className="flex flex-wrap gap-3">
-                                                        {selectedCatalog.availableColors.map((color) => (
-                                                            <SelectionChip
-                                                                key={color}
-                                                                label={color}
-                                                                selected={selectedColor === color}
-                                                                disabled={isColorDisabled(color)}
-                                                                onClick={() => handleSelectColor(color)}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                </div>
+                                                <VariantSelectorSection
+                                                    title="Pilih Varian"
+                                                    activeVariantLabel={selectedVariant ? `${selectedVariant.size} • ${selectedVariant.color}` : 'Belum dipilih'}
+                                                    variants={selectedCatalog.variants}
+                                                    selectedVariantId={selectedVariant?.variantId || selectedVariantId}
+                                                    sizeOptions={selectedCatalog.availableSizes}
+                                                    colorOptions={selectedCatalog.availableColors}
+                                                    selectedSize={selectedSize}
+                                                    selectedColor={selectedColor}
+                                                    isSizeDisabled={isSizeDisabled}
+                                                    isColorDisabled={isColorDisabled}
+                                                    onSelectVariant={handleSelectVariant}
+                                                    onSelectSize={handleSelectSize}
+                                                    onSelectColor={handleSelectColor}
+                                                    getVariantId={(variant) => variant.variantId}
+                                                />
 
                                                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                                                     <div className="space-y-3">
@@ -581,21 +541,6 @@ export default function CreateOrderPage() {
         </div>
     );
 }
-
-const SelectionChip = ({ label, selected, disabled, onClick }) => (
-    <button
-        type="button"
-        disabled={disabled}
-        onClick={onClick}
-        className={`rounded-2xl border-2 px-4 py-3 text-sm font-black transition-all ${
-            selected
-                ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-primary/30 hover:text-primary'
-        } disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300`}
-    >
-        {label}
-    </button>
-);
 
 const SummaryRow = ({ label, value, danger }) => (
     <div className="flex items-center justify-between gap-4">
