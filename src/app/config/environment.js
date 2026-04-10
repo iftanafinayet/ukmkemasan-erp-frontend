@@ -155,6 +155,7 @@ export const ENDPOINTS = {
   CUSTOMER_BY_ID: (id) => `/customers/${id}`,
 
   // Inventory logic
+  INVENTORY_PRODUCTS: '/inventory/products',
   WAREHOUSES: '/inventory/warehouses',
   WAREHOUSE_BY_ID: (id) => `/inventory/warehouses/${id}`,
   ADJUSTMENTS: '/inventory/adjustments',

@@ -108,6 +108,7 @@ const EMPTY_WAREHOUSE_FORM = {
 
 const EMPTY_ADJUSTMENT_FORM = {
   productId: '',
+  variantId: '',
   warehouseId: '',
   type: 'In',
   quantity: '',
@@ -168,6 +169,7 @@ export default function CustomerDashboard() {
 
   const [adjustmentForm, setAdjustmentForm] = useState(EMPTY_ADJUSTMENT_FORM);
   const [savingAdjustment, setSavingAdjustment] = useState(false);
+  const [inventoryProductOptions, setInventoryProductOptions] = useState([]);
 
   const [stockCardProductId, setStockCardProductId] = useState('');
   const [stockCardRows, setStockCardRows] = useState([]);
@@ -308,7 +310,8 @@ export default function CustomerDashboard() {
           break;
 
         case 'inventory-adjustment':
-          response = await api.get(ENDPOINTS.PRODUCTS);
+          response = await api.get(ENDPOINTS.INVENTORY_PRODUCTS);
+          setInventoryProductOptions(response.data || []);
           setData(response.data || []);
           response = await api.get(ENDPOINTS.WAREHOUSES);
           setWarehouses(response.data || []);
@@ -511,17 +514,14 @@ export default function CustomerDashboard() {
     try {
       await api.post(ENDPOINTS.ADJUSTMENTS, {
         productId: adjustmentForm.productId,
+        variantId: adjustmentForm.variantId || undefined,
         warehouseId: adjustmentForm.warehouseId,
         type: adjustmentForm.type,
         quantity: Number(adjustmentForm.quantity),
         reason: adjustmentForm.reason,
       });
       toast.success('Stok berhasil disesuaikan!');
-      setAdjustmentForm((currentForm) => ({
-        ...currentForm,
-        quantity: '',
-        reason: '',
-      }));
+      setAdjustmentForm(EMPTY_ADJUSTMENT_FORM);
       await fetchData();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Gagal menyimpan penyesuaian.');
@@ -792,8 +792,8 @@ export default function CustomerDashboard() {
         return (
           <InventoryAdjustmentPage
             adjustmentForm={adjustmentForm}
+            inventoryProductOptions={inventoryProductOptions}
             onSubmit={handleSaveAdjustment}
-            products={Array.isArray(data) ? data : []}
             savingAdjustment={savingAdjustment}
             setAdjustmentForm={setAdjustmentForm}
             warehouses={warehouses}
