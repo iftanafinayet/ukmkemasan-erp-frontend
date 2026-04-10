@@ -7,7 +7,8 @@ import {
     RefreshCw, Loader2, AlertCircle, Plus, X,
     ShoppingCart, Clock, Package, ChevronRight, Eye,
     User, Mail, Phone, MapPin, Lock, Save, ImagePlus,
-    Layers, Ruler, Tag, Box, ArrowRight, BadgeCheck, Sparkles
+    Layers, Ruler, Tag, Box, ArrowRight, BadgeCheck, Sparkles,
+    Newspaper, CalendarDays, Camera
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -16,6 +17,54 @@ import {
 import { buildCatalogGroups } from '../utils/catalog';
 import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 import CustomerCartSection from './customer-portal/CustomerCartSection';
+
+const ARTICLE_HIGHLIGHTS = [
+    {
+        category: 'Artikel Baru',
+        title: 'Tren desain kemasan 2026 untuk brand UMKM yang ingin naik kelas.',
+        date: '10 April 2026',
+        excerpt: 'Insight singkat tentang kombinasi warna, finishing, dan struktur kemasan yang lebih menarik di rak maupun marketplace.'
+    },
+    {
+        category: 'Business Insight',
+        title: 'Kapan saat yang tepat beralih dari kemasan polos ke kemasan custom?',
+        date: '8 April 2026',
+        excerpt: 'Panduan memilih momentum upgrade packaging agar biaya tetap terkontrol tetapi persepsi brand meningkat.'
+    },
+    {
+        category: 'Packaging Tips',
+        title: 'Cara memilih ukuran pouch yang pas untuk kopi, snack, dan produk frozen.',
+        date: '5 April 2026',
+        excerpt: 'Ukuran yang tepat membantu efisiensi produksi, tampilan display, dan pengalaman customer saat menerima produk.'
+    }
+];
+
+const ACTIVITY_GALLERY = [
+    {
+        label: 'Pameran',
+        title: 'Booth UKM Kemasan di expo kemasan dan printing regional.',
+        date: 'April 2026',
+        location: 'Surabaya',
+        summary: 'Menampilkan sampel standing pouch, diskusi kebutuhan brand, dan konsultasi langsung dengan calon client.',
+        accent: 'from-slate-900 via-slate-800 to-cyan-900'
+    },
+    {
+        label: 'Workshop',
+        title: 'Sesi edukasi packaging branding untuk pelaku UMKM kuliner.',
+        date: 'Maret 2026',
+        location: 'Malang',
+        summary: 'Berbagi insight tentang struktur kemasan, visual shelf impact, dan strategi upgrade kemasan bertahap.',
+        accent: 'from-primary via-cyan-700 to-emerald-700'
+    },
+    {
+        label: 'Production Visit',
+        title: 'Dokumentasi review material dan approval sample bersama client.',
+        date: 'Maret 2026',
+        location: 'Sidoarjo',
+        summary: 'Aktivitas quality checking dan finalisasi spesifikasi sebelum masuk tahap order berjalan.',
+        accent: 'from-amber-500 via-orange-500 to-rose-500'
+    }
+];
 
 export default function CustomerPortal() {
     const user = storage.getUser();
@@ -454,6 +503,98 @@ export default function CustomerPortal() {
                         ))}
                     </div>
                 </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1.2fr)]">
+                <section className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Artikel & Insight</p>
+                            <h3 className="mt-2 text-2xl font-black text-slate-900">Informasi menarik dan update artikel terbaru dari UKM Kemasan.</h3>
+                        </div>
+                        <div className="hidden h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 sm:flex">
+                            <Newspaper className="h-6 w-6" />
+                        </div>
+                    </div>
+
+                    <div className="mt-6 space-y-4">
+                        {ARTICLE_HIGHLIGHTS.map((article, index) => (
+                            <article
+                                key={article.title}
+                                className={`rounded-3xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${index === 0 ? 'border-primary/20 bg-[linear-gradient(180deg,_#f4fbfc_0%,_#ffffff_100%)]' : 'border-slate-100 bg-slate-50/60'}`}
+                            >
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <span className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+                                        {article.category}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400">
+                                        <CalendarDays className="h-3.5 w-3.5" />
+                                        {article.date}
+                                    </span>
+                                </div>
+                                <h4 className="mt-4 text-lg font-black leading-snug text-slate-900">
+                                    {article.title}
+                                </h4>
+                                <p className="mt-3 text-sm leading-6 text-slate-500">
+                                    {article.excerpt}
+                                </p>
+                                {index === 0 && (
+                                    <div className="mt-5 flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-primary">
+                                        Highlight Minggu Ini
+                                        <ArrowRight className="h-4 w-4" />
+                                    </div>
+                                )}
+                            </article>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Galeri Kegiatan</p>
+                            <h3 className="mt-2 text-2xl font-black text-slate-900">Update aktivitas UKM Kemasan seperti pameran, workshop, dan kunjungan produksi.</h3>
+                        </div>
+                        <div className="hidden h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 sm:flex">
+                            <Camera className="h-6 w-6" />
+                        </div>
+                    </div>
+
+                    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+                        {ACTIVITY_GALLERY.map((activity) => (
+                            <article key={activity.title} className="overflow-hidden rounded-[1.75rem] border border-slate-100 bg-slate-50">
+                                <div className={`relative min-h-52 bg-gradient-to-br ${activity.accent} p-5 text-white`}>
+                                    <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full border border-white/15 bg-white/10" />
+                                    <div className="absolute bottom-4 right-4 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm">
+                                        <Camera className="h-5 w-5" />
+                                    </div>
+                                    <div className="relative flex h-full flex-col justify-between">
+                                        <div className="flex items-center justify-between gap-3">
+                                            <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
+                                                {activity.label}
+                                            </span>
+                                            <span className="text-[11px] font-bold text-white/75">{activity.date}</span>
+                                        </div>
+                                        <div className="mt-12">
+                                            <h4 className="max-w-xs text-xl font-black leading-snug">
+                                                {activity.title}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-3 p-5">
+                                    <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-400">
+                                        <MapPin className="h-4 w-4 text-primary" />
+                                        {activity.location}
+                                    </div>
+                                    <p className="text-sm leading-6 text-slate-500">
+                                        {activity.summary}
+                                    </p>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </section>
             </div>
 
             {/* Recent Orders */}
