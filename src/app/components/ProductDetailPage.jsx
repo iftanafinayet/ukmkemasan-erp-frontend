@@ -14,6 +14,7 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 } from './ui/carousel';
 import { getCartItems, upsertCartItem } from '../utils/cart';
+import VariantSelectorSection from './customer-order/VariantSelectorSection';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -323,82 +324,23 @@ export default function ProductDetailPage() {
                                         </div>
                                     )}
 
-                                    <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
-                                        <div className="mb-6 flex items-start justify-between gap-4">
-                                            <div>
-                                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Pilih Varian</h3>
-                                                <p className="mt-2 text-sm font-medium text-slate-500">
-                                                    Pilih kombinasi ukuran dan warna untuk melihat harga serta stok real-time.
-                                                </p>
-                                            </div>
-                                            <div className="rounded-2xl bg-slate-50 px-4 py-3 text-right">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Aktif</p>
-                                                <p className="mt-1 text-sm font-black text-slate-800">
-                                                    {selectedVariant ? `${selectedVariant.size} • ${selectedVariant.color}` : 'Belum dipilih'}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-6">
-                                            <div>
-                                                <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Langsung</p>
-                                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                                    {variants.map((variant) => {
-                                                        const isSelected = String(selectedVariant?._id || '') === String(variant._id || '');
-                                                        const isOutOfStock = (variant.stock || 0) <= 0;
-
-                                                        return (
-                                                            <button
-                                                                key={variant._id || `${variant.size}-${variant.color}-${variant.sku}`}
-                                                                type="button"
-                                                                onClick={() => handleSelectVariant(variant)}
-                                                                className={`rounded-2xl border p-4 text-left transition-all ${
-                                                                    isSelected
-                                                                        ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                                                        : 'border-slate-200 bg-white hover:border-primary/30'
-                                                                } ${isOutOfStock ? 'opacity-60' : ''}`}
-                                                            >
-                                                                <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
-                                                                <p className="mt-1 text-[11px] font-bold text-slate-400">{variant.sku || product.sku || '-'}</p>
-                                                                <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
-                                                                    {isOutOfStock ? 'Stok habis' : `${Number(variant.stock || 0).toLocaleString()} pcs`}
-                                                                </p>
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Ukuran</p>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {sizeOptions.map((size) => (
-                                                        <SelectionChip
-                                                            key={size}
-                                                            label={size}
-                                                            selected={selectedSize === size}
-                                                            disabled={isSizeDisabled(size)}
-                                                            onClick={() => handleSelectSize(size)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Warna</p>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {colorOptions.map((color) => (
-                                                        <SelectionChip
-                                                            key={color}
-                                                            label={color}
-                                                            selected={selectedColor === color}
-                                                            disabled={isColorDisabled(color)}
-                                                            onClick={() => handleSelectColor(color)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <VariantSelectorSection
+                                        title="Pilih Varian"
+                                        activeVariantLabel={selectedVariant ? `${selectedVariant.size} • ${selectedVariant.color}` : 'Belum dipilih'}
+                                        variants={variants}
+                                        selectedVariantId={selectedVariant?._id || selectedVariantId}
+                                        sizeOptions={sizeOptions}
+                                        colorOptions={colorOptions}
+                                        selectedSize={selectedSize}
+                                        selectedColor={selectedColor}
+                                        isSizeDisabled={isSizeDisabled}
+                                        isColorDisabled={isColorDisabled}
+                                        onSelectVariant={handleSelectVariant}
+                                        onSelectSize={handleSelectSize}
+                                        onSelectColor={handleSelectColor}
+                                        getVariantId={(variant) => variant._id}
+                                        getVariantSku={(variant) => variant.sku || product.sku || '-'}
+                                    />
 
                                     <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
                                         <h3 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-400">Spesifikasi</h3>
@@ -605,21 +547,6 @@ const SpecCard = ({ icon, label, value, highlight }) => {
         </div>
     );
 };
-
-const SelectionChip = ({ label, selected, disabled, onClick }) => (
-    <button
-        type="button"
-        disabled={disabled}
-        onClick={onClick}
-        className={`rounded-2xl border-2 px-4 py-3 text-sm font-black transition-all ${
-            selected
-                ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary'
-        } disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300 disabled:shadow-none`}
-    >
-        {label}
-    </button>
-);
 
 const PriceRow = ({ label, value, highlight, accent, dark }) => (
     <div className="flex items-center justify-between gap-3">
