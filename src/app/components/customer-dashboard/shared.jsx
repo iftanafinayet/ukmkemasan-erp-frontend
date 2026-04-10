@@ -67,7 +67,7 @@ export function StatCard({ icon, color, label, value, border = false }) {
 export function ModalWrapper({ children, onClose, wide = false }) {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/60 p-3 backdrop-blur-md animate-in fade-in duration-300 sm:items-center sm:p-4">
-      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-[28px] border border-white/20 bg-white p-5 pt-14 shadow-2xl sm:rounded-[40px] sm:p-10 ${wide ? 'max-w-2xl' : 'max-w-lg'}`}>
+      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-[28px] border border-white/20 bg-white p-5 pt-14 shadow-2xl sm:rounded-[40px] sm:p-10 ${wide ? 'max-w-5xl' : 'max-w-lg'}`}>
         <button
           type="button"
           onClick={onClose}

@@ -46,15 +46,44 @@ import {
 } from './customer-dashboard/utils';
 
 const EMPTY_PRODUCT_FORM = {
-  sku: '',
   name: '',
   category: 'Standing Pouch',
   material: '',
-  priceBase: '',
+  minOrder: 100,
+  valvePrice: 600,
+  description: '',
+  variants: [],
+};
+
+const createEmptyVariant = () => ({
+  _id: '',
+  sku: '',
+  size: '',
+  color: '',
   priceB2C: '',
   priceB2B: '',
-  stockPolos: '',
-  description: '',
+  stock: '',
+});
+
+const getEmptyProductForm = () => ({
+  ...EMPTY_PRODUCT_FORM,
+  variants: [createEmptyVariant()],
+});
+
+const normalizeProductVariants = (variants = []) => {
+  if (!Array.isArray(variants) || variants.length === 0) {
+    return [createEmptyVariant()];
+  }
+
+  return variants.map((variant) => ({
+    _id: variant._id || '',
+    sku: variant.sku || '',
+    size: variant.size || '',
+    color: variant.color || '',
+    priceB2C: variant.priceB2C ?? '',
+    priceB2B: variant.priceB2B ?? '',
+    stock: variant.stock ?? '',
+  }));
 };
 
 const EMPTY_PROFILE = {
@@ -106,7 +135,7 @@ export default function CustomerDashboard() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [newProduct, setNewProduct] = useState(EMPTY_PRODUCT_FORM);
+  const [newProduct, setNewProduct] = useState(getEmptyProductForm);
   const [imageFiles, setImageFiles] = useState([]);
   const [deleteImageIds, setDeleteImageIds] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -119,6 +148,7 @@ export default function CustomerDashboard() {
   const [products, setProducts] = useState([]);
   const [orderForm, setOrderForm] = useState({
     productId: '',
+    variantId: '',
     quantity: 100,
     useValve: false,
   });
@@ -156,7 +186,7 @@ export default function CustomerDashboard() {
   });
 
   const resetProductForm = () => {
-    setNewProduct(EMPTY_PRODUCT_FORM);
+    setNewProduct(getEmptyProductForm());
     setImageFiles([]);
     setDeleteImageIds([]);
     setExistingImages([]);
@@ -373,16 +403,47 @@ export default function CustomerDashboard() {
     event.preventDefault();
 
     try {
+      const normalizedVariants = (newProduct.variants || [])
+        .map((variant) => ({
+          ...(variant._id ? { _id: variant._id } : {}),
+          sku: String(variant.sku || '').trim(),
+          size: String(variant.size || '').trim(),
+          color: String(variant.color || '').trim(),
+          priceB2C: Number(variant.priceB2C),
+          priceB2B: Number(variant.priceB2B),
+          stock: Number(variant.stock),
+        }))
+        .filter((variant) => variant.sku || variant.size || variant.color || variant.priceB2C || variant.priceB2B || variant.stock);
+
+      if (normalizedVariants.length === 0) {
+        toast.error('Tambahkan minimal satu varian produk.');
+        return;
+      }
+
+      const hasInvalidVariant = normalizedVariants.some((variant) => (
+        !variant.sku
+        || !variant.size
+        || !variant.color
+        || !Number.isFinite(variant.priceB2C)
+        || !Number.isFinite(variant.priceB2B)
+        || !Number.isFinite(variant.stock)
+      ));
+
+      if (hasInvalidVariant) {
+        toast.error('Lengkapi SKU, ukuran, warna, harga, dan stok untuk setiap varian.');
+        return;
+      }
+
       const formData = new FormData();
-      formData.append('sku', newProduct.sku || '');
       formData.append('name', newProduct.name);
       formData.append('category', newProduct.category);
       formData.append('material', newProduct.material);
-      formData.append('priceBase', Number(newProduct.priceBase));
-      formData.append('priceB2C', Number(newProduct.priceB2C));
-      formData.append('priceB2B', Number(newProduct.priceB2B));
-      formData.append('stockPolos', Number(newProduct.stockPolos));
-      formData.append('description', newProduct.description);
+      formData.append('minOrder', Number(newProduct.minOrder || 100));
+      formData.append('description', newProduct.description || '');
+      formData.append('addons', JSON.stringify({
+        valvePrice: Number(newProduct.valvePrice || 0),
+      }));
+      formData.append('variants', JSON.stringify(normalizedVariants));
 
       imageFiles.forEach((file) => formData.append('images', file));
 
@@ -412,15 +473,13 @@ export default function CustomerDashboard() {
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setNewProduct({
-      sku: product.sku || '',
       name: product.name,
       category: product.category,
       material: product.material,
-      priceBase: product.priceBase,
-      priceB2C: product.priceB2C,
-      priceB2B: product.priceB2B,
-      stockPolos: product.stockPolos,
+      minOrder: product.minOrder || 100,
+      valvePrice: product.addons?.valvePrice ?? 0,
       description: product.description || '',
+      variants: normalizeProductVariants(product.variants),
     });
     setExistingImages(product.images || []);
     setImageFiles([]);
@@ -588,6 +647,7 @@ export default function CustomerDashboard() {
       setProducts(response.data || []);
       setOrderForm({
         productId: response.data[0]?._id || '',
+        variantId: '',
         quantity: 100,
         useValve: false,
       });
