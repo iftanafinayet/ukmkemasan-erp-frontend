@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, ShoppingCart, Package, Settings, LogOut, Menu, X, User
 } from 'lucide-react';
 import { storage } from '../config/environment';
+import { getCartCount, subscribeCart } from '../utils/cart';
 import logoUrl from '../../assets/LogoUKM.svg';
 
 /**
@@ -11,17 +13,35 @@ import logoUrl from '../../assets/LogoUKM.svg';
  */
 export default function CustomerSidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
     const user = storage.getUser();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'catalog', label: 'Katalog Produk', icon: Package },
+        { id: 'cart', label: 'Keranjang', icon: ShoppingCart, badge: cartCount },
         { id: 'orders', label: 'Pesanan Saya', icon: ShoppingCart },
         { id: 'profile', label: 'Profil Saya', icon: User }
     ];
 
+    useEffect(() => {
+        setCartCount(getCartCount());
+        return subscribeCart((items) => {
+            const nextCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+            setCartCount(nextCount);
+        });
+    }, []);
+
     const handleMenuClick = (menuId) => {
-        if (onMenuChange) onMenuChange(menuId);
+        if (onMenuChange) {
+            onMenuChange(menuId);
+        } else if (location.pathname.startsWith('/portal')) {
+            navigate(`/portal?menu=${menuId}`);
+        } else {
+            navigate(`/portal?menu=${menuId}`);
+        }
         setIsOpen(false);
     };
 
@@ -97,7 +117,12 @@ export default function CustomerSidebar({ activeMenu = 'dashboard', onMenuChange
                                                 }`}
                                         >
                                             <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                                            <span>{item.label}</span>
+                                            <span className="flex-1 text-left">{item.label}</span>
+                                            {item.badge > 0 && (
+                                                <span className={`min-w-6 rounded-full px-2 py-0.5 text-[10px] font-black ${isActive ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>
+                                                    {item.badge}
+                                                </span>
+                                            )}
                                         </button>
                                     </li>
                                 );
