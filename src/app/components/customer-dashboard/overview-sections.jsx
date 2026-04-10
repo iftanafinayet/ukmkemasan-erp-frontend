@@ -31,6 +31,7 @@ import {
 import { OrderCard } from '../OrderCard';
 import { REPORT_CHART_COLORS } from './constants';
 import { EmptyState, InputField, SearchBar, StatCard } from './shared';
+import LandingContentSettingsSection from './LandingContentSettingsSection';
 
 function ReportTooltip({ active, payload, label, formatCurrency }) {
   if (!active || !payload?.length) return null;
@@ -358,10 +359,22 @@ export function ReportsPage({
 }
 
 export function SettingsPage({
+  isAdmin,
+  landingContent,
+  onActivityChange,
+  onActivityImageChange,
+  onActivityRemoveImage,
+  onAddActivity,
+  onAddArticle,
   onChangePassword,
+  onRemoveActivity,
+  onRemoveArticle,
   onSaveProfile,
+  onSaveLandingContent,
+  onArticleChange,
   passwords,
   profile,
+  savingLandingContent,
   savingPassword,
   savingProfile,
   setPasswords,
@@ -369,7 +382,7 @@ export function SettingsPage({
   user,
 }) {
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-2xl">
+    <div className={`space-y-8 animate-in fade-in duration-500 ${isAdmin ? 'max-w-5xl' : 'max-w-2xl'}`}>
       <div className="bg-white p-8 rounded-3xl border border-slate-100">
         <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2">
           <User className="w-5 h-5 text-primary" />
@@ -445,6 +458,22 @@ export function SettingsPage({
           Role: <span className="font-bold text-primary uppercase">{user?.role}</span>
         </p>
       </div>
+
+      {isAdmin && (
+        <LandingContentSettingsSection
+          landingContent={landingContent}
+          onActivityChange={onActivityChange}
+          onActivityImageChange={onActivityImageChange}
+          onActivityRemoveImage={onActivityRemoveImage}
+          onAddActivity={onAddActivity}
+          onAddArticle={onAddArticle}
+          onArticleChange={onArticleChange}
+          onRemoveActivity={onRemoveActivity}
+          onRemoveArticle={onRemoveArticle}
+          onSave={onSaveLandingContent}
+          saving={savingLandingContent}
+        />
+      )}
     </div>
   );
 }
