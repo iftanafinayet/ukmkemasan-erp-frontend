@@ -7,7 +7,7 @@ import {
     RefreshCw, Loader2, AlertCircle, Plus, X,
     ShoppingCart, Clock, Package, ChevronRight, Eye,
     User, Mail, Phone, MapPin, Lock, Save, ImagePlus,
-    Layers, Ruler, Tag, Box
+    Layers, Ruler, Tag, Box, ArrowRight, BadgeCheck, Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -267,17 +267,121 @@ export default function CustomerPortal() {
     const renderDashboard = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Welcome */}
-            <div className="bg-gradient-to-r from-primary to-primary p-6 text-white shadow-xl shadow-primary/20 sm:p-8 rounded-3xl">
-                <h2 className="text-2xl font-black sm:text-3xl">Selamat Datang, {user?.name || 'Customer'}! 👋</h2>
-                <p className="text-primary/10 mt-1 font-medium">Pantau pesanan dan kelola akun Anda di sini.</p>
-                <button onClick={() => navigate('/portal/orders/create')}
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-black text-primary shadow-lg transition-all hover:scale-105 active:scale-95 sm:w-auto">
-                    <Plus size={18} /> Buat Pesanan Baru
-                </button>
-            </div>
+            <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.35),_transparent_35%),linear-gradient(135deg,_#4dbace_0%,_#256f80_50%,_#133c46_100%)] p-6 text-white shadow-2xl shadow-cyan-900/20 sm:p-8 lg:p-10">
+                <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.18),_transparent_62%)] lg:block" />
+                <div className="absolute -right-10 top-10 h-40 w-40 rounded-full border border-white/15 bg-white/5 blur-2xl" />
+                <div className="absolute -bottom-16 left-10 h-36 w-36 rounded-full border border-white/10 bg-white/10 blur-2xl" />
+
+                <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.9fr)] lg:items-center">
+                    <div>
+                        <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-white/90 backdrop-blur-sm">
+                            <Sparkles className="h-4 w-4" />
+                            Official Packaging Partner
+                        </span>
+                        <h2 className="mt-5 max-w-3xl text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-[2.8rem]">
+                            UKM Kemasan membantu brand tampil lebih siap jual lewat solusi kemasan yang rapi, fleksibel, dan mudah dipesan.
+                        </h2>
+                        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-base">
+                            Di dashboard ini Anda bisa mengenal layanan UKM Kemasan, melihat progres pesanan, lalu langsung lanjut ke proses purchase tanpa berpindah alur.
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap gap-3">
+                            {[
+                                'Standing pouch & roll stock',
+                                'MOQ fleksibel kelipatan 100 pcs',
+                                'Alur order sampai pengiriman terpantau'
+                            ].map((item) => (
+                                <span
+                                    key={item}
+                                    className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-bold text-white/85 backdrop-blur-sm"
+                                >
+                                    {item}
+                                </span>
+                            ))}
+                        </div>
+
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                            <button
+                                onClick={() => navigate('/portal/orders/create')}
+                                className="flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-primary shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                            >
+                                <Plus size={18} />
+                                Purchase Sekarang
+                                <ArrowRight size={16} />
+                            </button>
+                            <button
+                                onClick={() => setActiveMenu('catalog')}
+                                className="flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-black text-white backdrop-blur-sm transition-all hover:bg-white/15 active:scale-95"
+                            >
+                                Lihat Katalog
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="relative rounded-[1.75rem] border border-white/15 bg-slate-950/20 p-5 backdrop-blur-md">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white/60">Profile Snapshot</p>
+                                <h3 className="mt-2 text-2xl font-black">UKM Kemasan</h3>
+                            </div>
+                            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100">
+                                <BadgeCheck className="h-4 w-4" />
+                                Active Service
+                            </span>
+                        </div>
+
+                        <div className="mt-6 space-y-4">
+                            {[
+                                {
+                                    icon: Layers,
+                                    title: 'Solusi kemasan terkurasi',
+                                    description: 'Pilihan produk disusun untuk kebutuhan UKM, reseller, sampai brand yang sedang scale up.'
+                                },
+                                {
+                                    icon: Ruler,
+                                    title: 'Varian ukuran dan material',
+                                    description: 'Pilih format kemasan yang sesuai kebutuhan produk, kuantitas, dan positioning brand Anda.'
+                                },
+                                {
+                                    icon: Tag,
+                                    title: 'Purchase lebih cepat',
+                                    description: 'Masuk ke katalog atau langsung ke form order untuk memulai permintaan pembelian.'
+                                }
+                            ].map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                    <div key={item.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
+                                            <Icon className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-white">{item.title}</p>
+                                            <p className="mt-1 text-sm leading-6 text-white/70">{item.description}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-2 gap-3">
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Pesanan Anda</p>
+                                <p className="mt-2 text-3xl font-black">{stats.total}</p>
+                                <p className="mt-1 text-xs text-white/60">Total order yang sudah tercatat</p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Produksi Aktif</p>
+                                <p className="mt-2 text-3xl font-black">{stats.production}</p>
+                                <p className="mt-1 text-xs text-white/60">Pesanan yang sedang berjalan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="p-2 bg-blue-50 rounded-xl"><ShoppingCart className="w-5 h-5 text-blue-500" /></div>
@@ -298,6 +402,57 @@ export default function CustomerPortal() {
                         <p className="text-primary text-[10px] font-black uppercase">Selesai</p>
                     </div>
                     <h3 className="text-3xl font-black text-slate-800">{stats.completed}</h3>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.8fr)]">
+                <div className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
+                    <div className="flex items-center justify-between gap-3">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Tentang UKM Kemasan</p>
+                            <h3 className="mt-2 text-2xl font-black text-slate-900">Partner kemasan untuk produk yang ingin tampil lebih profesional.</h3>
+                        </div>
+                        <div className="hidden h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary sm:flex">
+                            <Box className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-500">
+                        UKM Kemasan memudahkan proses pemesanan kemasan dari eksplorasi katalog, input detail order, sampai monitoring status produksi. Section ini sengaja ditempatkan di homepage agar customer baru langsung paham layanan yang tersedia dan customer lama bisa langsung lanjut purchase.
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                        <button
+                            onClick={() => navigate('/portal/orders/create')}
+                            className="flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-all hover:bg-slate-800 active:scale-95"
+                        >
+                            Direct To Purchase
+                            <ArrowRight className="h-4 w-4" />
+                        </button>
+                        <button
+                            onClick={() => setActiveMenu('catalog')}
+                            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary active:scale-95"
+                        >
+                            Jelajahi Produk
+                            <ChevronRight className="h-4 w-4" />
+                        </button>
+                    </div>
+                </div>
+
+                <div className="rounded-3xl border border-slate-100 bg-[linear-gradient(180deg,_#ffffff_0%,_#f4fbfc_100%)] p-6 sm:p-8">
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Kenapa di dashboard</p>
+                    <div className="mt-5 space-y-4">
+                        {[
+                            'Customer langsung memahami positioning UKM Kemasan saat pertama masuk.',
+                            'CTA purchase selalu terlihat tanpa harus membuka menu lain lebih dulu.',
+                            'Dashboard tetap berfungsi sebagai ringkasan order, bukan sekadar halaman statistik.'
+                        ].map((point, index) => (
+                            <div key={point} className="flex gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-sm font-black text-primary">
+                                    0{index + 1}
+                                </div>
+                                <p className="text-sm leading-6 text-slate-600">{point}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 

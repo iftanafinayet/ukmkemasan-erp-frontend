@@ -97,9 +97,7 @@ export default function LoginPage() {
               Official Identity
             </p>
             <h1 className="text-white text-5xl font-black tracking-tight uppercase">UKM Kemasan</h1>
-            <div className="mt-4 inline-flex items-center rounded-full border border-white/80 bg-white px-5 py-1.5 text-xs font-black uppercase tracking-[0.35em] text-primary shadow-lg shadow-slate-950/10">
-              ERP System
-            </div>
+            <div className="mt-4 inline-flex items-center rounded-full border border-white/80 bg-white px-5 py-1.5 text-xs font-black uppercase tracking-[0.35em] text-primary shadow-lg shadow-slate-950/10">            </div>
           </div>
 
           <div className="space-y-6">
