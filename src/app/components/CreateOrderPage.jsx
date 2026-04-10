@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import { ENDPOINTS, storage } from '../config/environment';
@@ -54,11 +54,17 @@ export default function CreateOrderPage() {
         fetchProducts();
     }, [fetchProducts]);
 
-    const catalogGroups = buildCatalogGroups(products);
-    const categories = ['All', ...new Set(catalogGroups.map((catalog) => catalog.category).filter(Boolean))];
-    const filteredCatalogs = selectedCategory === 'All'
-        ? catalogGroups
-        : catalogGroups.filter((catalog) => catalog.category === selectedCategory);
+    const catalogGroups = useMemo(() => buildCatalogGroups(products), [products]);
+    const categories = useMemo(
+        () => ['All', ...new Set(catalogGroups.map((catalog) => catalog.category).filter(Boolean))],
+        [catalogGroups]
+    );
+    const filteredCatalogs = useMemo(
+        () => (selectedCategory === 'All'
+            ? catalogGroups
+            : catalogGroups.filter((catalog) => catalog.category === selectedCategory)),
+        [catalogGroups, selectedCategory]
+    );
     const selectedCatalog = catalogGroups.find((catalog) => catalog.key === selectedCatalogKey) || null;
     const selectedVariant = selectedCatalog?.variants.find((variant) => String(variant.variantId) === String(selectedVariantId))
         || selectedCatalog?.variants.find((variant) => variant.size === selectedSize && variant.color === selectedColor)
@@ -74,7 +80,7 @@ export default function CreateOrderPage() {
     const totalPrice = (basePrice + valvePrice) * safeQuantity;
 
     useEffect(() => {
-        if (catalogGroups.length === 0) return;
+        if (catalogGroups.length === 0 || selectedCatalogKey) return;
 
         let nextCatalog = null;
 
@@ -108,7 +114,7 @@ export default function CreateOrderPage() {
             variantId: nextVariant?.variantId || '',
             quantity: Math.max(nextCatalog?.minOrder || 100, Number(current.quantity) || nextCatalog?.minOrder || 100)
         }));
-    }, [catalogGroups, initialCatalogKey, initialProductId]);
+    }, [catalogGroups, initialCatalogKey, initialProductId, selectedCatalogKey]);
 
     useEffect(() => {
         if (!selectedCatalog) return;
