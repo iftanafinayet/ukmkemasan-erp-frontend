@@ -6,6 +6,7 @@ import CustomerSidebar from './CustomerSidebar';
 import { ArrowLeft, Loader2, ShoppingCart, Info, Package, DollarSign, Layers } from 'lucide-react';
 import { toast } from 'sonner';
 import { buildCatalogGroups } from '../utils/catalog';
+import { getCartItems, upsertCartItem } from '../utils/cart';
 
 export default function CreateOrderPage() {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function CreateOrderPage() {
     const [creatingOrder, setCreatingOrder] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedCatalogKey, setSelectedCatalogKey] = useState('');
+    const [selectedVariantId, setSelectedVariantId] = useState('');
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
 
@@ -58,9 +60,9 @@ export default function CreateOrderPage() {
         ? catalogGroups
         : catalogGroups.filter((catalog) => catalog.category === selectedCategory);
     const selectedCatalog = catalogGroups.find((catalog) => catalog.key === selectedCatalogKey) || null;
-    const selectedVariant = selectedCatalog?.variants.find((variant) =>
-        variant.size === selectedSize && variant.color === selectedColor
-    ) || null;
+    const selectedVariant = selectedCatalog?.variants.find((variant) => String(variant.variantId) === String(selectedVariantId))
+        || selectedCatalog?.variants.find((variant) => variant.size === selectedSize && variant.color === selectedColor)
+        || null;
     const minimumOrder = selectedCatalog?.minOrder || 100;
     const safeQuantity = Math.max(minimumOrder, Number(orderForm.quantity) || minimumOrder);
     const valvePrice = orderForm.useValve && selectedCatalog?.addons?.valvePrice
@@ -97,6 +99,7 @@ export default function CreateOrderPage() {
 
         setSelectedCategory(nextCatalog?.category || 'All');
         setSelectedCatalogKey(nextCatalog?.key || '');
+        setSelectedVariantId(nextVariant?.variantId || '');
         setSelectedSize(nextVariant?.size || '');
         setSelectedColor(nextVariant?.color || '');
         setOrderForm((current) => ({
@@ -137,6 +140,7 @@ export default function CreateOrderPage() {
             || null;
 
         setSelectedCatalogKey(nextCatalog.key);
+        setSelectedVariantId(nextVariant?.variantId || '');
         setSelectedSize(nextVariant?.size || '');
         setSelectedColor(nextVariant?.color || '');
     };
@@ -148,6 +152,7 @@ export default function CreateOrderPage() {
 
         setSelectedCategory(catalog.category);
         setSelectedCatalogKey(catalog.key);
+        setSelectedVariantId(nextVariant?.variantId || '');
         setSelectedSize(nextVariant?.size || '');
         setSelectedColor(nextVariant?.color || '');
         setOrderForm((current) => ({
@@ -182,6 +187,7 @@ export default function CreateOrderPage() {
 
         setSelectedSize(size);
         setSelectedColor(nextVariant?.color || '');
+        setSelectedVariantId(nextVariant?.variantId || '');
     };
 
     const handleSelectColor = (color) => {
@@ -197,6 +203,56 @@ export default function CreateOrderPage() {
 
         setSelectedColor(color);
         setSelectedSize(nextVariant?.size || '');
+        setSelectedVariantId(nextVariant?.variantId || '');
+    };
+
+    const handleSelectVariant = (variant) => {
+        setSelectedVariantId(variant?.variantId || '');
+        setSelectedSize(variant?.size || '');
+        setSelectedColor(variant?.color || '');
+        setOrderForm((current) => ({
+            ...current,
+            productId: variant?.sourceProductId || selectedCatalog?.productId || '',
+            variantId: variant?.variantId || '',
+        }));
+    };
+
+    const handleAddToCart = () => {
+        if (!orderForm.productId || !selectedCatalog || !selectedVariant) {
+            return toast.error('Silakan pilih katalog dan varian terlebih dahulu.');
+        }
+
+        if (safeQuantity > selectedVariant.stock) {
+            return toast.error(`Stok varian hanya tersedia ${selectedVariant.stock} pcs.`);
+        }
+
+        const existingCart = getCartItems();
+        const existingItem = existingCart.find((item) =>
+            item.productId === orderForm.productId
+            && item.variantId === selectedVariant.variantId
+            && item.useValve === orderForm.useValve
+        );
+        const nextQuantity = (Number(existingItem?.quantity) || 0) + safeQuantity;
+
+        if (nextQuantity > selectedVariant.stock) {
+            return toast.error(`Total item di keranjang melebihi stok ${selectedVariant.stock} pcs.`);
+        }
+
+        upsertCartItem({
+            productId: orderForm.productId,
+            variantId: selectedVariant.variantId,
+            quantity: safeQuantity,
+            totalPrice,
+            name: selectedCatalog.name,
+            sku: selectedVariant.sku,
+            selectedColor: selectedVariant.color,
+            selectedSize: selectedVariant.size,
+            useValve: orderForm.useValve,
+            unitPrice: basePrice + valvePrice,
+            imageUrl: selectedCatalog.images?.[0]?.url || '',
+            productCategory: selectedCatalog.category || '',
+        });
+        toast.success('Varian produk ditambahkan ke keranjang.');
     };
 
     const handleCreateOrder = async (e) => {
@@ -234,7 +290,7 @@ export default function CreateOrderPage() {
 
     return (
         <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-            <CustomerSidebar activeMenu="" onMenuChange={() => navigate('/portal')} />
+            <CustomerSidebar activeMenu="catalog" />
 
             <main className="flex-1 overflow-y-auto overflow-x-hidden">
                 <div className="mx-auto max-w-6xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:px-12 lg:py-8">
@@ -335,6 +391,34 @@ export default function CreateOrderPage() {
                                     {selectedCatalog && (
                                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                                             <div className="space-y-8">
+                                                <div className="space-y-3">
+                                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Varian Langsung</label>
+                                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                                        {selectedCatalog.variants.map((variant) => {
+                                                            const isSelected = String(selectedVariant?.variantId || '') === String(variant.variantId || '');
+                                                            const isOutOfStock = (variant.stock || 0) <= 0;
+
+                                                            return (
+                                                                <button
+                                                                    key={variant.variantId || `${variant.size}-${variant.color}-${variant.sku}`}
+                                                                    type="button"
+                                                                    onClick={() => handleSelectVariant(variant)}
+                                                                    className={`rounded-2xl border p-4 text-left transition-all ${
+                                                                        isSelected
+                                                                            ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
+                                                                            : 'border-slate-200 bg-white hover:border-primary/30'
+                                                                    } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                                                >
+                                                                    <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
+                                                                    <p className="mt-1 text-[11px] font-bold text-slate-400">{variant.sku || '-'}</p>
+                                                                    <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
+                                                                        {isOutOfStock ? 'Stok habis' : `${Number(variant.stock || 0).toLocaleString()} pcs`}
+                                                                    </p>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
                                                 <div className="space-y-3">
                                                     <label className="text-xs font-black uppercase tracking-widest text-slate-400">Ukuran</label>
                                                     <div className="flex flex-wrap gap-3">
@@ -465,13 +549,23 @@ export default function CreateOrderPage() {
                                         </div>
                                     )}
 
-                                    <button
-                                        type="submit"
-                                        disabled={creatingOrder || catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
-                                        className="mt-8 flex w-full items-center justify-center gap-3 rounded-3xl bg-primary py-5 text-lg font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
-                                    >
-                                        {creatingOrder ? <><Loader2 className="h-6 w-6 animate-spin" /> Memproses Pesanan...</> : 'Konfirmasi & Buat Pesanan'}
-                                    </button>
+                                    <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleAddToCart}
+                                            disabled={catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
+                                            className="flex w-full items-center justify-center gap-3 rounded-3xl border border-primary bg-white py-5 text-lg font-black text-primary shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
+                                        >
+                                            <ShoppingCart className="h-6 w-6" /> Tambah ke Keranjang
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={creatingOrder || catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
+                                            className="flex w-full items-center justify-center gap-3 rounded-3xl bg-primary py-5 text-lg font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
+                                        >
+                                            {creatingOrder ? <><Loader2 className="h-6 w-6 animate-spin" /> Memproses Pesanan...</> : 'Konfirmasi & Buat Pesanan'}
+                                        </button>
+                                    </div>
                                 </form>
                             )}
                         </div>

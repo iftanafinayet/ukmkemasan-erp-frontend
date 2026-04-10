@@ -13,8 +13,7 @@ import { toast } from 'sonner';
 import {
     Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 } from './ui/carousel';
-
-const CART_STORAGE_KEY = 'ukm_cart_items';
+import { getCartItems, upsertCartItem } from '../utils/cart';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -25,6 +24,7 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeImageIdx, setActiveImageIdx] = useState(0);
+    const [selectedVariantId, setSelectedVariantId] = useState('');
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [quantity, setQuantity] = useState(100);
@@ -58,6 +58,7 @@ export default function ProductDetailPage() {
             || product.variants?.[0]
             || null;
 
+        setSelectedVariantId(firstAvailableVariant?._id || '');
         setSelectedSize(firstAvailableVariant?.size || '');
         setSelectedColor(firstAvailableVariant?.color || '');
         setQuantity(product.minOrder || 100);
@@ -87,11 +88,11 @@ export default function ProductDetailPage() {
 
     const goBack = () => navigate(isAdmin ? '/admin' : '/portal');
 
-    const handleMenuChange = () => {
+    const handleMenuChange = (menuId) => {
         if (isAdmin) {
             navigate('/admin');
         } else {
-            navigate('/portal');
+            navigate(`/portal?menu=${menuId}`);
         }
     };
 
@@ -101,9 +102,9 @@ export default function ProductDetailPage() {
     const safeQuantity = Math.max(minimumOrder, Number(quantity) || minimumOrder);
     const sizeOptions = [...new Set(variants.map((variant) => variant.size))];
     const colorOptions = [...new Set(variants.map((variant) => variant.color))];
-    const selectedVariant = variants.find((variant) =>
-        variant.size === selectedSize && variant.color === selectedColor
-    ) || null;
+    const selectedVariant = variants.find((variant) => String(variant._id) === String(selectedVariantId))
+        || variants.find((variant) => variant.size === selectedSize && variant.color === selectedColor)
+        || null;
     const priceTierLabel = safeQuantity >= 1000 ? 'B2B (>=1000 pcs)' : 'B2C';
     const baseVariantPrice = selectedVariant
         ? (safeQuantity >= 1000 ? selectedVariant.priceB2B : selectedVariant.priceB2C)
@@ -138,6 +139,7 @@ export default function ProductDetailPage() {
 
         setSelectedSize(size);
         setSelectedColor(nextVariant?.color || '');
+        setSelectedVariantId(nextVariant?._id || '');
     };
 
     const handleSelectColor = (color) => {
@@ -152,6 +154,13 @@ export default function ProductDetailPage() {
 
         setSelectedColor(color);
         setSelectedSize(nextVariant?.size || '');
+        setSelectedVariantId(nextVariant?._id || '');
+    };
+
+    const handleSelectVariant = (variant) => {
+        setSelectedVariantId(variant?._id || '');
+        setSelectedSize(variant?.size || '');
+        setSelectedColor(variant?.color || '');
     };
 
     const handleAddToCart = () => {
@@ -176,43 +185,34 @@ export default function ProductDetailPage() {
             quantity: safeQuantity,
             totalPrice,
             name: product.name,
+            sku: selectedVariant.sku,
             selectedColor: selectedVariant.color,
             selectedSize: selectedVariant.size,
             useValve,
-            unitPrice
+            unitPrice,
+            imageUrl: product.images?.[0]?.url || '',
+            productCategory: product.category || '',
         };
 
-        const existingCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
-        const existingItemIndex = existingCart.findIndex((item) =>
+        const existingItem = getCartItems().find((item) =>
             item.productId === cartItem.productId
             && item.variantId === cartItem.variantId
             && item.useValve === cartItem.useValve
         );
+        const nextQuantity = (Number(existingItem?.quantity) || 0) + safeQuantity;
 
-        if (existingItemIndex >= 0) {
-            const nextQuantity = existingCart[existingItemIndex].quantity + safeQuantity;
-
-            if (nextQuantity > selectedVariant.stock) {
-                toast.error(`Total item di keranjang melebihi stok ${selectedVariant.stock} pcs.`);
-                return;
-            }
-
-            existingCart[existingItemIndex] = {
-                ...existingCart[existingItemIndex],
-                quantity: nextQuantity,
-                totalPrice: unitPrice * nextQuantity
-            };
-        } else {
-            existingCart.push(cartItem);
+        if (nextQuantity > selectedVariant.stock) {
+            toast.error(`Total item di keranjang melebihi stok ${selectedVariant.stock} pcs.`);
+            return;
         }
 
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(existingCart));
+        upsertCartItem(cartItem);
         toast.success('Varian produk ditambahkan ke keranjang.');
     };
 
     return (
         <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-            <SidebarComponent activeMenu="inventory" onMenuChange={handleMenuChange} />
+            <SidebarComponent activeMenu={isAdmin ? 'inventory' : 'catalog'} onMenuChange={isAdmin ? handleMenuChange : undefined} />
             <main className="flex-1 overflow-y-auto overflow-x-hidden">
                 <div className="mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
                     <div className="mb-8 flex items-center justify-between gap-4">
@@ -340,6 +340,34 @@ export default function ProductDetailPage() {
                                         </div>
 
                                         <div className="space-y-6">
+                                            <div>
+                                                <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Langsung</p>
+                                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                                    {variants.map((variant) => {
+                                                        const isSelected = String(selectedVariant?._id || '') === String(variant._id || '');
+                                                        const isOutOfStock = (variant.stock || 0) <= 0;
+
+                                                        return (
+                                                            <button
+                                                                key={variant._id || `${variant.size}-${variant.color}-${variant.sku}`}
+                                                                type="button"
+                                                                onClick={() => handleSelectVariant(variant)}
+                                                                className={`rounded-2xl border p-4 text-left transition-all ${
+                                                                    isSelected
+                                                                        ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
+                                                                        : 'border-slate-200 bg-white hover:border-primary/30'
+                                                                } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                                            >
+                                                                <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
+                                                                <p className="mt-1 text-[11px] font-bold text-slate-400">{variant.sku || product.sku || '-'}</p>
+                                                                <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
+                                                                    {isOutOfStock ? 'Stok habis' : `${Number(variant.stock || 0).toLocaleString()} pcs`}
+                                                                </p>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                             <div>
                                                 <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Ukuran</p>
                                                 <div className="flex flex-wrap gap-3">

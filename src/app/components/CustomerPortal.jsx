@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import CustomerSidebar from './CustomerSidebar';
 import { ENDPOINTS, storage } from '../config/environment';
@@ -14,16 +14,20 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 } from './ui/carousel';
 import { buildCatalogGroups } from '../utils/catalog';
+import { clearCart, getCartItems, removeCartItem, subscribeCart } from '../utils/cart';
 
 export default function CustomerPortal() {
     const user = storage.getUser();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const menuFromQuery = searchParams.get('menu') || 'dashboard';
 
     // State
-    const [activeMenu, setActiveMenu] = useState('dashboard');
+    const [activeMenu, setActiveMenu] = useState(menuFromQuery);
     const [loading, setLoading] = useState(false);
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
+    const [cartItems, setCartItems] = useState([]);
     const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -64,6 +68,10 @@ export default function CustomerPortal() {
                     setOrders(res.data || []);
                     break;
                 }
+                case 'cart': {
+                    setCartItems(getCartItems());
+                    break;
+                }
                 case 'profile':
                 case 'settings': {
                     try {
@@ -89,6 +97,20 @@ export default function CustomerPortal() {
     }, [activeMenu]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
+
+    useEffect(() => {
+        setActiveMenu(menuFromQuery);
+    }, [menuFromQuery]);
+
+    useEffect(() => subscribeCart((items) => setCartItems(items)), []);
+
+    useEffect(() => {
+        if (menuFromQuery === activeMenu) return;
+
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.set('menu', activeMenu);
+        setSearchParams(nextParams, { replace: true });
+    }, [activeMenu, menuFromQuery, searchParams, setSearchParams]);
 
     // Helpers
     const formatCurrency = (amt) => {
@@ -167,6 +189,7 @@ export default function CustomerPortal() {
             case 'dashboard': return renderDashboard();
             case 'catalog': return renderCatalog();
             case 'orders': return renderOrders();
+            case 'cart': return renderCart();
             case 'profile':
             case 'settings': return renderProfile();
             default: return <EmptyState text="Halaman sedang dikembangkan." />;
@@ -448,6 +471,77 @@ export default function CustomerPortal() {
                     </div>
                 ))}
                 {orders.length === 0 && <EmptyState text="Belum ada pesanan." />}
+            </div>
+        </div>
+    );
+
+    const renderCart = () => (
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p className="text-slate-400 text-sm font-medium">{cartItems.length} item tersimpan di keranjang</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-300 mt-1">Keranjang lokal perangkat ini</p>
+                </div>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => navigate('/portal/orders/create')}
+                        className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                    >
+                        <Plus size={16} /> Tambah Item
+                    </button>
+                    <button
+                        onClick={() => {
+                            clearCart();
+                            toast.success('Keranjang dikosongkan.');
+                        }}
+                        disabled={cartItems.length === 0}
+                        className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-500 transition-all hover:bg-slate-50 disabled:opacity-40"
+                    >
+                        Kosongkan
+                    </button>
+                </div>
+            </div>
+
+            {cartItems.length === 0 && <EmptyState text="Keranjang masih kosong." />}
+
+            <div className="grid grid-cols-1 gap-4">
+                {cartItems.map((item, index) => (
+                    <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
+                                {item.imageUrl ? (
+                                    <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
+                                ) : (
+                                    <div className="flex h-full w-full items-center justify-center text-slate-300">
+                                        <Package size={22} />
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{item.productCategory || 'Produk'}</p>
+                                <p className="font-black text-slate-800">{item.name}</p>
+                                <p className="mt-1 text-xs font-bold text-slate-500">{item.selectedSize} • {item.selectedColor} • {item.sku || '-'}</p>
+                                <p className="mt-1 text-xs font-bold text-slate-400">{item.quantity} pcs {item.useValve ? '• Dengan valve' : '• Tanpa valve'}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+                            <p className="text-lg font-black text-primary">{formatCurrency(item.totalPrice)}</p>
+                            <button
+                                onClick={() => {
+                                    removeCartItem((cartItem) =>
+                                        cartItem.productId === item.productId
+                                        && cartItem.variantId === item.variantId
+                                        && cartItem.useValve === item.useValve
+                                    );
+                                    toast.success('Item dihapus dari keranjang.');
+                                }}
+                                className="rounded-2xl bg-red-50 px-4 py-2 text-xs font-black uppercase tracking-widest text-red-500 transition-all hover:bg-red-100"
+                            >
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
