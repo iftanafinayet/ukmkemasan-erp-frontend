@@ -14,7 +14,7 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 } from './ui/carousel';
 import { buildCatalogGroups } from '../utils/catalog';
-import { clearCart, getCartItems, removeCartItem, subscribeCart } from '../utils/cart';
+import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 
 export default function CustomerPortal() {
     const user = storage.getUser();
@@ -28,6 +28,7 @@ export default function CustomerPortal() {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
     const [cartItems, setCartItems] = useState([]);
+    const [checkingOutCart, setCheckingOutCart] = useState(false);
     const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -174,6 +175,57 @@ export default function CustomerPortal() {
         } catch (err) {
             toast.error(err.response?.data?.message || 'Gagal mengubah password.');
         } finally { setSavingPassword(false); }
+    };
+
+    const handleCheckoutCart = async () => {
+        const items = getCartItems();
+        if (items.length === 0) {
+            toast.error('Keranjang masih kosong.');
+            return;
+        }
+
+        setCheckingOutCart(true);
+        const failedItems = [];
+        let successCount = 0;
+
+        try {
+            for (const item of items) {
+                try {
+                    await api.post(ENDPOINTS.ORDERS, {
+                        productId: item.productId,
+                        variantId: item.variantId || undefined,
+                        quantity: Number(item.quantity) || 0,
+                        useValve: Boolean(item.useValve)
+                    });
+                    successCount += 1;
+                } catch (error) {
+                    failedItems.push({
+                        ...item,
+                        failureMessage: error.response?.data?.message || 'Gagal membuat order untuk item ini.'
+                    });
+                }
+            }
+
+            persistCartItems(failedItems);
+            setCartItems(failedItems);
+            setActiveMenu(successCount > 0 ? 'orders' : 'cart');
+
+            if (successCount > 0 && failedItems.length === 0) {
+                toast.success('Checkout berhasil. ' + successCount + ' order dibuat.');
+            } else if (successCount > 0) {
+                toast.warning(successCount + ' order berhasil dibuat, ' + failedItems.length + ' item tetap di keranjang.');
+            } else {
+                toast.error('Checkout gagal untuk semua item di keranjang.');
+            }
+
+            if (failedItems.length > 0) {
+                toast.error(failedItems[0].failureMessage);
+            }
+
+            await fetchData();
+        } finally {
+            setCheckingOutCart(false);
+        }
     };
 
     // === PAGES ===
@@ -475,6 +527,9 @@ export default function CustomerPortal() {
         </div>
     );
 
+    const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
+    const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+
     const renderCart = () => (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -499,6 +554,21 @@ export default function CustomerPortal() {
                     >
                         Kosongkan
                     </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Item</p>
+                    <p className="mt-2 text-3xl font-black text-slate-800">{cartItems.length}</p>
+                </div>
+                <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Kuantitas</p>
+                    <p className="mt-2 text-3xl font-black text-slate-800">{cartQuantity.toLocaleString()} pcs</p>
+                </div>
+                <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Estimasi Total</p>
+                    <p className="mt-2 text-2xl font-black text-primary">{formatCurrency(cartTotal)}</p>
                 </div>
             </div>
 
@@ -542,6 +612,24 @@ export default function CustomerPortal() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            <div className="rounded-3xl border border-slate-100 bg-slate-900 p-6 text-white shadow-xl shadow-slate-900/10">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Checkout Keranjang</p>
+                        <p className="mt-2 text-lg font-black">Buat order dari semua item yang ada di keranjang.</p>
+                        <p className="mt-1 text-sm font-medium text-white/60">Item yang gagal akan tetap tersimpan di keranjang.</p>
+                    </div>
+                    <button
+                        onClick={handleCheckoutCart}
+                        disabled={cartItems.length === 0 || checkingOutCart}
+                        className="flex items-center justify-center gap-3 rounded-2xl bg-white px-6 py-4 text-sm font-black uppercase tracking-widest text-slate-900 transition-all hover:-translate-y-1 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                    >
+                        {checkingOutCart ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShoppingCart className="h-5 w-5" />}
+                        {checkingOutCart ? 'Memproses Checkout...' : 'Checkout Keranjang'}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -614,7 +702,7 @@ export default function CustomerPortal() {
                     <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                             <h1 className="text-3xl font-black text-slate-900 tracking-tighter capitalize sm:text-4xl">
-                                {activeMenu === 'catalog' ? 'Katalog Produk' : activeMenu === 'orders' ? 'Pesanan Saya' : activeMenu === 'profile' || activeMenu === 'settings' ? 'Profil' : 'Dashboard'}
+                                {activeMenu === 'catalog' ? 'Katalog Produk' : activeMenu === 'orders' ? 'Pesanan Saya' : activeMenu === 'cart' ? 'Keranjang' : activeMenu === 'profile' || activeMenu === 'settings' ? 'Profil' : 'Dashboard'}
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
