@@ -808,6 +808,16 @@ export default function CustomerDashboard() {
     }));
   };
 
+  const handleLandingSectionConfigChange = (sectionType, field, value) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      [sectionType]: {
+        ...currentContent[sectionType],
+        [field]: value,
+      },
+    }));
+  };
+
   const handleSaveLandingContent = async () => {
     setSavingLandingContent(true);
 
@@ -998,6 +1008,7 @@ export default function CustomerDashboard() {
             onSaveProfile={handleSaveProfile}
             onSaveLandingContent={handleSaveLandingContent}
             onArticleChange={updateArticleField}
+            onSectionConfigChange={handleLandingSectionConfigChange}
             passwords={passwords}
             profile={profile}
             savingLandingContent={savingLandingContent}

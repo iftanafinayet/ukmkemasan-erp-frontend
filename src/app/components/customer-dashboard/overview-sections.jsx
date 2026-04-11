@@ -371,6 +371,7 @@ export function SettingsPage({
   onRemoveArticle,
   onSaveProfile,
   onSaveLandingContent,
+  onSectionConfigChange, // New prop
   onArticleChange,
   passwords,
   profile,
@@ -470,6 +471,7 @@ export function SettingsPage({
           onArticleChange={onArticleChange}
           onRemoveActivity={onRemoveActivity}
           onRemoveArticle={onRemoveArticle}
+          onSectionConfigChange={onSectionConfigChange}
           onSave={onSaveLandingContent}
           saving={savingLandingContent}
         />

@@ -27,11 +27,14 @@ export default function LandingContentSettingsSection({
   onArticleChange,
   onRemoveActivity,
   onRemoveArticle,
+  onSectionConfigChange,  // New prop for changing section configs
   onSave,
   saving,
 }) {
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
+  const articleSectionConfig = landingContent?.articleSectionConfig || { pillText: '', title: '', subtitle: '' };
+  const gallerySectionConfig = landingContent?.gallerySectionConfig || { pillText: '', title: '', subtitle: '' };
 
   return (
     <div className="space-y-8">
@@ -61,8 +64,8 @@ export default function LandingContentSettingsSection({
       <div className="space-y-5 rounded-3xl border border-slate-100 bg-white p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Artikel</p>
-            <h4 className="mt-2 text-xl font-black text-slate-900">Artikel terbaru untuk section insight</h4>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Artikel & Insight</p>
+            <h4 className="mt-2 text-xl font-black text-slate-900">Konfigurasi Header & Daftar Artikel</h4>
           </div>
           <button
             type="button"
@@ -74,7 +77,16 @@ export default function LandingContentSettingsSection({
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 border-b border-slate-100 pb-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Header Section Artikel</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormInput label="Teks Label (Pill)" value={articleSectionConfig.pillText} onChange={(value) => onSectionConfigChange('articleSectionConfig', 'pillText', value)} placeholder="Contoh: Informasi Menarik" />
+            <FormInput label="Judul Utama" value={articleSectionConfig.title} onChange={(value) => onSectionConfigChange('articleSectionConfig', 'title', value)} placeholder="Contoh: Artikel Pilihan..." />
+          </div>
+          <TextAreaField label="Subjudul / Deskripsi Singkat" value={articleSectionConfig.subtitle} onChange={(value) => onSectionConfigChange('articleSectionConfig', 'subtitle', value)} rows={2} />
+        </div>
+
+        <div className="space-y-4 pt-4">
           {articles.map((article, index) => (
             <div key={article.clientId} className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
@@ -115,7 +127,7 @@ export default function LandingContentSettingsSection({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Galeri Kegiatan</p>
-            <h4 className="mt-2 text-xl font-black text-slate-900">Kegiatan seperti pameran, workshop, dan update lapangan</h4>
+            <h4 className="mt-2 text-xl font-black text-slate-900">Konfigurasi Header & Daftar Kegiatan</h4>
           </div>
           <button
             type="button"
@@ -127,7 +139,16 @@ export default function LandingContentSettingsSection({
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 border-b border-slate-100 pb-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Header Section Galeri</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormInput label="Teks Label (Pill)" value={gallerySectionConfig.pillText} onChange={(value) => onSectionConfigChange('gallerySectionConfig', 'pillText', value)} placeholder="Contoh: Galeri" />
+            <FormInput label="Judul Utama" value={gallerySectionConfig.title} onChange={(value) => onSectionConfigChange('gallerySectionConfig', 'title', value)} placeholder="Jika ada judul tambahan..." />
+          </div>
+          <TextAreaField label="Subjudul / Deskripsi Singkat" value={gallerySectionConfig.subtitle} onChange={(value) => onSectionConfigChange('gallerySectionConfig', 'subtitle', value)} rows={2} />
+        </div>
+
+        <div className="space-y-4 pt-4">
           {activities.map((activity, index) => (
             <div key={activity.clientId} className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
