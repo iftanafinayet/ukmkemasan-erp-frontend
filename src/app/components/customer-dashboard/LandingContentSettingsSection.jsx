@@ -26,7 +26,6 @@ export default function LandingContentSettingsSection({
   onAddArticle,
   onArticleChange,
   onRemoveActivity,
-  onRemoveActivity,
   onRemoveArticle,
   onSectionConfigChange,  // New prop for changing section configs
   onSave,
