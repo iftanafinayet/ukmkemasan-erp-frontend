@@ -153,30 +153,6 @@ export default function CustomerPortalHomePage({
         </div>
       </section>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-          <div className="mb-3 flex items-center gap-3">
-            <div className="rounded-xl bg-blue-50 p-2"><ShoppingCart className="h-5 w-5 text-blue-500" /></div>
-            <p className="text-[10px] font-black uppercase text-blue-500">Total Pesanan</p>
-          </div>
-          <h3 className="text-3xl font-black text-slate-800">{stats.total}</h3>
-        </div>
-        <div className="rounded-3xl border border-slate-100 border-l-4 border-l-amber-400 bg-white p-6 shadow-sm">
-          <div className="mb-3 flex items-center gap-3">
-            <div className="rounded-xl bg-amber-50 p-2"><Clock className="h-5 w-5 text-amber-500" /></div>
-            <p className="text-[10px] font-black uppercase text-amber-500">Dalam Produksi</p>
-          </div>
-          <h3 className="text-3xl font-black text-slate-800">{stats.production}</h3>
-        </div>
-        <div className="rounded-3xl border border-slate-100 border-l-4 border-l-primary bg-white p-6 shadow-sm">
-          <div className="mb-3 flex items-center gap-3">
-            <div className="rounded-xl bg-primary/5 p-2"><Package className="h-5 w-5 text-primary" /></div>
-            <p className="text-[10px] font-black uppercase text-primary">Selesai</p>
-          </div>
-          <h3 className="text-3xl font-black text-slate-800">{stats.completed}</h3>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.8fr)]">
         <div className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
           <div className="flex items-center justify-between gap-3">
@@ -287,7 +263,7 @@ export default function CustomerPortalHomePage({
             <path d="M45.7,-76.4C58,-68.2,65.8,-52.1,70.5,-36.8C75.2,-21.5,76.8,-6.8,75.1,7C73.3,20.8,68.2,33.7,60.8,45.4C53.4,57.1,43.7,67.6,31.5,72.4C19.3,77.3,4.6,76.5,-9.7,73.5C-24,70.5,-37.9,65.3,-50.2,56.7C-62.5,48.1,-73.2,36.1,-78.9,21.9C-84.6,7.7,-85.4,-8.7,-79.8,-22.6C-74.1,-36.5,-62.1,-47.9,-48.9,-55.8C-35.8,-63.7,-21.6,-68.1,-4.3,-62.1C13.1,-56,33.4,-84.6,45.7,-76.4Z" transform="translate(100 100)" />
           </svg>
         </div>
-        
+
         <div className="relative z-10">
           <div className="flex justify-center mb-6">
             <span className="inline-flex items-center rounded-full bg-[#45bbd4] px-6 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-md">
@@ -333,14 +309,14 @@ export default function CustomerPortalHomePage({
                     <div className={`relative aspect-[16/9] w-full bg-gradient-to-br ${activity.accent || 'from-[#45bbd4] via-cyan-600 to-cyan-900'} p-8 text-white flex flex-col justify-between overflow-hidden`}>
                       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/20 bg-white/10" />
                       <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full border border-white/10 bg-white/5" />
-                      
+
                       <div className="relative z-10 flex items-center justify-between gap-3">
                         <span className="rounded-full bg-white/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-md shadow-sm">
                           {activity.label || 'Kegiatan'}
                         </span>
                         <span className="text-xs font-bold text-white/90 bg-black/20 px-3 py-1 rounded-full backdrop-blur-md">{activity.date}</span>
                       </div>
-                      
+
                       <div className="relative z-10 mt-auto">
                         <h4 className="text-3xl font-black leading-tight drop-shadow-md pb-2">
                           {activity.title}
@@ -374,12 +350,12 @@ export default function CustomerPortalHomePage({
               <>
                 <div className="absolute top-[40%] left-0 pl-2 sm:pl-4 hidden md:block">
                   <button className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
-                     <ChevronRight className="w-6 h-6 rotate-180" />
+                    <ChevronRight className="w-6 h-6 rotate-180" />
                   </button>
                 </div>
                 <div className="absolute top-[40%] right-0 pr-2 sm:pr-4 hidden md:block">
                   <button className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
-                     <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-6 h-6" />
                   </button>
                 </div>
               </>
@@ -387,37 +363,6 @@ export default function CustomerPortalHomePage({
           </div>
         </div>
       </section>
-
-      <div className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="flex items-center gap-2 font-black text-slate-800">
-            <Clock className="h-5 w-5 text-primary" /> Pesanan Terbaru
-          </h3>
-          <button type="button" onClick={onViewAllOrders} className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-            Lihat Semua <ChevronRight size={14} />
-          </button>
-        </div>
-        <div className="space-y-3">
-          {orders.length > 0 ? orders.slice(0, 5).map((order) => (
-            <div
-              key={order._id}
-              onClick={() => onViewOrder(order._id)}
-              className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:border-primary/20 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="text-sm font-black text-slate-800">#{order.orderNumber || order._id.slice(-6)}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-400">{order.product?.name || 'Produk'} · {order.details?.quantity} pcs</p>
-              </div>
-              <div className="flex items-center gap-3 self-start sm:self-auto">
-                <span className={`rounded-full border px-3 py-1 text-[10px] font-black ${getStatusColor(order.status)}`}>
-                  {getStatusLabel(order.status)}
-                </span>
-                <Eye size={16} className="text-slate-300 transition-colors group-hover:text-primary" />
-              </div>
-            </div>
-          )) : <EmptyState text="Belum ada pesanan. Mulai pesan sekarang!" />}
-        </div>
-      </div>
     </div>
   );
 }
