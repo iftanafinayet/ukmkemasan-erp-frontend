@@ -35,6 +35,8 @@ export const createEmptyActivity = () => ({
 export const createEmptyLandingContent = () => ({
   articles: [],
   activities: [],
+  articleSectionConfig: { pillText: 'Informasi Menarik', title: 'Artikel Pilihan Untuk Meningkatkan Produk Anda', subtitle: 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.' },
+  gallerySectionConfig: { pillText: 'Galeri', title: '', subtitle: '' },
 });
 
 export const normalizeLandingContent = (payload = {}) => ({
@@ -54,6 +56,8 @@ export const normalizeLandingContent = (payload = {}) => ({
         imageRemoved: false,
       }))
     : [],
+  articleSectionConfig: payload.articleSectionConfig || { pillText: '', title: '', subtitle: '' },
+  gallerySectionConfig: payload.gallerySectionConfig || { pillText: '', title: '', subtitle: '' },
 });
 
 export const buildLandingContentPayload = (landingContent = createEmptyLandingContent()) => ({
@@ -79,7 +83,10 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
         imageUrl: activity.imageUrl,
         imagePublicId: activity.imagePublicId,
         imageAlt: activity.imageAlt,
+        imageAlt: activity.imageAlt,
         removeImage: Boolean(activity.imageRemoved),
       }))
     : [],
+  articleSectionConfig: landingContent.articleSectionConfig,
+  gallerySectionConfig: landingContent.gallerySectionConfig,
 });
