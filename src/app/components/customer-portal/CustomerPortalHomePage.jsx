@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   ArrowRight,
   BadgeCheck,
@@ -35,6 +36,20 @@ export default function CustomerPortalHomePage({
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
   const articleConfig = landingContent?.articleSectionConfig || { pillText: 'Informasi Menarik', title: 'Artikel Pilihan Untuk Meningkatkan Produk Anda', subtitle: 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.' };
   const galleryConfig = landingContent?.gallerySectionConfig || { pillText: 'Galeri', title: '', subtitle: '' };
+
+  const sliderRef = useRef(null);
+
+  const scrollPrev = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -sliderRef.current.offsetWidth, behavior: 'smooth' });
+    }
+  };
+
+  const scrollNext = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: sliderRef.current.offsetWidth, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -282,9 +297,9 @@ export default function CustomerPortalHomePage({
           )}
 
           <div className="mt-10 overflow-hidden relative group">
-            <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 pt-4 px-4 sm:px-8 hide-scrollbar text-left scroll-smooth">
+            <div ref={sliderRef} className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 pt-4 px-4 sm:px-8 hide-scrollbar text-left scroll-smooth">
               {activities.length > 0 ? activities.map((activity) => (
-                <article key={activity._id || activity.clientId || activity.title} className="snap-center sm:snap-start shrink-0 w-[85vw] sm:w-[450px] lg:w-[600px] overflow-hidden rounded-[2rem] shadow-xl shadow-slate-200 border border-slate-100 bg-white group/card relative">
+                <article key={activity._id || activity.clientId || activity.title} className="snap-center shrink-0 w-full overflow-hidden rounded-[2rem] shadow-xl shadow-slate-200 border border-slate-100 bg-white group/card relative">
                   {activity.imageUrl ? (
                     <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-900">
                       <img
@@ -349,12 +364,12 @@ export default function CustomerPortalHomePage({
             {activities.length > 1 && (
               <>
                 <div className="absolute top-[40%] left-0 pl-2 sm:pl-4 hidden md:block">
-                  <button className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
+                  <button onClick={scrollPrev} className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
                     <ChevronRight className="w-6 h-6 rotate-180" />
                   </button>
                 </div>
                 <div className="absolute top-[40%] right-0 pr-2 sm:pr-4 hidden md:block">
-                  <button className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
+                  <button onClick={scrollNext} className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
                     <ChevronRight className="w-6 h-6" />
                   </button>
                 </div>
