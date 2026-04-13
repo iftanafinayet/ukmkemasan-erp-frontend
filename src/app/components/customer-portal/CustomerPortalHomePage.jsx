@@ -324,13 +324,13 @@ export default function CustomerPortalHomePage({
                 <>
                     <button 
                         onClick={handlePrevGallery}
-                        className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-white/10 backdrop-blur-md hover:bg-white/20 active:scale-90 z-20 text-white"
+                        className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-primary text-white shadow-lg hover:bg-primary-container active:scale-95 z-20"
                     >
                         <span className="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
                     </button>
                     <button 
                         onClick={handleNextGallery}
-                        className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-white/10 backdrop-blur-md hover:bg-white/20 active:scale-90 z-20 text-white"
+                        className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-primary text-white shadow-lg hover:bg-primary-container active:scale-95 z-20"
                     >
                         <span className="material-symbols-outlined text-3xl">arrow_forward_ios</span>
                     </button>
@@ -343,7 +343,7 @@ export default function CustomerPortalHomePage({
                     <button 
                         key={i} 
                         onClick={() => setActiveGalleryIndex(i)}
-                        className={`transition-all duration-300 rounded-full h-2 ${i === activeGalleryIndex ? 'bg-white w-8' : 'bg-white/30 w-2 hover:bg-white/50'}`}
+                        className={`transition-all duration-300 rounded-full h-2 ${i === activeGalleryIndex ? 'bg-primary w-8 shadow-sm' : 'bg-slate-300 w-2 hover:bg-slate-400'}`}
                     />
                 ))}
             </div>
