@@ -1,381 +1,328 @@
-import { useRef } from 'react';
-import {
-  ArrowRight,
-  BadgeCheck,
-  Box,
-  CalendarDays,
-  Camera,
-  ChevronRight,
-  Clock,
-  Eye,
-  ImagePlus,
-  Layers,
-  MapPin,
-  Newspaper,
-  Package,
-  Plus,
-  Ruler,
-  ShoppingCart,
-  Sparkles,
-  Tag,
-} from 'lucide-react';
-import { EmptyState } from '../customer-dashboard/shared';
+import { useState } from 'react';
+import { storage } from '../../config/environment';
 
 export default function CustomerPortalHomePage({
-  getStatusColor,
-  getStatusLabel,
+  stats,
   landingContent,
   onNavigateToCatalog,
-  onNavigateToCreateOrder,
-  onViewAllOrders,
-  onViewOrder,
-  orders,
-  stats,
+  onNavigateToCreateOrder
 }) {
+  const user = storage.getUser() || { name: 'Customer' };
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
-  const articleConfig = landingContent?.articleSectionConfig || { pillText: 'Informasi Menarik', title: 'Artikel Pilihan Untuk Meningkatkan Produk Anda', subtitle: 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.' };
-  const galleryConfig = landingContent?.gallerySectionConfig || { pillText: 'Galeri', title: '', subtitle: '' };
 
-  const sliderRef = useRef(null);
-
-  const scrollPrev = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -sliderRef.current.offsetWidth, behavior: 'smooth' });
-    }
+  const handleNextGallery = () => {
+    if (activities.length === 0) return;
+    setActiveGalleryIndex((prev) => (prev + 1) % activities.length);
   };
 
-  const scrollNext = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: sliderRef.current.offsetWidth, behavior: 'smooth' });
-    }
+  const handlePrevGallery = () => {
+    if (activities.length === 0) return;
+    setActiveGalleryIndex((prev) => (prev - 1 + activities.length) % activities.length);
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.35),_transparent_35%),linear-gradient(135deg,_#4dbace_0%,_#256f80_50%,_#133c46_100%)] p-6 text-white shadow-2xl shadow-cyan-900/20 sm:p-8 lg:p-10">
-        <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.18),_transparent_62%)] lg:block" />
-        <div className="absolute -right-10 top-10 h-40 w-40 rounded-full border border-white/15 bg-white/5 blur-2xl" />
-        <div className="absolute -bottom-16 left-10 h-36 w-36 rounded-full border border-white/10 bg-white/10 blur-2xl" />
+    <div className="relative space-y-12 animate-in fade-in duration-500">
+      {/* Floating WhatsApp Button */}
+      <a 
+        href="https://wa.me/6281234567890" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-[#25D366] rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 group"
+      >
+        <svg className="w-9 h-9 fill-current" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span className="absolute right-full mr-4 bg-white text-on-surface text-xs font-bold px-3 py-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap">
+          Butuh Bantuan? Chat Admin
+        </span>
+      </a>
 
-        <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.9fr)] lg:items-center">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-white/90 backdrop-blur-sm">
-              <Sparkles className="h-4 w-4" />
-              Official Packaging Partner
+      {/* Hero and Profile Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="lg:col-span-8 relative overflow-hidden rounded-xl bg-primary p-12 text-on-primary shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
+          <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO"
+              alt="Packaging Design"
+              className="w-full h-full object-cover mix-blend-overlay"
+            />
+          </div>
+          <div className="relative z-10 max-w-lg space-y-6">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-white border border-white/10">
+              Solution for UKM
             </span>
-            <h2 className="mt-5 max-w-3xl text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-[2.8rem]">
-              UKM Kemasan membantu brand tampil lebih siap jual lewat solusi kemasan yang rapi, fleksibel, dan mudah dipesan.
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-base">
-              Di dashboard ini Anda bisa mengenal layanan UKM Kemasan, melihat progres pesanan, lalu langsung lanjut ke proses purchase tanpa berpindah alur.
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tighter leading-tight font-headline">
+              UKM Kemasan membantu brand tampil lebih siap jual...
+            </h1>
+            <p className="text-white/80 font-body leading-relaxed max-w-md">
+              Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.
             </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {[
-                'Standing pouch & roll stock',
-                'MOQ fleksibel kelipatan 100 pcs',
-                'Alur order sampai pengiriman terpantau',
-              ].map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-bold text-white/85 backdrop-blur-sm"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={onNavigateToCreateOrder}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-primary shadow-lg transition-all hover:scale-[1.02] active:scale-95"
-              >
-                <Plus size={18} />
+            <div className="flex flex-wrap gap-4 pt-4">
+              <button onClick={onNavigateToCreateOrder} className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-surface-container-lowest transition-all duration-300 active:scale-95 flex items-center gap-2">
                 Purchase Sekarang
-                <ArrowRight size={16} />
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
-              <button
-                type="button"
-                onClick={onNavigateToCatalog}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-black text-white backdrop-blur-sm transition-all hover:bg-white/15 active:scale-95"
-              >
+              <button onClick={onNavigateToCatalog} className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-all duration-300 active:scale-95">
                 Lihat Katalog
-                <ChevronRight size={16} />
               </button>
             </div>
           </div>
-
-          <div className="relative rounded-[1.75rem] border border-white/15 bg-slate-950/20 p-5 backdrop-blur-md">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white/60">Profile Snapshot</p>
-                <h3 className="mt-2 text-2xl font-black">UKM Kemasan</h3>
-              </div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100">
-                <BadgeCheck className="h-4 w-4" />
-                Active Service
-              </span>
-            </div>
-
-            <div className="mt-6 space-y-4">
-              {[
-                {
-                  icon: Layers,
-                  title: 'Solusi kemasan terkurasi',
-                  description: 'Pilihan produk disusun untuk kebutuhan UKM, reseller, sampai brand yang sedang scale up.',
-                },
-                {
-                  icon: Ruler,
-                  title: 'Varian ukuran dan material',
-                  description: 'Pilih format kemasan yang sesuai kebutuhan produk, kuantitas, dan positioning brand Anda.',
-                },
-                {
-                  icon: Tag,
-                  title: 'Purchase lebih cepat',
-                  description: 'Masuk ke katalog atau langsung ke form order untuk memulai permintaan pembelian.',
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-black text-white">{item.title}</p>
-                      <p className="mt-1 text-sm leading-6 text-white/70">{item.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Pesanan Anda</p>
-                <p className="mt-2 text-3xl font-black">{stats.total}</p>
-                <p className="mt-1 text-xs text-white/60">Total order yang sudah tercatat</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Produksi Aktif</p>
-                <p className="mt-2 text-3xl font-black">{stats.production}</p>
-                <p className="mt-1 text-xs text-white/60">Pesanan yang sedang berjalan</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.8fr)]">
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-8">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Tentang UKM Kemasan</p>
-              <h3 className="mt-2 text-2xl font-black text-slate-900">Partner kemasan untuk produk yang ingin tampil lebih profesional.</h3>
-            </div>
-            <div className="hidden h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary sm:flex">
-              <Box className="h-6 w-6" />
-            </div>
-          </div>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-500">
-            UKM Kemasan memudahkan proses pemesanan kemasan dari eksplorasi katalog, input detail order, sampai monitoring status produksi. Section ini sengaja ditempatkan di homepage agar customer baru langsung paham layanan yang tersedia dan customer lama bisa langsung lanjut purchase.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={onNavigateToCreateOrder}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-all hover:bg-slate-800 active:scale-95"
-            >
-              Direct To Purchase
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onNavigateToCatalog}
-              className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary active:scale-95"
-            >
-              Jelajahi Produk
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-100 bg-[linear-gradient(180deg,_#ffffff_0%,_#f4fbfc_100%)] p-6 sm:p-8">
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Kenapa di dashboard</p>
-          <div className="mt-5 space-y-4">
-            {[
-              'Customer langsung memahami positioning UKM Kemasan saat pertama masuk.',
-              'CTA purchase selalu terlihat tanpa harus membuka menu lain lebih dulu.',
-              'Dashboard tetap berfungsi sebagai ringkasan order, bukan sekadar halaman statistik.',
-            ].map((point, index) => (
-              <div key={point} className="flex gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-sm font-black text-primary">
-                  0{index + 1}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="bg-surface-container-lowest rounded-xl p-8 shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] flex-1 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-on-secondary-container uppercase tracking-wider font-label">Profile Snapshot</span>
+                <h2 className="text-2xl font-bold font-headline text-on-surface line-clamp-1">Halo, {user.name}</h2>
+              </div>
+              <div className="w-16 h-16 rounded-2xl bg-primary/20 overflow-hidden flex items-center justify-center font-bold text-3xl text-primary flex-shrink-0">
+                {user.name.charAt(0)}
+              </div>
+            </div>
+            <div className="mt-8 space-y-4">
+              <div className="p-4 rounded-lg bg-surface-container-low flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+                  <span className="material-symbols-outlined">package_2</span>
                 </div>
-                <p className="text-sm leading-6 text-slate-600">{point}</p>
+                <div>
+                  <div className="text-xs text-on-secondary-container font-medium">Total Pesanan</div>
+                  <div className="text-lg font-bold text-on-surface">{stats.total} Order</div>
+                </div>
               </div>
-            ))}
+              <div className="p-4 rounded-lg bg-surface-container-low flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
+                  <span className="material-symbols-outlined">verified</span>
+                </div>
+                <div>
+                  <div className="text-xs text-on-secondary-container font-medium">Produksi Aktif</div>
+                  <div className="text-lg font-bold text-on-surface">{stats.production} Project</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ARTICLE SECTION - NEW CENTERED LAYOUT */}
-      <section className="rounded-3xl bg-slate-50/50 py-12 px-6 sm:px-10 text-center border border-slate-100">
-        <div className="flex justify-center mb-6">
-          <span className="inline-flex items-center rounded-full bg-[#45bbd4] px-5 py-2 text-xs font-black uppercase tracking-widest text-white shadow-md">
-            {articleConfig.pillText}
-          </span>
+      {/* Quick Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
+            <span className="material-symbols-outlined">inventory</span>
+          </div>
+          <h3 className="font-bold text-lg">Stok Kemasan</h3>
+          <p className="text-on-secondary-container text-sm">Pantau ketersediaan berbagai jenis kemasan siap kirim.</p>
         </div>
-        <h3 className="text-3xl sm:text-4xl font-black text-slate-900 max-w-3xl mx-auto leading-tight">
-          {articleConfig.title}
-        </h3>
-        {articleConfig.subtitle && (
-          <p className="mt-4 text-sm sm:text-base leading-relaxed text-slate-600 max-w-4xl mx-auto">
-            {articleConfig.subtitle}
-          </p>
-        )}
+        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-on-primary-fixed-variant">
+            <span className="material-symbols-outlined">brush</span>
+          </div>
+          <h3 className="font-bold text-lg">Kustom Desain</h3>
+          <p className="text-on-secondary-container text-sm">Konsultasikan kebutuhan branding unik untuk produk Anda.</p>
+        </div>
+        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-tertiary-fixed rounded-lg flex items-center justify-center text-on-tertiary-fixed-variant">
+            <span className="material-symbols-outlined">local_shipping</span>
+          </div>
+          <h3 className="font-bold text-lg">Lacak Pengiriman</h3>
+          <p className="text-on-secondary-container text-sm">Informasi real-time perjalanan pesanan sampai tujuan.</p>
+        </div>
+        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center text-on-secondary-container">
+            <span className="material-symbols-outlined">support_agent</span>
+          </div>
+          <h3 className="font-bold text-lg">Bantuan 24/7</h3>
+          <p className="text-on-secondary-container text-sm">Tim kami siap membantu kendala operasional bisnis Anda.</p>
+        </div>
+      </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 text-left">
-          {articles.length > 0 ? articles.map((article, index) => (
-            <article
-              key={article._id || article.clientId || article.title}
-              className={`rounded-3xl border p-6 transition-all hover:-translate-y-1 hover:shadow-lg flex flex-col h-full bg-white border-slate-100`}
-            >
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
-                  {article.category || 'Artikel'}
-                </span>
-                {article.date && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400">
-                    <CalendarDays className="h-3.5 w-3.5" />
-                    {article.date}
-                  </span>
-                )}
+      {/* Katalog Populer Section */}
+      <section className="space-y-8">
+        <div className="flex items-end justify-between">
+          <div>
+            <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">The Archive</span>
+            <h2 className="text-3xl font-bold font-headline mt-2">Katalog Populer</h2>
+          </div>
+          <button onClick={onNavigateToCatalog} className="text-teal-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
+            Semua Katalog <span className="material-symbols-outlined text-sm">open_in_new</span>
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
+            <div className="aspect-[4/3] overflow-hidden">
+              <img alt="Premium Box" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAchS1w09uql8bgkd6xtd3B85hHZrdECDUxCJH1Fls4mMGKH4BjD6JN14xf3jaebjreZCSzh0RCVKEGZQmM6aOsLvGXgw199KwkzwdilSyG6z3sN6Y2JGXUe9JdGFccNlXflVl7aqyAK8g2SD07iin5x_prx6SiwBVmxjZoDG0Ctt3Fl4cOufd-18BJS_dSapUBtxwveX2SyBk1skCNJVaU0KvgzVqy5Sn0VnjEirKrdWoYxs5yiB3YkCXJlebxj8WZ2gRMNqCS2ngU"/>
+            </div>
+            <div className="p-6 space-y-3">
+              <div className="flex justify-between items-start">
+                <h4 className="font-bold text-xl">Eco Box Premium</h4>
+                <span className="px-2 py-1 bg-primary-fixed text-[10px] font-bold text-on-primary-fixed-variant rounded uppercase">New</span>
               </div>
-              <h4 className="mt-5 text-xl font-black leading-snug text-slate-900 group-hover:text-primary transition-colors">
-                {article.title}
-              </h4>
-              {article.excerpt && (
-                <p className="mt-3 text-sm leading-6 text-slate-500 line-clamp-3">
-                  {article.excerpt}
-                </p>
-              )}
-              <div className="mt-auto pt-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-primary">
-                Baca Selengkapnya
-                <ArrowRight className="h-4 w-4" />
+              <p className="text-sm text-on-secondary-container line-clamp-2">Kemasan ramah lingkungan dengan daya tahan tinggi untuk produk berat.</p>
+              <div className="flex items-center justify-between pt-4">
+                <span className="text-primary font-extrabold">Rp 2.500 / pcs</span>
+                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                  <span className="material-symbols-outlined">add_shopping_cart</span>
+                </button>
               </div>
-            </article>
-          )) : <EmptyState text="Belum ada artikel yang dipublikasikan." />}
+            </div>
+          </div>
+          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
+            <div className="aspect-[4/3] overflow-hidden">
+              <img alt="Glass Bottle" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH4F9jfnBibpYMFbfdOtEFZj59N1rPum0AHYDcIetp-XOBMZy-i_ReJokqSj6a_igt6cY6Goa94mnc_WBVT8gMwQ1VmlwZx_phMUmevaQM_1b-fmJYdCyzMWBsT8etl602gaNKmC8fzogi2TnHkB2ZV__xuNbmHMUlX4169h0Hx3EKA8re9c3awZ3nay_v6moJeGaSxfGufwkSpwTpNAokcw49nakDAYW4V3eLOUpo93TCKcOsSA5taWArK7cCrwlvkaRVRDaZBnp0"/>
+            </div>
+            <div className="p-6 space-y-3">
+              <div className="flex justify-between items-start">
+                <h4 className="font-bold text-xl">Amber Glass Series</h4>
+                <span className="px-2 py-1 bg-secondary-fixed text-[10px] font-bold text-on-secondary-fixed-variant rounded uppercase">Popular</span>
+              </div>
+              <p className="text-sm text-on-secondary-container line-clamp-2">Botol kaca berkualitas tinggi untuk menjaga stabilitas kandungan produk kecantikan.</p>
+              <div className="flex items-center justify-between pt-4">
+                <span className="text-primary font-extrabold">Rp 8.700 / pcs</span>
+                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                  <span className="material-symbols-outlined">add_shopping_cart</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
+            <div className="aspect-[4/3] overflow-hidden">
+              <img alt="Ziplock Pouch" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu5HOyAVs-gOi7ZRySGija9EWk9F4tZEa8rt6Eku6veXiFLpk9UUb3DJvmV0QfrqPTDyUKCAlr231iyDXSK7245YOK82OQlQtGese2FUuI8WO8Msyn56Wu4ELBufddS2UN1J-WmKqk1FHdpFENEiI6MKk3n6FllrK2NDkEUtSDH2l4SHNtYFTCkcV8NWpwWV0oIFzAFPRP24i1JybOiPHmSvLBx_2FFE0wDJVP_zYCdDT6AGv_OI--0v3QHoSbhIpwrQQpLHxwVk5_"/>
+            </div>
+            <div className="p-6 space-y-3">
+              <div className="flex justify-between items-start">
+                <h4 className="font-bold text-xl">Flexi-Pouch Ziplock</h4>
+                <span className="px-2 py-1 bg-tertiary-fixed text-[10px] font-bold text-on-tertiary-fixed-variant rounded uppercase">Best Value</span>
+              </div>
+              <p className="text-sm text-on-secondary-container line-clamp-2">Pouch kedap udara dengan jendela transparan untuk visibilitas produk makanan ringan.</p>
+              <div className="flex items-center justify-between pt-4">
+                <span className="text-primary font-extrabold">Rp 1.200 / pcs</span>
+                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                  <span className="material-symbols-outlined">add_shopping_cart</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* GALLERY SECTION - NEW CENTERED SLIDER LAYOUT */}
-      <section className="rounded-3xl bg-white xl:px-10 py-12 text-center border border-slate-100 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-5 pointer-events-none w-96 h-96">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-slate-900 fill-current">
-            <path d="M45.7,-76.4C58,-68.2,65.8,-52.1,70.5,-36.8C75.2,-21.5,76.8,-6.8,75.1,7C73.3,20.8,68.2,33.7,60.8,45.4C53.4,57.1,43.7,67.6,31.5,72.4C19.3,77.3,4.6,76.5,-9.7,73.5C-24,70.5,-37.9,65.3,-50.2,56.7C-62.5,48.1,-73.2,36.1,-78.9,21.9C-84.6,7.7,-85.4,-8.7,-79.8,-22.6C-74.1,-36.5,-62.1,-47.9,-48.9,-55.8C-35.8,-63.7,-21.6,-68.1,-4.3,-62.1C13.1,-56,33.4,-84.6,45.7,-76.4Z" transform="translate(100 100)" />
-          </svg>
+      {/* Artikel Terkini Section */}
+      <section className="bg-surface-container-low rounded-[2.5rem] p-8 md:p-16 lg:p-20 space-y-12">
+        <div className="flex flex-col items-center justify-center text-center space-y-5">
+          <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+            {landingContent?.articleSectionConfig?.pillText || 'Informasi Menarik'}
+          </span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-headline text-slate-900 max-w-3xl leading-tight">
+            {landingContent?.articleSectionConfig?.title || 'Artikel Pilihan Untuk Meningkatkan Produk Anda'}
+          </h2>
+          <p className="text-sm md:text-base font-medium text-slate-600 max-w-2xl">
+            {landingContent?.articleSectionConfig?.subtitle || 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.'}
+          </p>
         </div>
-
-        <div className="relative z-10">
-          <div className="flex justify-center mb-6">
-            <span className="inline-flex items-center rounded-full bg-[#45bbd4] px-6 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-md">
-              {galleryConfig.pillText}
-            </span>
-          </div>
-          {galleryConfig.title && (
-            <h3 className="text-3xl sm:text-4xl font-black text-slate-900 max-w-3xl mx-auto leading-tight">
-              {galleryConfig.title}
-            </h3>
-          )}
-          {galleryConfig.subtitle && (
-            <p className="mt-4 text-sm sm:text-base leading-relaxed text-slate-600 max-w-3xl mx-auto">
-              {galleryConfig.subtitle}
-            </p>
-          )}
-
-          <div className="mt-10 overflow-hidden relative group">
-            <div ref={sliderRef} className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 pt-4 px-4 sm:px-8 hide-scrollbar text-left scroll-smooth">
-              {activities.length > 0 ? activities.map((activity) => (
-                <article key={activity._id || activity.clientId || activity.title} className="snap-center shrink-0 w-full overflow-hidden rounded-[2rem] shadow-xl shadow-slate-200 border border-slate-100 bg-white group/card relative">
-                  {activity.imageUrl ? (
-                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-900">
-                      <img
-                        src={activity.imageUrl}
-                        alt={activity.imageAlt || activity.title}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-105"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
-                        <div className="flex items-center justify-between gap-3 mb-3">
-                          <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-md">
-                            {activity.label || 'Kegiatan'}
-                          </span>
-                          <span className="text-xs font-bold text-white/80">{activity.date}</span>
-                        </div>
-                        <h4 className="text-2xl font-black text-white leading-snug drop-shadow-sm">
-                          {activity.title}
-                        </h4>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className={`relative aspect-[16/9] w-full bg-gradient-to-br ${activity.accent || 'from-[#45bbd4] via-cyan-600 to-cyan-900'} p-8 text-white flex flex-col justify-between overflow-hidden`}>
-                      <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/20 bg-white/10" />
-                      <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full border border-white/10 bg-white/5" />
-
-                      <div className="relative z-10 flex items-center justify-between gap-3">
-                        <span className="rounded-full bg-white/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-md shadow-sm">
-                          {activity.label || 'Kegiatan'}
-                        </span>
-                        <span className="text-xs font-bold text-white/90 bg-black/20 px-3 py-1 rounded-full backdrop-blur-md">{activity.date}</span>
-                      </div>
-
-                      <div className="relative z-10 mt-auto">
-                        <h4 className="text-3xl font-black leading-tight drop-shadow-md pb-2">
-                          {activity.title}
-                        </h4>
-                      </div>
-                    </div>
-                  )}
-                  {(activity.location || activity.summary) && (
-                    <div className="p-6 bg-white space-y-3">
-                      {activity.location && (
-                        <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#45bbd4]">
-                          <MapPin className="h-4 w-4" />
-                          {activity.location}
-                        </div>
-                      )}
-                      {activity.summary && (
-                        <p className="text-sm leading-relaxed text-slate-600">
-                          {activity.summary}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </article>
-              )) : (
-                <div className="w-full shrink-0 snap-center">
-                  <EmptyState text="Belum ada kegiatan yang ditampilkan." />
-                </div>
-              )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {articles.slice(0, 4).length > 0 ? articles.slice(0, 4).map((article, idx) => (
+            <div key={idx} className="group space-y-6 cursor-pointer text-center">
+              <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+                <img 
+                  alt={article.title} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  src={article.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuC7zXpW1G8K9u_Yv0X9jJ_l9sV9H5j_U_M9K9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9"}
+                />
+              </div>
+              <div className="space-y-3 px-2">
+                <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{article.category || 'Artikel'}</div>
+                <h4 className="font-bold text-xl leading-tight text-slate-900 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h4>
+                <p className="text-sm font-medium text-slate-500 line-clamp-2 leading-relaxed">{article.excerpt || 'Baca selengkapnya untuk informasi lebih lanjut.'}</p>
+              </div>
             </div>
+          )) : (
+            // Fallback content if empty from DB
+            <>
+              {[
+                { cat: 'Sustainability', title: 'Masa Depan Kemasan Ramah Lingkungan 2024', desc: 'Tren material berkelanjutan yang akan mendominasi pasar UKM di Indonesia tahun ini.' },
+                { cat: 'Branding', title: 'Psikologi Warna dalam Desain Produk', desc: 'Bagaimana memilih warna yang tepat untuk meningkatkan konversi penjualan produk Anda.' },
+                { cat: 'Technology', title: 'Implementasi Smart Packaging untuk UKM', desc: 'Teknologi QR Code dan tracking yang memudahkan interaksi pelanggan dengan brand.' },
+                { cat: 'Compliance', title: 'Standar Keamanan Pangan Nasional', desc: 'Panduan lengkap memenuhi standar BPOM melalui pemilihan kemasan yang tepat.' }
+              ].map((item, i) => (
+                <div key={i} className="group space-y-6 cursor-pointer text-center">
+                  <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+                    <img alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"/>
+                  </div>
+                  <div className="space-y-3 px-2">
+                    <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{item.cat}</div>
+                    <h4 className="font-bold text-xl leading-tight text-slate-900 group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
+                    <p className="text-sm font-medium text-slate-500 line-clamp-2 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* Berita Terbaru Section (Gallery) */}
+      <section className="space-y-8 pb-12">
+        <div className="flex flex-col items-center justify-center text-center space-y-5">
+          <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+            {landingContent?.gallerySectionConfig?.pillText || 'Galeri'}
+          </span>
+        </div>
+        
+        <div className="relative w-full aspect-[21/10] sm:aspect-[21/9] rounded-[2rem] overflow-hidden bg-primary shadow-xl group">
+            {/* Slide Content */}
+            <div className="absolute inset-0 w-full h-full transition-all duration-700 ease-in-out">
+                {activities.length > 0 ? (
+                    <div className="relative w-full h-full">
+                        <img 
+                          src={activities[activeGalleryIndex]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDI2tXpsS0B-_5q6ZfR73uO-g27nOtb9lB1VlG_wA_P0tOxb_2q9v9hZ_YvqI4yR0F5_I0sX0l_fD7B1B6tO-y5J1N0kM8mO5M3qO-_I8r1sU6P8XqD1R7kU3L1_vG7Y9cZ0i9q8"} 
+                          alt={activities[activeGalleryIndex]?.title || "Gallery"} 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white space-y-2 max-w-2xl">
+                            <span className="text-sm font-bold uppercase tracking-widest text-primary-fixed">{activities[activeGalleryIndex]?.label || "Pameran"}</span>
+                            <h3 className="text-3xl md:text-4xl font-black">{activities[activeGalleryIndex]?.title || "Mendukung Kemajuan UKM Indonesia"}</h3>
+                            <p className="text-white/80 line-clamp-2">{activities[activeGalleryIndex]?.summary || "Koleksi momen kolaborasi kami dengan berbagai mitra bisnis di seluruh penjuru negeri."}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-white/40 space-y-4">
+                        <span className="material-symbols-outlined text-8xl">gallery_thumbnail</span>
+                        <p className="font-bold uppercase tracking-widest">Belum ada foto galeri</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Navigation Buttons */}
             {activities.length > 1 && (
-              <>
-                <div className="absolute top-[40%] left-0 pl-2 sm:pl-4 hidden md:block">
-                  <button onClick={scrollPrev} className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
-                    <ChevronRight className="w-6 h-6 rotate-180" />
-                  </button>
-                </div>
-                <div className="absolute top-[40%] right-0 pr-2 sm:pr-4 hidden md:block">
-                  <button onClick={scrollNext} className="bg-white/90 text-[#45bbd4] border border-slate-100 p-3 rounded-full shadow-lg backdrop-blur hover:bg-[#45bbd4] hover:text-white transition-colors">
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
-              </>
+                <>
+                    <button 
+                        onClick={handlePrevGallery}
+                        className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-white/10 backdrop-blur-md hover:bg-white/20 active:scale-90 z-20 text-white"
+                    >
+                        <span className="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
+                    </button>
+                    <button 
+                        onClick={handleNextGallery}
+                        className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-white/10 backdrop-blur-md hover:bg-white/20 active:scale-90 z-20 text-white"
+                    >
+                        <span className="material-symbols-outlined text-3xl">arrow_forward_ios</span>
+                    </button>
+                </>
             )}
-          </div>
+
+            {/* Indicators */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {activities.map((_, i) => (
+                    <button 
+                        key={i} 
+                        onClick={() => setActiveGalleryIndex(i)}
+                        className={`transition-all duration-300 rounded-full h-2 ${i === activeGalleryIndex ? 'bg-white w-8' : 'bg-white/30 w-2 hover:bg-white/50'}`}
+                    />
+                ))}
+            </div>
         </div>
       </section>
     </div>

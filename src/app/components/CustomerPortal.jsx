@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronRight, ImagePlus, Plus, RefreshCw } from 'lucide-react';
+import { ChevronRight, ImagePlus, Plus, RefreshCw, Filter } from 'lucide-react';
 import { toast } from 'sonner';
-import CustomerSidebar from './CustomerSidebar';
+import CustomerNavbar from './customer-portal/CustomerNavbar';
 import CustomerCartSection from './customer-portal/CustomerCartSection';
 import CustomerPortalHomePage from './customer-portal/CustomerPortalHomePage';
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
+import CustomerFooter from './CustomerFooter';
+import FilterOverlay from './FilterOverlay';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
@@ -29,6 +31,7 @@ export default function CustomerPortal() {
   const [checkingOutCart, setCheckingOutCart] = useState(false);
   const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [profile, setProfile] = useState({ name: '', email: '', phone: '', address: '' });
@@ -282,125 +285,107 @@ export default function CustomerPortal() {
       : catalogGroups.filter((catalog) => catalog.category === selectedCategory);
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-medium text-slate-400">{filteredCatalogs.length} katalog tersedia</p>
-          <button
-            type="button"
-            onClick={() => navigate('/portal/orders/create')}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-          >
-            <Plus size={16} /> Pesan Sekarang
-          </button>
+      <div className="space-y-12 animate-in fade-in duration-500">
+        <header className="mb-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2 font-headline">
+            Katalog <span className="text-primary italic">Produk</span>
+          </h1>
+          <p className="text-on-secondary-container max-w-2xl text-base font-medium leading-relaxed font-body">
+            Eksplorasi pilihan kemasan kami. Temukan yang paling sesuai dengan kebutuhan produk Anda.
+          </p>
+        </header>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 mt-2">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold text-slate-600">
+              Kategori: <span className="font-bold text-slate-900">{selectedCategory}</span>
+            </span>
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex md:hidden items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
+            >
+              <Filter className="w-4 h-4" />
+              Filter
+            </button>
+          </div>
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-semibold transition-colors"
+            >
+              <Filter className="w-4 h-4" />
+              Semua Filter
+            </button>
+            <button 
+              onClick={() => navigate('/portal/orders/create')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Pesan Baru
+            </button>
+          </div>
+          <div className="flex md:hidden">
+            <button 
+              onClick={() => navigate('/portal/orders/create')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Pesan Baru
+            </button>
+          </div>
         </div>
 
-        {categories.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {categories.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setSelectedCategory(category)}
-                className={`whitespace-nowrap rounded-2xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-                  selectedCategory === category
-                    ? 'bg-primary text-white shadow-md shadow-primary/30'
-                    : 'border border-slate-100 bg-white text-slate-500 hover:bg-slate-100'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        )}
+        <FilterOverlay
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCatalogs.map((catalog) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredCatalogs.map((catalog, index) => (
             <div
               key={catalog.key}
-              className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-100 bg-white transition-shadow hover:shadow-lg"
+              className={`group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer ${
+                index % 3 === 2 ? 'lg:col-span-1' : ''
+              }`}
               onClick={() => navigate(`/portal/orders/create?catalog=${encodeURIComponent(catalog.key)}`)}
             >
-              {catalog.images?.length > 0 ? (
-                <div className="relative">
-                  <Carousel className="w-full" opts={{ loop: true }}>
-                    <CarouselContent>
-                      {catalog.images.map((image, index) => (
-                        <CarouselItem key={index}>
-                          <div className="relative aspect-[4/3] overflow-hidden">
-                            <img
-                              src={image.url}
-                              alt={image.alt || catalog.name}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                            />
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-12">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-white opacity-80">{catalog.category}</p>
-                              <p className="mt-0.5 text-[9px] font-bold text-white/70">{catalog.materialLabel}</p>
-                            </div>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    {catalog.images.length > 1 && (
-                      <>
-                        <CarouselPrevious className="left-2 h-7 w-7 border-0 bg-white/80 shadow-lg backdrop-blur-sm hover:bg-white" />
-                        <CarouselNext className="right-2 h-7 w-7 border-0 bg-white/80 shadow-lg backdrop-blur-sm hover:bg-white" />
-                      </>
-                    )}
-                  </Carousel>
-                  {catalog.images.length > 1 && (
-                    <div className="absolute right-3 top-3 z-10 rounded-lg bg-black/50 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-                      {catalog.images.length} foto
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="flex aspect-[4/3] flex-col items-center justify-center bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5">
-                  <ImagePlus className="mb-2 h-10 w-10 text-primary/20" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary/30">Belum ada foto</p>
-                </div>
-              )}
-
-              <div className="p-6">
-                <div className="mb-3 flex items-start justify-between">
-                  <div>
-                    <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-primary/70">Katalog Varian</p>
-                    <h4 className="font-black leading-tight text-slate-800">{catalog.name}</h4>
-                    <p className="mt-1 text-[10px] font-bold uppercase text-slate-400">{catalog.category}</p>
-                  </div>
-                  <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500">{catalog.materialLabel}</span>
-                </div>
-                {catalog.description && (
-                  <p className="mb-4 line-clamp-2 text-xs text-slate-400">{catalog.description}</p>
+              <div className="relative h-72 overflow-hidden bg-surface-container">
+                {catalog.images?.length > 0 ? (
+                   <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                ) : (
+                   <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-50">
+                     <span className="material-symbols-outlined !text-4xl mb-2">image</span>
+                     <span className="text-sm font-semibold">No Image</span>
+                   </div>
                 )}
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {catalog.availableSizes.slice(0, 4).map((size) => (
-                    <span key={size} className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
-                      {size}
-                    </span>
-                  ))}
-                  {catalog.availableSizes.length > 4 && (
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
-                      +{catalog.availableSizes.length - 4} ukuran
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-end justify-between border-t border-slate-100 pt-3">
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400">Mulai dari</p>
-                    <p className="text-lg font-black text-primary">
-                      {formatCurrency(catalog.priceB2B)}
-                      <span className="text-[10px] font-bold text-slate-400">/pcs</span>
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-bold text-slate-400">Varian</p>
-                    <p className="text-sm font-black text-slate-600">{catalog.variants.length} opsi</p>
-                  </div>
-                </div>
-                {catalog.addons?.valvePrice > 0 && (
-                  <p className="mt-2 text-[10px] font-bold text-primary">+ Valve tersedia ({formatCurrency(catalog.addons.valvePrice)}/pcs)</p>
+                {index === 0 && (
+                   <div className="absolute top-4 left-4">
+                     <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-full">New</span>
+                   </div>
                 )}
+              </div>
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1 font-label">{catalog.category}</span>
+                    <h3 className="text-2xl font-extrabold text-on-surface tracking-tight font-headline">{catalog.name}</h3>
+                  </div>
+                  <span className="text-lg font-bold text-primary text-right pl-2 shrink-0">
+                    {formatCurrency(catalog.priceB2B)} <span className="text-[10px] block opacity-70">/ pcs</span>
+                  </span>
+                </div>
+                <p className="text-on-secondary-container text-sm leading-relaxed mb-6 line-clamp-3 font-body">
+                  {catalog.description || `${catalog.materialLabel} - Tersedia dalam ${catalog.variants.length} varian dan ${catalog.availableSizes.length} ukuran.`}
+                </p>
+                <div className="mt-auto flex gap-3">
+                  <button className="flex-grow bg-primary text-on-primary font-bold py-3 px-6 rounded-full text-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+                    <span className="material-symbols-outlined text-sm">shopping_cart</span>
+                    Pesan Sekarang
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -413,80 +398,126 @@ export default function CustomerPortal() {
     );
   };
 
-  const renderOrders = () => (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-medium text-slate-400">{orders.length} pesanan</p>
-        <button
-          type="button"
-          onClick={() => navigate('/portal/orders/create')}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-        >
-          <Plus size={16} /> Pesan Baru
-        </button>
-      </div>
-
-      <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
-        <div className="overflow-x-auto">
-          <div className="flex min-w-[720px] items-center justify-between">
-            {['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'].map((status, index, arr) => {
-              const count = orders.filter((order) => order.status === status).length;
-              const isActive = count > 0;
-              return (
-                <React.Fragment key={status}>
-                  <div className="flex flex-1 flex-col items-center">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-black shadow-sm transition-all ${isActive ? 'scale-110 bg-primary text-white shadow-primary/30' : 'border border-slate-100 bg-slate-50 text-slate-400'}`}>
-                      {count}
-                    </div>
-                    <p className={`mt-3 text-center text-[10px] font-black uppercase tracking-widest ${isActive ? 'text-primary' : 'text-slate-400'}`}>
-                      {getStatusLabel(status)}
-                    </p>
-                  </div>
-                  {index < arr.length - 1 && (
-                    <div className="relative mx-2 h-0.5 flex-1 bg-slate-100">
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 transition-opacity" />
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            })}
+  const renderOrders = () => {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <header className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2 block font-label">Track Your Progress</span>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface font-headline">Pesanan Saya</h1>
           </div>
-        </div>
-      </div>
+          <div className="flex gap-3">
+            <div className="bg-surface-container-low px-4 py-2 rounded-lg flex items-center gap-2">
+              <span className="text-on-secondary-container text-sm font-medium">Total Pesanan:</span>
+              <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-bold">{orders.length}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/portal/orders/create')}
+              className="flex items-center gap-2 bg-primary px-4 py-2 rounded-lg text-white text-sm font-bold shadow-md hover:scale-105 transition-transform"
+            >
+              <span className="material-symbols-outlined text-sm">add</span> Buat
+            </button>
+          </div>
+        </header>
 
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            onClick={() => handleViewOrder(order._id)}
-            className="group cursor-pointer rounded-3xl border border-slate-100 bg-white p-6 transition-all hover:border-primary/20 hover:shadow-md"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <h4 className="font-black text-slate-800">#{order.orderNumber || order._id.slice(-6)}</h4>
-                  <span className={`rounded-full border px-3 py-1 text-[10px] font-black ${getStatusColor(order.status)}`}>
-                    {getStatusLabel(order.status)}
-                  </span>
-                  {order.isPaid && <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-black text-green-600">✓ Lunas</span>}
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
-                  <span className="font-bold">{order.product?.name}</span>
-                  <span>{order.details?.quantity?.toLocaleString()} pcs</span>
-                  <span>{formatDate(order.createdAt)}</span>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
+              <h3 className="font-bold text-lg mb-4 text-on-surface font-headline">Tracker App</h3>
+              <div className="space-y-2">
+                {[
+                  { id: 'all', label: 'Semua Pesanan' },
+                  { id: 'payment', label: 'Payment' },
+                  { id: 'production', label: 'Production' },
+                  { id: 'completed', label: 'Completed' }
+                ].map(statusBtn => {
+                  const isActive = statusBtn.id === 'all';
+                  return (
+                    <button key={statusBtn.id} className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-primary-container text-on-primary-container font-semibold' : 'text-on-secondary-container hover:bg-surface-container'}`}>
+                      {statusBtn.label}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="text-left sm:text-right">
-                <p className="text-lg font-black text-primary">{formatCurrency(order.totalPrice)}</p>
-                <ChevronRight size={18} className="mt-1 text-slate-300 transition-colors group-hover:text-primary sm:ml-auto" />
+            </div>
+            <div className="bg-primary p-6 rounded-xl text-white relative overflow-hidden group hidden lg:block">
+              <div className="relative z-10">
+                <h3 className="font-bold text-xl mb-2 font-headline">Butuh Bantuan?</h3>
+                <p className="text-primary-fixed text-sm mb-4 leading-relaxed font-body">Hubungi admin untuk pertanyaan mengenai produksi.</p>
+                <button className="bg-white text-primary px-6 py-2 rounded-full text-sm font-bold hover:scale-105 transition-transform">WhatsApp Admin</button>
+              </div>
+              <div className="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                <span className="material-symbols-outlined !text-9xl">support_agent</span>
               </div>
             </div>
           </div>
-        ))}
-        {orders.length === 0 && <EmptyState text="Belum ada pesanan." />}
+
+          <div className="lg:col-span-9 space-y-8">
+            {orders.map((order) => {
+              const isCompleted = order.status === 'Completed';
+              const isPending = order.status === 'Quotation' || order.status === 'Payment';
+              const orderDate = new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+              return (
+                <article key={order._id} onClick={() => handleViewOrder(order._id)} className={`cursor-pointer group bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] transition-opacity ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}>
+                  <div className="bg-surface-container-high px-6 py-4 flex flex-col md:flex-row justify-between md:items-center gap-3">
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-bold text-primary tracking-wider">#{order.orderNumber || order._id.slice(-6)}</span>
+                      <span className="text-xs text-on-secondary-container bg-surface-container-highest px-3 py-1 rounded-full font-bold">{orderDate}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                       <span className={`material-symbols-outlined text-sm ${isCompleted ? 'text-green-600' : 'text-primary'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                         {isCompleted ? 'check_circle' : 'schedule'}
+                       </span>
+                       <span className={`text-sm font-bold ${isCompleted ? 'text-green-600' : 'text-primary'}`}>Status: {getStatusLabel(order.status)}</span>
+                    </div>
+                  </div>
+                  <div className="p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
+                      <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-sm border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
+                        {order.product?.images?.[0] ? (
+                          <img src={order.product.images[0].url} alt={order.product.name} className="w-full h-full object-cover" />
+                        ) : (
+                           <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined">image</span></div>
+                        )}
+                      </div>
+                      <div className="flex-grow">
+                        <h2 className="text-xl md:text-2xl font-bold mb-1 text-on-surface font-headline">{order.product?.name || 'Produk Custom'}</h2>
+                        <p className="text-on-secondary-container text-sm mb-4">{order.details?.quantity?.toLocaleString()} pcs {order.product?.material && `• ${order.product.material}`}</p>
+                        <div className="flex flex-wrap gap-8">
+                          <div>
+                            <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Total</p>
+                            <p className="text-lg font-extrabold text-on-surface font-headline">{formatCurrency(order.totalPrice)}</p>
+                          </div>
+                          {order.isPaid && (
+                            <div>
+                              <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Payment</p>
+                              <p className="text-sm font-bold text-green-600 flex items-center gap-1 font-body"><span className="material-symbols-outlined text-xs">check</span> Lunas</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-end shrink-0">
+                         {isPending ? (
+                           <button onClick={(e) => { e.stopPropagation(); handleViewOrder(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">Panduan Bayar</button>
+                         ) : isCompleted ? (
+                           <button onClick={(e) => { e.stopPropagation(); navigate('/portal/orders/create'); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
+                         ) : (
+                           <button onClick={(e) => { e.stopPropagation(); handleViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-colors group-hover:bg-primary group-hover:text-white">Detail Progress</button>
+                         )}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+            {orders.length === 0 && <EmptyState text="Belum ada pesanan." />}
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
   const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
@@ -550,30 +581,29 @@ export default function CustomerPortal() {
           : 'Dashboard';
 
   return (
-    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-      <CustomerSidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
+    <div className="min-h-screen bg-white font-sans text-on-surface flex flex-col">
+      <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+      <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
+        {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
           <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-3xl font-black tracking-tighter text-slate-900 capitalize sm:text-4xl">{pageTitle}</h1>
-              <div className="mt-1 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <p className="text-sm font-medium italic text-slate-500">Customer Portal · UKM Kemasan</p>
-              </div>
+              <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">The Archive Portal</span>
+              <h1 className="text-3xl font-black tracking-tighter text-slate-900 capitalize sm:text-4xl mt-2 font-headline">{pageTitle}</h1>
             </div>
             <button
               type="button"
               onClick={fetchData}
-              className="self-end rounded-2xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto"
+              className="self-end rounded-xl border border-outline-variant/15 bg-white p-4 text-on-secondary-container shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-surface-container-low sm:self-auto"
             >
               <RefreshCw size={24} className={loading ? 'animate-spin text-primary' : ''} />
             </button>
           </header>
+        )}
 
-          {renderPage()}
-        </div>
+        {renderPage()}
       </main>
+
+      <CustomerFooter />
 
       {isDetailOpen && selectedOrder && (
         <CustomerPortalOrderDetailModal
@@ -587,3 +617,4 @@ export default function CustomerPortal() {
     </div>
   );
 }
+

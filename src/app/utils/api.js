@@ -18,4 +18,18 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Response interceptor untuk handle token expired (401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear user data dan redirect ke login
+      storage.removeToken();
+      storage.removeUser();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

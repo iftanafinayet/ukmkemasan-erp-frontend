@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import { ENDPOINTS, storage } from '../config/environment';
-import CustomerSidebar from './CustomerSidebar';
 import { ArrowLeft, Loader2, ShoppingCart, Info, Package, DollarSign, Layers } from 'lucide-react';
 import { toast } from 'sonner';
 import { buildCatalogGroups } from '../utils/catalog';
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
+import CustomerNavbar from './customer-portal/CustomerNavbar';
 
 export default function CreateOrderPage() {
     const navigate = useNavigate();
@@ -296,11 +296,11 @@ export default function CreateOrderPage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-            <CustomerSidebar activeMenu="catalog" />
+        <div className="min-h-screen bg-surface-bright font-sans text-on-surface selection:bg-primary/20">
+            <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
 
-            <main className="flex-1 overflow-y-auto overflow-x-hidden">
-                <div className="mx-auto max-w-6xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:px-12 lg:py-8">
+            <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12">
+                <div className="mx-auto max-w-6xl">
                     <div className="mb-10 flex items-center">
                         <button
                             onClick={() => navigate(-1)}
@@ -338,11 +338,10 @@ export default function CreateOrderPage() {
                                                     key={category}
                                                     type="button"
                                                     onClick={() => handleSelectCategory(category)}
-                                                    className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all ${
-                                                        selectedCategory === category
+                                                    className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all ${selectedCategory === category
                                                             ? 'bg-primary text-white shadow-md shadow-primary/20'
                                                             : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-primary/30 hover:text-primary'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {category}
                                                 </button>
@@ -360,11 +359,10 @@ export default function CreateOrderPage() {
                                                     key={catalog.key}
                                                     type="button"
                                                     onClick={() => handleSelectCatalog(catalog)}
-                                                    className={`rounded-3xl border p-5 text-left transition-all ${
-                                                        selectedCatalogKey === catalog.key
+                                                    className={`rounded-3xl border p-5 text-left transition-all ${selectedCatalogKey === catalog.key
                                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
                                                             : 'border-slate-200 bg-white hover:border-primary/30 hover:shadow-sm'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div>
@@ -445,11 +443,10 @@ export default function CreateOrderPage() {
                                                     <div className="space-y-3">
                                                         <label className="text-xs font-black uppercase tracking-widest text-slate-400">Tambahan Valve</label>
                                                         <div className="grid grid-cols-2 gap-4">
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${
-                                                                orderForm.useValve
+                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${orderForm.useValve
                                                                     ? 'border-primary bg-primary/5 text-primary'
                                                                     : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
-                                                            } ${(selectedCatalog.addons?.valvePrice || 0) <= 0 ? 'cursor-not-allowed opacity-40' : ''}`}>
+                                                                } ${(selectedCatalog.addons?.valvePrice || 0) <= 0 ? 'cursor-not-allowed opacity-40' : ''}`}>
                                                                 <input
                                                                     type="radio"
                                                                     name="valve"
@@ -460,11 +457,10 @@ export default function CreateOrderPage() {
                                                                 />
                                                                 <span className="font-black">Ya, Pakai</span>
                                                             </label>
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${
-                                                                !orderForm.useValve
+                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${!orderForm.useValve
                                                                     ? 'border-primary bg-primary text-white'
                                                                     : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
-                                                            }`}>
+                                                                }`}>
                                                                 <input
                                                                     type="radio"
                                                                     name="valve"
