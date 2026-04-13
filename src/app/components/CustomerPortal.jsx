@@ -8,7 +8,6 @@ import CustomerPortalHomePage from './customer-portal/CustomerPortalHomePage';
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
 import CustomerFooter from './CustomerFooter';
-import FilterOverlay from './FilterOverlay';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
@@ -31,7 +30,6 @@ export default function CustomerPortal() {
   const [checkingOutCart, setCheckingOutCart] = useState(false);
   const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [profile, setProfile] = useState({ name: '', email: '', phone: '', address: '' });
@@ -299,53 +297,45 @@ export default function CustomerPortal() {
           </p>
         </header>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 mt-2">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-600">
-              Kategori: <span className="font-bold text-slate-900">{selectedCategory}</span>
-            </span>
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex md:hidden items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
-            >
-              <Filter className="w-4 h-4" />
-              Filter
-            </button>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-semibold transition-colors"
-            >
-              <Filter className="w-4 h-4" />
-              Semua Filter
-            </button>
+        <div className="flex flex-col gap-6 mb-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">category</span>
+              <span className="text-sm font-bold text-on-surface/60 uppercase tracking-widest font-label">Kategori Produk</span>
+            </div>
             <button 
-              onClick={() => navigate('/portal/orders/create')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Pesan Baru
+                onClick={() => navigate('/portal/orders/create')}
+                className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Buat Pesanan Custom
             </button>
           </div>
-          <div className="flex md:hidden">
-            <button 
-              onClick={() => navigate('/portal/orders/create')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Pesan Baru
-            </button>
+          
+          <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
+                  selectedCategory === category
+                    ? 'bg-primary text-on-primary shadow-lg shadow-primary/30 scale-105'
+                    : 'bg-surface-container-low text-on-surface/60 hover:bg-surface-container hover:text-on-surface border border-outline-variant/10'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
           </div>
-        </div>
 
-        <FilterOverlay
-          isOpen={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
+          <button 
+              onClick={() => navigate('/portal/orders/create')}
+              className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 transition-all w-full"
+            >
+              <Plus className="w-5 h-5" />
+              Buat Pesanan Custom
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredCatalogs.map((catalog, index) => (
