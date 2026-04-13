@@ -381,9 +381,35 @@ export default function CustomerPortal() {
                     {formatCurrency(catalog.priceB2B)} <span className="text-[10px] block opacity-70">/ pcs</span>
                   </span>
                 </div>
-                <p className="text-on-secondary-container text-sm leading-relaxed mb-6 line-clamp-3 font-body">
-                  {catalog.description || `${catalog.materialLabel} - Tersedia dalam ${catalog.variants.length} varian dan ${catalog.availableSizes.length} ukuran.`}
-                </p>
+                <div className="text-on-secondary-container text-sm leading-relaxed mb-6 flex-grow font-body">
+                  {(() => {
+                    const desc = catalog.description || `${catalog.materialLabel} - Tersedia dalam ${catalog.variants.length} varian dan ${catalog.availableSizes.length} ukuran.`;
+                    const parts = desc.split('. ').map(p => p.trim()).filter(Boolean);
+                    
+                    // Clean up potential duplicates from old data
+                    const uniqueParts = parts.reduce((acc, current) => {
+                      if (current.startsWith('Varian ukuran:')) {
+                        const sizes = current.replace('Varian ukuran:', '').split(',').map(s => s.trim());
+                        const uniqueSizes = [...new Set(sizes)].filter(Boolean);
+                        acc.push(`Varian ukuran: ${uniqueSizes.join(', ')}`);
+                      } else if (!acc.includes(current)) {
+                        acc.push(current);
+                      }
+                      return acc;
+                    }, []);
+
+                    return uniqueParts.map((part, i) => (
+                      <p key={i} className="mb-1 last:mb-0 text-xs text-on-secondary-container/70 font-medium">
+                        {part.split(':').length === 2 ? (
+                          <>
+                            <span className="font-bold text-on-surface/80">{part.split(':')[0]}:</span>
+                            {part.split(':')[1]}
+                          </>
+                        ) : part}
+                      </p>
+                    ));
+                  })()}
+                </div>
                 <div className="mt-auto flex gap-3">
                   <button className="flex-grow bg-primary text-on-primary font-bold py-3 px-6 rounded-full text-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined text-sm">shopping_cart</span>

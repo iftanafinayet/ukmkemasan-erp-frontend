@@ -177,7 +177,34 @@ export default function CustomerPortalHomePage({
                   <h4 className="font-bold text-xl line-clamp-1">{product.name}</h4>
                   <span className="px-2 py-1 bg-primary-fixed text-[10px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Populer</span>
                 </div>
-                <p className="text-sm text-on-secondary-container line-clamp-2">{product.description || `Kemasan ${product.category} berkualitas tinggi.`}</p>
+                <div className="text-sm text-on-secondary-container/80 space-y-0.5">
+                  {(() => {
+                    const desc = product.description || `Kemasan ${product.category} berkualitas tinggi.`;
+                    const parts = desc.split('. ').map(p => p.trim()).filter(Boolean);
+                    
+                    const uniqueParts = parts.reduce((acc, current) => {
+                      if (current.startsWith('Varian ukuran:')) {
+                        const sizes = current.replace('Varian ukuran:', '').split(',').map(s => s.trim());
+                        const uniqueSizes = [...new Set(sizes)].filter(Boolean);
+                        acc.push(`Varian ukuran: ${uniqueSizes.join(', ')}`);
+                      } else if (!acc.includes(current)) {
+                        acc.push(current);
+                      }
+                      return acc;
+                    }, []);
+
+                    return uniqueParts.slice(0, 2).map((part, i) => (
+                      <p key={i} className="line-clamp-1 last:line-clamp-none">
+                        {part.split(':').length === 2 ? (
+                          <>
+                            <span className="font-bold text-on-surface/80">{part.split(':')[0]}:</span>
+                            {part.split(':')[1]}
+                          </>
+                        ) : part}
+                      </p>
+                    ));
+                  })()}
+                </div>
                 <div className="flex items-center justify-between pt-4">
                   <div className="flex flex-col">
                     <span className="text-primary font-extrabold">{formatCurrency(product.priceB2B)}</span>
