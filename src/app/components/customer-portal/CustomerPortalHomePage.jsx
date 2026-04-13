@@ -4,6 +4,7 @@ import { storage } from '../../config/environment';
 export default function CustomerPortalHomePage({
   stats,
   landingContent,
+  popularProducts = [],
   onNavigateToCatalog,
   onNavigateToCreateOrder
 }) {
@@ -21,6 +22,15 @@ export default function CustomerPortalHomePage({
   const handlePrevGallery = () => {
     if (activities.length === 0) return;
     setActiveGalleryIndex((prev) => (prev - 1 + activities.length) % activities.length);
+  };
+
+  const formatCurrency = (amount) => {
+    if (!amount) return 'Rp 0';
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount);
   };
 
   return (
@@ -143,7 +153,7 @@ export default function CustomerPortalHomePage({
       <section className="space-y-8">
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">The Archive</span>
+            <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">Top Sellers</span>
             <h2 className="text-3xl font-bold font-headline mt-2">Katalog Populer</h2>
           </div>
           <button onClick={onNavigateToCatalog} className="text-teal-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
@@ -151,60 +161,47 @@ export default function CustomerPortalHomePage({
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
-            <div className="aspect-[4/3] overflow-hidden">
-              <img alt="Premium Box" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAchS1w09uql8bgkd6xtd3B85hHZrdECDUxCJH1Fls4mMGKH4BjD6JN14xf3jaebjreZCSzh0RCVKEGZQmM6aOsLvGXgw199KwkzwdilSyG6z3sN6Y2JGXUe9JdGFccNlXflVl7aqyAK8g2SD07iin5x_prx6SiwBVmxjZoDG0Ctt3Fl4cOufd-18BJS_dSapUBtxwveX2SyBk1skCNJVaU0KvgzVqy5Sn0VnjEirKrdWoYxs5yiB3YkCXJlebxj8WZ2gRMNqCS2ngU"/>
-            </div>
-            <div className="p-6 space-y-3">
-              <div className="flex justify-between items-start">
-                <h4 className="font-bold text-xl">Eco Box Premium</h4>
-                <span className="px-2 py-1 bg-primary-fixed text-[10px] font-bold text-on-primary-fixed-variant rounded uppercase">New</span>
+          {popularProducts.length > 0 ? popularProducts.map((product) => (
+            <div key={product._id} onClick={onNavigateToCatalog} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
+              <div className="aspect-[4/3] overflow-hidden bg-surface-container">
+                {product.images?.[0] ? (
+                  <img alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src={product.images[0].url}/>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-on-secondary-container opacity-30">
+                    <span className="material-symbols-outlined text-4xl">image</span>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-on-secondary-container line-clamp-2">Kemasan ramah lingkungan dengan daya tahan tinggi untuk produk berat.</p>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-primary font-extrabold">Rp 2.500 / pcs</span>
-                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
-            <div className="aspect-[4/3] overflow-hidden">
-              <img alt="Glass Bottle" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH4F9jfnBibpYMFbfdOtEFZj59N1rPum0AHYDcIetp-XOBMZy-i_ReJokqSj6a_igt6cY6Goa94mnc_WBVT8gMwQ1VmlwZx_phMUmevaQM_1b-fmJYdCyzMWBsT8etl602gaNKmC8fzogi2TnHkB2ZV__xuNbmHMUlX4169h0Hx3EKA8re9c3awZ3nay_v6moJeGaSxfGufwkSpwTpNAokcw49nakDAYW4V3eLOUpo93TCKcOsSA5taWArK7cCrwlvkaRVRDaZBnp0"/>
-            </div>
-            <div className="p-6 space-y-3">
-              <div className="flex justify-between items-start">
-                <h4 className="font-bold text-xl">Amber Glass Series</h4>
-                <span className="px-2 py-1 bg-secondary-fixed text-[10px] font-bold text-on-secondary-fixed-variant rounded uppercase">Popular</span>
-              </div>
-              <p className="text-sm text-on-secondary-container line-clamp-2">Botol kaca berkualitas tinggi untuk menjaga stabilitas kandungan produk kecantikan.</p>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-primary font-extrabold">Rp 8.700 / pcs</span>
-                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
-                </button>
+              <div className="p-6 space-y-3">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold text-xl line-clamp-1">{product.name}</h4>
+                  <span className="px-2 py-1 bg-primary-fixed text-[10px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Populer</span>
+                </div>
+                <p className="text-sm text-on-secondary-container line-clamp-2">{product.description || `Kemasan ${product.category} berkualitas tinggi.`}</p>
+                <div className="flex items-center justify-between pt-4">
+                  <div className="flex flex-col">
+                    <span className="text-primary font-extrabold">{formatCurrency(product.priceB2B)}</span>
+                    <span className="text-[10px] text-on-secondary-container font-medium">{product.totalSold?.toLocaleString() || 0} terjual</span>
+                  </div>
+                  <button className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                    <span className="material-symbols-outlined">add_shopping_cart</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10">
-            <div className="aspect-[4/3] overflow-hidden">
-              <img alt="Ziplock Pouch" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu5HOyAVs-gOi7ZRySGija9EWk9F4tZEa8rt6Eku6veXiFLpk9UUb3DJvmV0QfrqPTDyUKCAlr231iyDXSK7245YOK82OQlQtGese2FUuI8WO8Msyn56Wu4ELBufddS2UN1J-WmKqk1FHdpFENEiI6MKk3n6FllrK2NDkEUtSDH2l4SHNtYFTCkcV8NWpwWV0oIFzAFPRP24i1JybOiPHmSvLBx_2FFE0wDJVP_zYCdDT6AGv_OI--0v3QHoSbhIpwrQQpLHxwVk5_"/>
-            </div>
-            <div className="p-6 space-y-3">
-              <div className="flex justify-between items-start">
-                <h4 className="font-bold text-xl">Flexi-Pouch Ziplock</h4>
-                <span className="px-2 py-1 bg-tertiary-fixed text-[10px] font-bold text-on-tertiary-fixed-variant rounded uppercase">Best Value</span>
+          )) : (
+            // Fallback content if empty from DB
+            [1, 2, 3].map((i) => (
+              <div key={i} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[380px]">
+                <div className="aspect-[4/3] bg-surface-container"></div>
+                <div className="p-6 space-y-4">
+                  <div className="h-6 bg-surface-container rounded w-3/4"></div>
+                  <div className="h-4 bg-surface-container rounded w-full"></div>
+                  <div className="h-4 bg-surface-container rounded w-1/2"></div>
+                </div>
               </div>
-              <p className="text-sm text-on-secondary-container line-clamp-2">Pouch kedap udara dengan jendela transparan untuk visibilitas produk makanan ringan.</p>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-primary font-extrabold">Rp 1.200 / pcs</span>
-                <button onClick={onNavigateToCatalog} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
-                </button>
-              </div>
-            </div>
-          </div>
+            ))
+          )}
         </div>
       </section>
 

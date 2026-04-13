@@ -148,6 +148,7 @@ export const ENDPOINTS = {
 
   // Products
   PRODUCTS: '/products',
+  POPULAR_PRODUCTS: '/products/popular',
   PRODUCT_BY_ID: (id) => `/products/${id}`,
 
   // Landing Content

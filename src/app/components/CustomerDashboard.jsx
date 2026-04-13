@@ -776,6 +776,38 @@ export default function CustomerDashboard() {
     }));
   };
 
+  const handleLandingArticleImageChange = (clientId, file) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      articles: currentContent.articles.map((article) => (
+        article.clientId === clientId
+          ? {
+              ...article,
+              imageFile: file || null,
+              imageRemoved: false,
+            }
+          : article
+      )),
+    }));
+  };
+
+  const handleLandingArticleRemoveImage = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      articles: currentContent.articles.map((article) => (
+        article.clientId === clientId
+          ? {
+              ...article,
+              imageFile: null,
+              imageUrl: '',
+              imagePublicId: '',
+              imageRemoved: true,
+            }
+          : article
+      )),
+    }));
+  };
+
   const handleLandingActivityImageChange = (clientId, file) => {
     setLandingContent((currentContent) => ({
       ...currentContent,
@@ -824,6 +856,12 @@ export default function CustomerDashboard() {
     try {
       const formData = new FormData();
       formData.append('payload', JSON.stringify(buildLandingContentPayload(landingContent)));
+
+      landingContent.articles.forEach((article) => {
+        if (article.imageFile) {
+          formData.append(`articleImage:${article.clientId}`, article.imageFile);
+        }
+      });
 
       landingContent.activities.forEach((activity) => {
         if (activity.imageFile) {
@@ -1008,6 +1046,8 @@ export default function CustomerDashboard() {
             onSaveProfile={handleSaveProfile}
             onSaveLandingContent={handleSaveLandingContent}
             onArticleChange={updateArticleField}
+            onArticleImageChange={handleLandingArticleImageChange}
+            onArticleRemoveImage={handleLandingArticleRemoveImage}
             onSectionConfigChange={handleLandingSectionConfigChange}
             passwords={passwords}
             profile={profile}
