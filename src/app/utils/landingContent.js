@@ -15,6 +15,11 @@ export const createEmptyArticle = () => ({
   title: '',
   date: '',
   excerpt: '',
+  imageUrl: '',
+  imagePublicId: '',
+  imageAlt: '',
+  imageFile: null,
+  imageRemoved: false,
 });
 
 export const createEmptyActivity = () => ({
@@ -45,6 +50,8 @@ export const normalizeLandingContent = (payload = {}) => ({
         ...createEmptyArticle(),
         ...article,
         clientId: article.clientId || article._id || createClientId('article'),
+        imageFile: null,
+        imageRemoved: false,
       }))
     : [],
   activities: Array.isArray(payload.activities)
@@ -64,10 +71,15 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
   articles: Array.isArray(landingContent.articles)
     ? landingContent.articles.map((article) => ({
         _id: article._id,
+        clientId: article.clientId,
         category: article.category,
         title: article.title,
         date: article.date,
         excerpt: article.excerpt,
+        imageUrl: article.imageUrl,
+        imagePublicId: article.imagePublicId,
+        imageAlt: article.imageAlt,
+        removeImage: Boolean(article.imageRemoved),
       }))
     : [],
   activities: Array.isArray(landingContent.activities)
@@ -83,7 +95,6 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
         imageUrl: activity.imageUrl,
         imagePublicId: activity.imagePublicId,
         imageAlt: activity.imageAlt,
-
         removeImage: Boolean(activity.imageRemoved),
       }))
     : [],

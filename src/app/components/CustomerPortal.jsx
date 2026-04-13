@@ -39,19 +39,22 @@ export default function CustomerPortal() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [landingContent, setLandingContent] = useState(createEmptyLandingContent);
+  const [popularProducts, setPopularProducts] = useState([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       switch (activeMenu) {
         case 'dashboard': {
-          const [ordersResponse, landingContentResponse] = await Promise.all([
+          const [ordersResponse, landingContentResponse, popularResponse] = await Promise.all([
             api.get(ENDPOINTS.MY_ORDERS),
             api.get(ENDPOINTS.LANDING_CONTENT),
+            api.get(ENDPOINTS.POPULAR_PRODUCTS),
           ]);
           const allOrders = ordersResponse.data || [];
           setOrders(allOrders);
           setLandingContent(normalizeLandingContent(landingContentResponse.data));
+          setPopularProducts(popularResponse.data || []);
           setStats({
             total: allOrders.length,
             production: allOrders.filter((order) => order.status === 'Production').length,
@@ -274,6 +277,7 @@ export default function CustomerPortal() {
       onViewOrder={handleViewOrder}
       orders={orders}
       stats={stats}
+      popularProducts={popularProducts}
     />
   );
 

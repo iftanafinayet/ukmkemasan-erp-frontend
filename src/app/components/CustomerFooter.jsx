@@ -5,25 +5,25 @@ export default function CustomerFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-900 text-white mt-20">
+    <footer className="bg-surface-container-low text-on-surface border-t-2 border-primary/20 mt-20">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Brand Section */}
         <div className="space-y-4">
           <div>
             <h3 className="text-2xl font-black text-primary mb-2">UKM Kemasan</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-on-surface-variant text-sm leading-relaxed">
               Solusi kemasan premium untuk UKM yang ingin berkembang. Tingkatkan brand Anda dengan desain yang memukau.
             </p>
           </div>
           <div className="flex gap-3 pt-4">
-            <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
+            <a href="#" className="w-10 h-10 bg-surface-container-lowest hover:bg-primary/10 text-on-surface-variant hover:text-primary rounded-lg flex items-center justify-center transition-all shadow-sm">
               <Facebook className="w-5 h-5" />
             </a>
-            <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
+            <a href="#" className="w-10 h-10 bg-surface-container-lowest hover:bg-primary/10 text-on-surface-variant hover:text-primary rounded-lg flex items-center justify-center transition-all shadow-sm">
               <Instagram className="w-5 h-5" />
             </a>
-            <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
+            <a href="#" className="w-10 h-10 bg-surface-container-lowest hover:bg-primary/10 text-on-surface-variant hover:text-primary rounded-lg flex items-center justify-center transition-all shadow-sm">
               <Linkedin className="w-5 h-5" />
             </a>
           </div>
@@ -31,8 +31,8 @@ export default function CustomerFooter() {
 
         {/* Product Links */}
         <div>
-          <h4 className="font-bold text-lg mb-4 text-white">Produk</h4>
-          <ul className="space-y-2 text-slate-400 text-sm">
+          <h4 className="font-bold text-lg mb-4 text-on-surface">Produk</h4>
+          <ul className="space-y-2 text-on-surface-variant text-sm">
             <li>
               <a href="#" className="hover:text-primary transition-colors">Kemasan Pouch</a>
             </li>
@@ -53,8 +53,8 @@ export default function CustomerFooter() {
 
         {/* Company Links */}
         <div>
-          <h4 className="font-bold text-lg mb-4 text-white">Perusahaan</h4>
-          <ul className="space-y-2 text-slate-400 text-sm">
+          <h4 className="font-bold text-lg mb-4 text-on-surface">Perusahaan</h4>
+          <ul className="space-y-2 text-on-surface-variant text-sm">
             <li>
               <a href="#" className="hover:text-primary transition-colors">Tentang Kami</a>
             </li>
@@ -75,17 +75,17 @@ export default function CustomerFooter() {
 
         {/* Contact Info */}
         <div>
-          <h4 className="font-bold text-lg mb-4 text-white">Kontak</h4>
+          <h4 className="font-bold text-lg mb-4 text-on-surface">Kontak</h4>
           <div className="space-y-4">
-            <a href="mailto:info@ukmkemasan.com" className="flex items-start gap-3 text-slate-400 hover:text-primary transition-colors group">
+            <a href="mailto:info@ukmkemasan.com" className="flex items-start gap-3 text-on-surface-variant hover:text-primary transition-colors group">
               <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
               <span className="text-sm">info@ukmkemasan.com</span>
             </a>
-            <a href="tel:+6281234567890" className="flex items-start gap-3 text-slate-400 hover:text-primary transition-colors group">
+            <a href="tel:+6281234567890" className="flex items-start gap-3 text-on-surface-variant hover:text-primary transition-colors group">
               <Phone className="w-5 h-5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
               <span className="text-sm">+62 812 3456 7890</span>
             </a>
-            <div className="flex items-start gap-3 text-slate-400">
+            <div className="flex items-start gap-3 text-on-surface-variant">
               <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
               <span className="text-sm">Sidoarjo, Jawa Timur, Indonesia</span>
             </div>
@@ -94,14 +94,14 @@ export default function CustomerFooter() {
       </div>
 
       {/* Divider */}
-      <div className="border-t border-slate-800" />
+      <div className="border-t border-outline-variant/15" />
 
       {/* Bottom Footer */}
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-slate-400 text-xs text-center sm:text-left">
+        <p className="text-on-surface-variant text-xs text-center sm:text-left">
           © {currentYear} UKM Kemasan. Semua hak dilindungi.
         </p>
-        <div className="flex gap-6 text-xs text-slate-400">
+        <div className="flex gap-6 text-xs text-on-surface-variant">
           <a href="#" className="hover:text-primary transition-colors">Privasi</a>
           <a href="#" className="hover:text-primary transition-colors">Syarat</a>
           <a href="#" className="hover:text-primary transition-colors">Sitemap</a>
@@ -109,7 +109,7 @@ export default function CustomerFooter() {
       </div>
 
       {/* Promo Banner */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-t border-primary/20">
+      <div className="bg-primary-container/5 border-t border-primary/10">
         <div className="max-w-7xl mx-auto px-6 py-4 text-center">
           <p className="text-sm font-semibold text-primary">
             💬 Butuh bantuan? Hubungi kami untuk konsultasi gratis tentang kebutuhan kemasan Anda.

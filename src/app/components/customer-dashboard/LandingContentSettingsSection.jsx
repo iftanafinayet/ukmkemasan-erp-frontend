@@ -25,6 +25,8 @@ export default function LandingContentSettingsSection({
   onAddActivity,
   onAddArticle,
   onArticleChange,
+  onArticleImageChange,
+  onArticleRemoveImage,
   onRemoveActivity,
   onRemoveArticle,
   onSectionConfigChange,  // New prop for changing section configs
@@ -117,6 +119,73 @@ export default function LandingContentSettingsSection({
               </div>
               <div className="mt-4">
                 <TextAreaField label="Ringkasan" value={article.excerpt} onChange={(value) => onArticleChange(article.clientId, 'excerpt', value)} rows={3} />
+              </div>
+              <div className="mt-4">
+                <FormInput label="Alt Gambar" value={article.imageAlt} onChange={(value) => onArticleChange(article.clientId, 'imageAlt', value)} placeholder="Deskripsi gambar artikel" />
+              </div>
+
+              <div className="mt-4 rounded-3xl border border-dashed border-slate-200 bg-white p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Camera className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-black text-slate-900">Gambar artikel</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-500">
+                        Upload gambar untuk mempercantik artikel. Jika kosong, akan menggunakan placeholder default.
+                      </p>
+                    </div>
+                  </div>
+                  <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary">
+                    <ImagePlus className="h-4 w-4" />
+                    Pilih Gambar
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => {
+                        onArticleImageChange(article.clientId, event.target.files?.[0] || null);
+                        event.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-center">
+                  {(article.imageFile || article.imageUrl) && (
+                    <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 lg:h-40 lg:w-64">
+                      <img
+                        src={article.imageFile ? URL.createObjectURL(article.imageFile) : article.imageUrl}
+                        alt={article.imageAlt || 'Preview'}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-1 text-sm text-slate-500">
+                    {article.imageFile ? (
+                      <p className="font-bold text-primary">File baru terpilih: {article.imageFile.name}</p>
+                    ) : article.imageUrl ? (
+                      <p className="font-bold text-slate-700">Gambar saat ini tersimpan di server.</p>
+                    ) : (
+                      <p>Belum ada gambar untuk artikel ini.</p>
+                    )}
+                    <div className="inline-flex items-center gap-1 text-xs text-slate-400">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      Dashboard customer akan menampilkan gambar ini.
+                    </div>
+                  </div>
+                  {(article.imageUrl || article.imageFile) && (
+                    <button
+                      type="button"
+                      onClick={() => onArticleRemoveImage(article.clientId)}
+                      className="rounded-2xl border border-red-100 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-500 transition-colors hover:bg-red-50"
+                    >
+                      Hapus Gambar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -217,17 +286,30 @@ export default function LandingContentSettingsSection({
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(event) => onActivityImageChange(activity.clientId, event.target.files?.[0] || null)}
+                      onChange={(event) => {
+                        onActivityImageChange(activity.clientId, event.target.files?.[0] || null);
+                        event.target.value = '';
+                      }}
                     />
                   </label>
                 </div>
 
-                <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="space-y-1 text-sm text-slate-500">
+                <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-center">
+                  {(activity.imageFile || activity.imageUrl) && (
+                    <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 lg:h-40 lg:w-64">
+                      <img
+                        src={activity.imageFile ? URL.createObjectURL(activity.imageFile) : activity.imageUrl}
+                        alt={activity.imageAlt || 'Preview'}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-1 text-sm text-slate-500">
                     {activity.imageFile ? (
-                      <p className="font-bold text-primary">File baru: {activity.imageFile.name}</p>
+                      <p className="font-bold text-primary">File baru terpilih: {activity.imageFile.name}</p>
                     ) : activity.imageUrl ? (
-                      <p className="font-bold text-slate-700">Gambar tersimpan di server.</p>
+                      <p className="font-bold text-slate-700">Gambar saat ini tersimpan di server.</p>
                     ) : (
                       <p>Belum ada gambar untuk kegiatan ini.</p>
                     )}
