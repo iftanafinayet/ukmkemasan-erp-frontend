@@ -143,7 +143,7 @@ export default function CustomerDashboard() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [newProduct, setNewProduct] = useState(getEmptyProductForm);
+  const [newProduct, setNewProduct] = useState(getEmptyProductForm());
   const [imageFiles, setImageFiles] = useState([]);
   const [deleteImageIds, setDeleteImageIds] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -166,7 +166,7 @@ export default function CustomerDashboard() {
   const [passwords, setPasswords] = useState(EMPTY_PASSWORDS);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [landingContent, setLandingContent] = useState(createEmptyLandingContent);
+  const [landingContent, setLandingContent] = useState(createEmptyLandingContent());
   const [savingLandingContent, setSavingLandingContent] = useState(false);
 
   const [warehouses, setWarehouses] = useState([]);

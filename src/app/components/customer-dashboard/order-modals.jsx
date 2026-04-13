@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { FormInput, InfoBlock, ModalWrapper } from './shared';
+import SimplePricingSummary from '../SimplePricingSummary';
 import { buildCatalogGroups } from '../../utils/catalog';
 
 export function CreateOrderModal({
@@ -262,18 +263,16 @@ export function CreateOrderModal({
               </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
-              <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Estimasi Harga</p>
-              <div className="space-y-2 text-sm">
-                <p className="text-slate-600">Katalog: <span className="font-bold">{selectedCatalog.name}</span></p>
-                <p className="text-slate-600">Ukuran: <span className="font-bold">{selectedVariant?.size || '-'}</span></p>
-                <p className="text-slate-600">Warna: <span className="font-bold">{selectedVariant?.color || '-'}</span></p>
-                <p className="text-slate-600">Stok: <span className="font-bold">{(selectedVariant?.stock || 0).toLocaleString()} pcs</span></p>
-                <p className="text-slate-600">Tipe: <span className="font-bold">{quantity >= 1000 ? 'B2B (Wholesale)' : 'B2C (Retail)'}</span></p>
-                <p className="text-slate-600">Harga satuan: <span className="font-bold">{formatCurrency(basePrice)}</span>{valvePrice > 0 && ` + valve ${formatCurrency(valvePrice)}`}</p>
-                <p className="mt-2 text-lg font-black text-primary">Total: {formatCurrency(totalPrice)}</p>
-              </div>
-            </div>
+            <SimplePricingSummary
+              catalog={selectedCatalog}
+              variant={selectedVariant}
+              quantity={quantity}
+              useValve={orderForm.useValve}
+              basePrice={basePrice}
+              totalPrice={totalPrice}
+              priceType={quantity >= 1000 ? 'B2B' : 'B2C'}
+              formatCurrency={formatCurrency}
+            />
           </div>
         )}
 

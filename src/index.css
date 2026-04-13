@@ -1,9 +1,27 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 @theme {
   /* Ini cara mendaftarkan warna primary di Tailwind v4 */
   --color-primary: #4dbace;
   --color-primary-dark: #3a8fa3;
+}
+
+/* Material Symbols Outlined Configuration */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Base styling agar background abu-abu terang muncul */

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import Sidebar from './Sidebar';
-import CustomerSidebar from './CustomerSidebar';
+import CustomerNavbar from './customer-portal/CustomerNavbar';
 import { ENDPOINTS, storage } from '../config/environment';
 import {
     ArrowLeft, Loader2, Package, Edit3, Trash2,
@@ -97,7 +97,6 @@ export default function ProductDetailPage() {
         }
     };
 
-    const SidebarComponent = isAdmin ? Sidebar : CustomerSidebar;
     const variants = product?.variants || [];
     const minimumOrder = product?.minOrder || 100;
     const safeQuantity = Math.max(minimumOrder, Number(quantity) || minimumOrder);
@@ -212,10 +211,14 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-            <SidebarComponent activeMenu={isAdmin ? 'inventory' : 'catalog'} onMenuChange={isAdmin ? handleMenuChange : undefined} />
-            <main className="flex-1 overflow-y-auto overflow-x-hidden">
-                <div className="mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
+        <div className={isAdmin ? "flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen" : "min-h-screen bg-surface-bright font-sans text-on-surface"}>
+            {isAdmin ? (
+                <Sidebar activeMenu="inventory" onMenuChange={handleMenuChange} />
+            ) : (
+                <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
+            )}
+            <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12"}>
+                <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "mx-auto max-w-5xl"}>
                     <div className="mb-8 flex items-center justify-between gap-4">
                         <button
                             onClick={goBack}
@@ -283,7 +286,7 @@ export default function ProductDetailPage() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="flex aspect-[21/9] flex-col items-center justify-center bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5">
+                                    <div className="flex aspect-[21/9] flex-col items-center justify-center bg-primary/10">
                                         <ImagePlus className="mb-3 h-16 w-16 text-primary/15" />
                                         <p className="text-sm font-bold uppercase tracking-widest text-primary/25">Belum ada foto</p>
                                     </div>
@@ -295,11 +298,10 @@ export default function ProductDetailPage() {
                                             <button
                                                 key={idx}
                                                 onClick={() => setActiveImageIdx(idx)}
-                                                className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                                                    activeImageIdx === idx
-                                                        ? 'scale-105 border-primary shadow-lg shadow-primary/20'
-                                                        : 'border-slate-200 opacity-60 hover:opacity-100'
-                                                }`}
+                                                className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${activeImageIdx === idx
+                                                    ? 'scale-105 border-primary shadow-lg shadow-primary/20'
+                                                    : 'border-slate-200 opacity-60 hover:opacity-100'
+                                                    }`}
                                             >
                                                 <img src={img.url} alt={img.alt} className="h-full w-full object-cover" />
                                             </button>
@@ -436,22 +438,20 @@ export default function ProductDetailPage() {
                                                             type="button"
                                                             onClick={() => setUseValve(true)}
                                                             disabled={(product.addons?.valvePrice || 0) <= 0}
-                                                            className={`rounded-2xl border-2 px-4 py-4 text-sm font-black transition-all ${
-                                                                useValve
-                                                                    ? 'border-primary bg-primary/5 text-primary'
-                                                                    : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
-                                                            } disabled:cursor-not-allowed disabled:opacity-40`}
+                                                            className={`rounded-2xl border-2 px-4 py-4 text-sm font-black transition-all ${useValve
+                                                                ? 'border-primary bg-primary/5 text-primary'
+                                                                : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                                                                } disabled:cursor-not-allowed disabled:opacity-40`}
                                                         >
                                                             Pakai Valve
                                                         </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => setUseValve(false)}
-                                                            className={`rounded-2xl border-2 px-4 py-4 text-sm font-black transition-all ${
-                                                                !useValve
-                                                                    ? 'border-primary bg-primary text-white'
-                                                                    : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
-                                                            }`}
+                                                            className={`rounded-2xl border-2 px-4 py-4 text-sm font-black transition-all ${!useValve
+                                                                ? 'border-primary bg-primary text-white'
+                                                                : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                                                                }`}
                                                         >
                                                             Tanpa Valve
                                                         </button>
@@ -505,19 +505,16 @@ export default function ProductDetailPage() {
                                         </div>
                                     )}
 
-                                    <div className={`rounded-2xl border p-5 text-center ${
-                                        displayedStock < minimumOrder
-                                            ? 'border-red-200 bg-red-50'
-                                            : 'border-green-200 bg-green-50'
-                                    }`}>
-                                        <p className={`text-[10px] font-black uppercase tracking-widest ${
-                                            displayedStock < minimumOrder ? 'text-red-400' : 'text-green-500'
+                                    <div className={`rounded-2xl border p-5 text-center ${displayedStock < minimumOrder
+                                        ? 'border-red-200 bg-red-50'
+                                        : 'border-green-200 bg-green-50'
                                         }`}>
+                                        <p className={`text-[10px] font-black uppercase tracking-widest ${displayedStock < minimumOrder ? 'text-red-400' : 'text-green-500'
+                                            }`}>
                                             {displayedStock <= 0 ? 'Stok Habis' : displayedStock < minimumOrder ? 'Stok Menipis' : 'Stok Tersedia'}
                                         </p>
-                                        <p className={`mt-1 text-2xl font-black ${
-                                            displayedStock < minimumOrder ? 'text-red-600' : 'text-green-700'
-                                        }`}>
+                                        <p className={`mt-1 text-2xl font-black ${displayedStock < minimumOrder ? 'text-red-600' : 'text-green-700'
+                                            }`}>
                                             {displayedStock.toLocaleString()} pcs
                                         </p>
                                         {selectedVariant && (
@@ -551,15 +548,14 @@ const SpecCard = ({ icon, label, value, highlight }) => {
 const PriceRow = ({ label, value, highlight, accent, dark }) => (
     <div className="flex items-center justify-between gap-3">
         <p className={`text-xs font-bold ${dark ? 'text-white/60' : 'text-slate-400'}`}>{label}</p>
-        <p className={`text-sm font-black ${
-            dark
-                ? 'text-white'
-                : accent
-                    ? 'text-primary'
-                    : highlight
-                        ? 'text-red-500'
-                        : 'text-slate-700'
-        }`}>
+        <p className={`text-sm font-black ${dark
+            ? 'text-white'
+            : accent
+                ? 'text-primary'
+                : highlight
+                    ? 'text-red-500'
+                    : 'text-slate-700'
+            }`}>
             {value}
         </p>
     </div>

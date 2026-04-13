@@ -83,7 +83,7 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
         imageUrl: activity.imageUrl,
         imagePublicId: activity.imagePublicId,
         imageAlt: activity.imageAlt,
-        imageAlt: activity.imageAlt,
+
         removeImage: Boolean(activity.imageRemoved),
       }))
     : [],
