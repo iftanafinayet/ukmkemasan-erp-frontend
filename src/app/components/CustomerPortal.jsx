@@ -38,6 +38,7 @@ export default function CustomerPortal() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [landingContent, setLandingContent] = useState(createEmptyLandingContent);
   const [popularProducts, setPopularProducts] = useState([]);
+  const [orderFilter, setOrderFilter] = useState('all');
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -443,17 +444,25 @@ export default function CustomerPortal() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
-              <h3 className="font-bold text-lg mb-4 text-on-surface font-headline">Tracker App</h3>
-              <div className="space-y-2">
+              <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
+              <div className="space-y-3">
                 {[
                   { id: 'all', label: 'Semua Pesanan' },
                   { id: 'payment', label: 'Payment' },
                   { id: 'production', label: 'Production' },
                   { id: 'completed', label: 'Completed' }
                 ].map(statusBtn => {
-                  const isActive = statusBtn.id === 'all';
+                  const isActive = statusBtn.id === orderFilter;
                   return (
-                    <button key={statusBtn.id} className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-primary-container text-on-primary-container font-semibold' : 'text-on-secondary-container hover:bg-surface-container'}`}>
+                    <button
+                      key={statusBtn.id}
+                      onClick={() => setOrderFilter(statusBtn.id)}
+                      className={`w-full text-left px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+                        isActive
+                          ? 'bg-primary text-white shadow-lg shadow-primary/20 translate-x-1'
+                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                      }`}
+                    >
                       {statusBtn.label}
                     </button>
                   );
@@ -473,7 +482,15 @@ export default function CustomerPortal() {
           </div>
 
           <div className="lg:col-span-9 space-y-8">
-            {orders.map((order) => {
+            {orders
+              .filter(order => {
+                if (orderFilter === 'all') return true;
+                if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
+                if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
+                if (orderFilter === 'completed') return order.status === 'Completed';
+                return true;
+              })
+              .map((order) => {
               const isCompleted = order.status === 'Completed';
               const isPending = order.status === 'Quotation' || order.status === 'Payment';
               const orderDate = new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
