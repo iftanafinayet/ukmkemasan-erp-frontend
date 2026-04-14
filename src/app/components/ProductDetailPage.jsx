@@ -217,7 +217,7 @@ export default function ProductDetailPage() {
             ) : (
                 <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
             )}
-            <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12"}>
+            <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
                 <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "mx-auto max-w-5xl"}>
                     <div className="mb-8 flex items-center justify-between gap-4">
                         <button
