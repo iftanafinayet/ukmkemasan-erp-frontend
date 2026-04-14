@@ -5,12 +5,15 @@ import { toast } from 'sonner';
 import CustomerNavbar from './customer-portal/CustomerNavbar';
 import CustomerCartSection from './customer-portal/CustomerCartSection';
 import CustomerPortalHomePage from './customer-portal/CustomerPortalHomePage';
+import CustomerPortalCatalogSection from './customer-portal/CustomerPortalCatalogSection';
+import CustomerPortalOrdersSection from './customer-portal/CustomerPortalOrdersSection';
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
 import CustomerFooter from './CustomerFooter';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { buildCatalogGroups } from '../utils/catalog';
 import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
@@ -118,23 +121,9 @@ export default function CustomerPortal() {
     setSearchParams(nextParams, { replace: true });
   }, [activeMenu, menuFromQuery, searchParams, setSearchParams]);
 
-  const formatCurrency = (amount) => {
-    if (!amount) return 'Rp 0';
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const formatDate = (dateValue) => {
-    if (!dateValue) return '-';
-    return new Intl.DateTimeFormat('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }).format(new Date(dateValue));
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const getStatusColor = (status) => ({
     Quotation: 'bg-yellow-100 text-yellow-700 border-yellow-200',
@@ -281,279 +270,28 @@ export default function CustomerPortal() {
     />
   );
 
-  const renderCatalog = () => {
-    const catalogGroups = buildCatalogGroups(products);
-    const categories = ['All', ...new Set(catalogGroups.map((catalog) => catalog.category).filter(Boolean))];
-    const filteredCatalogs = selectedCategory === 'All'
-      ? catalogGroups
-      : catalogGroups.filter((catalog) => catalog.category === selectedCategory);
+  const renderCatalog = () => (
+    <CustomerPortalCatalogSection
+      formatCurrency={formatCurrency}
+      onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+      onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
+      products={products}
+      selectedCategory={selectedCategory}
+      setSelectedCategory={setSelectedCategory}
+    />
+  );
 
-    return (
-      <div className="space-y-12 animate-in fade-in duration-500">
-        <header className="mb-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2 font-headline">
-            Katalog <span className="text-primary italic">Produk</span>
-          </h1>
-          <p className="text-on-secondary-container max-w-2xl text-base font-medium leading-relaxed font-body">
-            Eksplorasi pilihan kemasan kami. Temukan yang paling sesuai dengan kebutuhan produk Anda.
-          </p>
-        </header>
-
-        <div className="flex flex-col gap-6 mb-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">category</span>
-              <span className="text-sm font-bold text-on-surface/60 uppercase tracking-widest font-label">Kategori Produk</span>
-            </div>
-            <button 
-                onClick={() => navigate('/portal/orders/create')}
-                className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Buat Pesanan Custom
-            </button>
-          </div>
-          
-          <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
-                  selectedCategory === category
-                    ? 'bg-primary text-on-primary shadow-lg shadow-primary/30 scale-105'
-                    : 'bg-surface-container-low text-on-surface/60 hover:bg-surface-container hover:text-on-surface border border-outline-variant/10'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          <button 
-              onClick={() => navigate('/portal/orders/create')}
-              className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 transition-all w-full"
-            >
-              <Plus className="w-5 h-5" />
-              Buat Pesanan Custom
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredCatalogs.map((catalog, index) => (
-            <div
-              key={catalog.key}
-              className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer"
-              onClick={() => navigate(`/portal/products/${catalog.productId}`)}
-            >
-              <div className="relative h-72 overflow-hidden bg-surface-container">
-                {catalog.images?.length > 0 ? (
-                   <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                ) : (
-                   <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-50">
-                     <span className="material-symbols-outlined !text-4xl mb-2">image</span>
-                     <span className="text-sm font-semibold">No Image</span>
-                   </div>
-                )}
-                {index === 0 && (
-                   <div className="absolute top-4 left-4">
-                     <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-full">New</span>
-                   </div>
-                )}
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1 font-label">{catalog.category}</span>
-                    <h3 className="text-2xl font-extrabold text-on-surface tracking-tight font-headline">{catalog.name}</h3>
-                  </div>
-                  <span className="text-lg font-bold text-primary text-right pl-2 shrink-0">
-                    {formatCurrency(catalog.priceB2B)} <span className="text-[10px] block opacity-70">/ pcs</span>
-                  </span>
-                </div>
-                <div className="text-on-secondary-container text-sm leading-relaxed mb-6 flex-grow font-body">
-                  {(() => {
-                    const desc = catalog.description || `${catalog.materialLabel} - Tersedia dalam ${catalog.variants.length} varian dan ${catalog.availableSizes.length} ukuran.`;
-                    const parts = desc.split('. ').map(p => p.trim()).filter(Boolean);
-                    
-                    // Clean up potential duplicates from old data
-                    const uniqueParts = parts.reduce((acc, current) => {
-                      if (current.startsWith('Varian ukuran:')) {
-                        const sizes = current.replace('Varian ukuran:', '').split(',').map(s => s.trim());
-                        const uniqueSizes = [...new Set(sizes)].filter(Boolean);
-                        acc.push(`Varian ukuran: ${uniqueSizes.join(', ')}`);
-                      } else if (!acc.includes(current)) {
-                        acc.push(current);
-                      }
-                      return acc;
-                    }, []);
-
-                    return uniqueParts.map((part, i) => (
-                      <p key={i} className="mb-1 last:mb-0 text-xs text-on-secondary-container/70 font-medium">
-                        {part.split(':').length === 2 ? (
-                          <>
-                            <span className="font-bold text-on-surface/80">{part.split(':')[0]}:</span>
-                            {part.split(':')[1]}
-                          </>
-                        ) : part}
-                      </p>
-                    ));
-                  })()}
-                </div>
-                <div className="mt-auto flex gap-3">
-                  <button className="flex-grow bg-primary text-on-primary font-bold py-3 px-6 rounded-full text-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
-                    <span className="material-symbols-outlined text-sm">shopping_cart</span>
-                    Pesan Sekarang
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredCatalogs.length === 0 && (
-          <EmptyState text={`Tidak ada katalog untuk kategori ${selectedCategory}.`} />
-        )}
-      </div>
-    );
-  };
-
-  const renderOrders = () => {
-    return (
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <header className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2 block font-label">Track Your Progress</span>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface font-headline">Pesanan Saya</h1>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-surface-container-low px-4 py-2 rounded-lg flex items-center gap-2">
-              <span className="text-on-secondary-container text-sm font-medium">Total Pesanan:</span>
-              <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-bold">{orders.length}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate('/portal/orders/create')}
-              className="flex items-center gap-2 bg-primary px-4 py-2 rounded-lg text-white text-sm font-bold shadow-md hover:scale-105 transition-transform"
-            >
-              <span className="material-symbols-outlined text-sm">add</span> Buat
-            </button>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-3 space-y-6">
-            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
-              <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
-              <div className="space-y-3">
-                {[
-                  { id: 'all', label: 'Semua Pesanan' },
-                  { id: 'payment', label: 'Payment' },
-                  { id: 'production', label: 'Production' },
-                  { id: 'completed', label: 'Completed' }
-                ].map(statusBtn => {
-                  const isActive = statusBtn.id === orderFilter;
-                  return (
-                    <button
-                      key={statusBtn.id}
-                      onClick={() => setOrderFilter(statusBtn.id)}
-                      className={`w-full text-left px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
-                        isActive
-                          ? 'bg-primary text-white shadow-lg shadow-primary/20 translate-x-1'
-                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
-                      }`}
-                    >
-                      {statusBtn.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="bg-primary p-6 rounded-xl text-white relative overflow-hidden group hidden lg:block">
-              <div className="relative z-10">
-                <h3 className="font-bold text-xl mb-2 font-headline">Butuh Bantuan?</h3>
-                <p className="text-primary-fixed text-sm mb-4 leading-relaxed font-body">Hubungi admin untuk pertanyaan mengenai produksi.</p>
-                <button className="bg-white text-primary px-6 py-2 rounded-full text-sm font-bold hover:scale-105 transition-transform">WhatsApp Admin</button>
-              </div>
-              <div className="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                <span className="material-symbols-outlined !text-9xl">support_agent</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-9 space-y-8">
-            {orders
-              .filter(order => {
-                if (orderFilter === 'all') return true;
-                if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
-                if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
-                if (orderFilter === 'completed') return order.status === 'Completed';
-                return true;
-              })
-              .map((order) => {
-              const isCompleted = order.status === 'Completed';
-              const isPending = order.status === 'Quotation' || order.status === 'Payment';
-              const orderDate = new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
-              return (
-                <article key={order._id} onClick={() => handleViewOrder(order._id)} className={`cursor-pointer group bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] transition-opacity ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}>
-                  <div className="bg-surface-container-high px-6 py-4 flex flex-col md:flex-row justify-between md:items-center gap-3">
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm font-bold text-primary tracking-wider">#{order.orderNumber || order._id.slice(-6)}</span>
-                      <span className="text-xs text-on-secondary-container bg-surface-container-highest px-3 py-1 rounded-full font-bold">{orderDate}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                       <span className={`material-symbols-outlined text-sm ${isCompleted ? 'text-green-600' : 'text-primary'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
-                         {isCompleted ? 'check_circle' : 'schedule'}
-                       </span>
-                       <span className={`text-sm font-bold ${isCompleted ? 'text-green-600' : 'text-primary'}`}>Status: {getStatusLabel(order.status)}</span>
-                    </div>
-                  </div>
-                  <div className="p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
-                      <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-sm border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
-                        {order.product?.images?.[0] ? (
-                          <img src={order.product.images[0].url} alt={order.product.name} className="w-full h-full object-cover" />
-                        ) : (
-                           <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined">image</span></div>
-                        )}
-                      </div>
-                      <div className="flex-grow">
-                        <h2 className="text-xl md:text-2xl font-bold mb-1 text-on-surface font-headline">{order.product?.name || 'Produk Custom'}</h2>
-                        <p className="text-on-secondary-container text-sm mb-4">{order.details?.quantity?.toLocaleString()} pcs {order.product?.material && `• ${order.product.material}`}</p>
-                        <div className="flex flex-wrap gap-8">
-                          <div>
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Total</p>
-                            <p className="text-lg font-extrabold text-on-surface font-headline">{formatCurrency(order.totalPrice)}</p>
-                          </div>
-                          {order.isPaid && (
-                            <div>
-                              <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Payment</p>
-                              <p className="text-sm font-bold text-green-600 flex items-center gap-1 font-body"><span className="material-symbols-outlined text-xs">check</span> Lunas</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-end shrink-0">
-                         {isPending ? (
-                           <button onClick={(e) => { e.stopPropagation(); handleViewOrder(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">Panduan Bayar</button>
-                         ) : isCompleted ? (
-                           <button onClick={(e) => { e.stopPropagation(); navigate('/portal/orders/create'); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
-                         ) : (
-                           <button onClick={(e) => { e.stopPropagation(); handleViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-colors group-hover:bg-primary group-hover:text-white">Detail Progress</button>
-                         )}
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-            {orders.length === 0 && <EmptyState text="Belum ada pesanan." />}
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const renderOrders = () => (
+    <CustomerPortalOrdersSection
+      formatCurrency={formatCurrency}
+      getStatusLabel={getStatusLabel}
+      onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+      onViewOrder={handleViewOrder}
+      orderFilter={orderFilter}
+      orders={orders}
+      setOrderFilter={setOrderFilter}
+    />
+  );
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
   const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);

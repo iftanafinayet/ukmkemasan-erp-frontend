@@ -8,6 +8,7 @@ import { buildCatalogGroups } from '../utils/catalog';
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
 import CustomerNavbar from './customer-portal/CustomerNavbar';
+import { formatCurrency } from '../utils/formatters';
 
 export default function CreateOrderPage() {
     const navigate = useNavigate();
@@ -290,10 +291,6 @@ export default function CreateOrderPage() {
         }
     };
 
-    const formatCurrency = (amount) => {
-        if (!amount) return 'Rp 0';
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-    };
 
     return (
         <div className="min-h-screen bg-surface-bright font-sans text-on-surface selection:bg-primary/20">

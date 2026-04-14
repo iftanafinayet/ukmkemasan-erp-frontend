@@ -1,26 +1,9 @@
 import React from 'react';
 import { Package, Calendar, User, DollarSign, Package2, Hash } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 export function OrderCard({ order }) {
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(date);
-  };
-
-  const formatCurrency = (amount) => {
-    if (!amount) return 'Rp 0';
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
 
   // Helper untuk mengambil ID yang cantik (Real API: orderNumber, Mock: id)
   const displayId = order.orderNumber || order.id || order._id?.substring(0, 8);
