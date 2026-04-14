@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import Sidebar from './Sidebar';
@@ -15,6 +15,7 @@ import {
 } from './ui/carousel';
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -77,16 +78,6 @@ export default function ProductDetailPage() {
         }
     };
 
-    const formatCurrency = (amount) => {
-        if (!amount) return 'Rp 0';
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return '-';
-        return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
-    };
-
     const goBack = () => navigate(isAdmin ? '/admin' : '/portal');
 
     const handleMenuChange = (menuId) => {
@@ -97,14 +88,19 @@ export default function ProductDetailPage() {
         }
     };
 
-    const variants = product?.variants || [];
+    const variants = useMemo(() => product?.variants || [], [product]);
     const minimumOrder = product?.minOrder || 100;
     const safeQuantity = Math.max(minimumOrder, Number(quantity) || minimumOrder);
-    const sizeOptions = [...new Set(variants.map((variant) => variant.size))];
-    const colorOptions = [...new Set(variants.map((variant) => variant.color))];
-    const selectedVariant = variants.find((variant) => String(variant._id) === String(selectedVariantId))
+
+    const sizeOptions = useMemo(() => [...new Set(variants.map((variant) => variant.size))], [variants]);
+    const colorOptions = useMemo(() => [...new Set(variants.map((variant) => variant.color))], [variants]);
+
+    const selectedVariant = useMemo(() => 
+        variants.find((variant) => String(variant._id) === String(selectedVariantId))
         || variants.find((variant) => variant.size === selectedSize && variant.color === selectedColor)
-        || null;
+        || null,
+    [variants, selectedVariantId, selectedSize, selectedColor]);
+
     const priceTierLabel = safeQuantity >= 1000 ? 'B2B (>=1000 pcs)' : 'B2C';
     const baseVariantPrice = selectedVariant
         ? (safeQuantity >= 1000 ? selectedVariant.priceB2B : selectedVariant.priceB2C)

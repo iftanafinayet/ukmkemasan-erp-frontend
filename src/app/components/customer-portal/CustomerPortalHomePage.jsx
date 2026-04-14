@@ -8,6 +8,8 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 
+import { formatCurrency } from '../../utils/formatters';
+
 export default function CustomerPortalHomePage({
   stats,
   landingContent,
@@ -21,15 +23,6 @@ export default function CustomerPortalHomePage({
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
-
-  const formatCurrency = (amount) => {
-    if (!amount) return 'Rp 0';
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="relative space-y-12 animate-in fade-in duration-500">
