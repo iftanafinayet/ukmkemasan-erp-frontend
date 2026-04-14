@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { storage } from '../../config/environment';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 
 export default function CustomerPortalHomePage({
   stats,
@@ -13,17 +20,6 @@ export default function CustomerPortalHomePage({
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
-  const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
-
-  const handleNextGallery = () => {
-    if (activities.length === 0) return;
-    setActiveGalleryIndex((prev) => (prev + 1) % activities.length);
-  };
-
-  const handlePrevGallery = () => {
-    if (activities.length === 0) return;
-    setActiveGalleryIndex((prev) => (prev - 1 + activities.length) % activities.length);
-  };
 
   const formatCurrency = (amount) => {
     if (!amount) return 'Rp 0';
@@ -295,59 +291,73 @@ export default function CustomerPortalHomePage({
           </span>
         </div>
 
-        <div className="relative w-full aspect-[21/10] sm:aspect-[21/9] rounded-[2rem] overflow-hidden bg-primary shadow-xl group">
-          {/* Slide Content */}
-          <div className="absolute inset-0 w-full h-full transition-all duration-700 ease-in-out">
-            {activities.length > 0 ? (
-              <div className="relative w-full h-full">
-                <img
-                  src={activities[activeGalleryIndex]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDI2tXpsS0B-_5q6ZfR73uO-g27nOtb9lB1VlG_wA_P0tOxb_2q9v9hZ_YvqI4yR0F5_I0sX0l_fD7B1B6tO-y5J1N0kM8mO5M3qO-_I8r1sU6P8XqD1R7kU3L1_vG7Y9cZ0i9q8"}
-                  alt={activities[activeGalleryIndex]?.title || "Gallery"}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white space-y-2 max-w-2xl">
-                  <span className="text-sm font-bold uppercase tracking-widest text-primary-fixed">{activities[activeGalleryIndex]?.label || "Pameran"}</span>
-                  <h3 className="text-3xl md:text-4xl font-black">{activities[activeGalleryIndex]?.title || "Mendukung Kemajuan UKM Indonesia"}</h3>
-                  <p className="text-white/80 line-clamp-2">{activities[activeGalleryIndex]?.summary || "Koleksi momen kolaborasi kami dengan berbagai mitra bisnis di seluruh penjuru negeri."}</p>
+        <div className="relative w-full">
+          <Carousel
+            className="w-full"
+            opts={{ loop: true }}
+            setApi={(api) => {
+              if (!api) return;
+              api.on('select', () => {
+                setActiveGalleryIndex(api.selectedScrollSnap());
+              });
+            }}
+          >
+            <CarouselContent className="-ml-0">
+              {activities.length > 0 ? (
+                activities.map((activity, idx) => (
+                  <CarouselItem key={idx} className="pl-0 basis-full">
+                    <div className="relative aspect-[21/10] sm:aspect-[21/9] rounded-[2.5rem] overflow-hidden bg-primary shadow-xl">
+                      <img
+                        src={activity.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDI2tXpsS0B-_5q6ZfR73uO-g27nOtb9lB1VlG_wA_P0tOxb_2q9v9hZ_YvqI4yR0F5_I0sX0l_fD7B1B6tO-y5J1N0kM8mO5M3qO-_I8r1sU6P8XqD1R7kU3L1_vG7Y9cZ0i9q8"}
+                        alt={activity.title || "Gallery"}
+                        className="w-full h-full object-cover lg:object-[center_30%]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                      <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <span className="inline-block px-3 py-1 bg-primary/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-primary-fixed border border-white/10">
+                          {activity.label || "Pameran"}
+                        </span>
+                        <h3 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight font-headline">
+                          {activity.title || "Mendukung Kemajuan UKM Indonesia"}
+                        </h3>
+                        <p className="text-white/70 text-sm md:text-base font-body leading-relaxed max-w-xl line-clamp-2">
+                          {activity.summary || "Koleksi momen kolaborasi kami dengan berbagai mitra bisnis di seluruh penjuru negeri."}
+                        </p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem className="pl-0 basis-full">
+                  <div className="relative aspect-[21/10] sm:aspect-[21/9] rounded-[2.5rem] overflow-hidden bg-primary flex flex-col items-center justify-center text-white/40 space-y-4 border border-outline-variant/10">
+                    <span className="material-symbols-outlined text-8xl">gallery_thumbnail</span>
+                    <p className="font-bold uppercase tracking-widest text-sm text-white/20">Belum ada foto galeri</p>
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselContent>
+
+            {activities.length > 1 && (
+              <>
+                <CarouselPrevious className="left-8 h-12 w-12 border-0 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 shadow-2xl transition-all" />
+                <CarouselNext className="right-8 h-12 w-12 border-0 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 shadow-2xl transition-all" />
+                
+                {/* Custom Indicators */}
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+                  {activities.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`transition-all duration-500 rounded-full h-2 ${
+                        i === activeGalleryIndex 
+                          ? 'bg-primary w-12' 
+                          : 'bg-white/30 w-2 hover:bg-white/50'
+                      }`}
+                    />
+                  ))}
                 </div>
-              </div>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-white/40 space-y-4">
-                <span className="material-symbols-outlined text-8xl">gallery_thumbnail</span>
-                <p className="font-bold uppercase tracking-widest">Belum ada foto galeri</p>
-              </div>
+              </>
             )}
-          </div>
-
-          {/* Navigation Buttons */}
-          {activities.length > 1 && (
-            <>
-              <button
-                onClick={handlePrevGallery}
-                className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-primary text-white shadow-lg hover:bg-primary-container active:scale-95 z-20"
-              >
-                <span className="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
-              </button>
-              <button
-                onClick={handleNextGallery}
-                className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all bg-primary text-white shadow-lg hover:bg-primary-container active:scale-95 z-20"
-              >
-                <span className="material-symbols-outlined text-3xl">arrow_forward_ios</span>
-              </button>
-            </>
-          )}
-
-          {/* Indicators */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {activities.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveGalleryIndex(i)}
-                className={`transition-all duration-300 rounded-full h-2 ${i === activeGalleryIndex ? 'bg-primary w-8 shadow-sm' : 'bg-slate-300 w-2 hover:bg-slate-400'}`}
-              />
-            ))}
-          </div>
+          </Carousel>
         </div>
       </section>
     </div>
