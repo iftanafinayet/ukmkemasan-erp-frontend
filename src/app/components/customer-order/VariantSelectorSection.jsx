@@ -19,6 +19,7 @@ export default function VariantSelectorSection({
     onSelectVariant,
     onSelectSize,
     onSelectColor,
+    showDirectVariants = true,
     getVariantId = defaultGetVariantId,
     getVariantSku = defaultGetVariantSku,
     getVariantStock = defaultGetVariantStock
@@ -37,36 +38,37 @@ export default function VariantSelectorSection({
             </div>
 
             <div className="space-y-6">
-                <div>
-                    <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Langsung</p>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {variants.map((variant) => {
-                            const variantId = String(getVariantId(variant));
-                            const isSelected = String(selectedVariantId) === variantId;
-                            const stock = getVariantStock(variant);
-                            const isOutOfStock = stock <= 0;
+                {showDirectVariants && (
+                    <div>
+                        <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Langsung</p>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            {variants.map((variant) => {
+                                const variantId = String(getVariantId(variant));
+                                const isSelected = String(selectedVariantId) === variantId;
+                                const stock = getVariantStock(variant);
+                                const isOutOfStock = stock <= 0;
 
-                            return (
-                                <button
-                                    key={variantId || `${variant.size}-${variant.color}-${getVariantSku(variant)}`}
-                                    type="button"
-                                    onClick={() => onSelectVariant?.(variant)}
-                                    className={`rounded-2xl border p-4 text-left transition-all ${
-                                        isSelected
+                                return (
+                                    <button
+                                        key={variantId || `${variant.size}-${variant.color}-${getVariantSku(variant)}`}
+                                        type="button"
+                                        onClick={() => onSelectVariant?.(variant)}
+                                        className={`rounded-2xl border p-4 text-left transition-all ${isSelected
                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
                                             : 'border-slate-200 bg-white hover:border-primary/30'
-                                    } ${isOutOfStock ? 'opacity-60' : ''}`}
-                                >
-                                    <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
-                                    <p className="mt-1 text-[11px] font-bold text-slate-400">{getVariantSku(variant)}</p>
-                                    <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
-                                        {isOutOfStock ? 'Stok habis' : `${stock.toLocaleString()} pcs`}
-                                    </p>
-                                </button>
-                            );
-                        })}
+                                            } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                    >
+                                        <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
+                                        <p className="mt-1 text-[11px] font-bold text-slate-400">{getVariantSku(variant)}</p>
+                                        <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
+                                            {isOutOfStock ? 'Stok habis' : `${stock.toLocaleString()} pcs`}
+                                        </p>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <div>
                     <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Ukuran</p>
