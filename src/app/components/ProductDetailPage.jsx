@@ -258,13 +258,13 @@ export default function ProductDetailPage() {
                                             <CarouselContent>
                                                 {product.images.map((img, idx) => (
                                                     <CarouselItem key={idx}>
-                                                        <div className="relative aspect-[16/9] overflow-hidden bg-slate-100 md:aspect-[21/9]">
+                                                        <div className="relative aspect-square overflow-hidden bg-white md:aspect-square">
                                                             <img
                                                                 src={img.url}
                                                                 alt={img.alt || product.name}
-                                                                className="h-full w-full object-cover"
+                                                                className="h-full w-full object-contain"
                                                             />
-                                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-6 pt-16 sm:p-8 sm:pt-20">
+                                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 via-transparent to-transparent p-6 pt-16 sm:p-8 sm:pt-20">
                                                                 <p className="text-xs font-black uppercase tracking-widest text-white/60">{product.category}</p>
                                                                 <h1 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">{product.name}</h1>
                                                             </div>
@@ -286,7 +286,7 @@ export default function ProductDetailPage() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="flex aspect-[21/9] flex-col items-center justify-center bg-primary/10">
+                                    <div className="flex aspect-square flex-col items-center justify-center bg-primary/10">
                                         <ImagePlus className="mb-3 h-16 w-16 text-primary/15" />
                                         <p className="text-sm font-bold uppercase tracking-widest text-primary/25">Belum ada foto</p>
                                     </div>
