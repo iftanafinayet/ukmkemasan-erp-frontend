@@ -20,6 +20,7 @@ export default function CustomerPortalHomePage({
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
+  const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
 
   const formatCurrency = (amount) => {
     if (!amount) return 'Rp 0';
