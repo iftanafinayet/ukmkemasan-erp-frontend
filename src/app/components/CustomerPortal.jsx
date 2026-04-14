@@ -337,13 +337,11 @@ export default function CustomerPortal() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCatalogs.map((catalog, index) => (
             <div
               key={catalog.key}
-              className={`group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer ${
-                index % 3 === 2 ? 'lg:col-span-1' : ''
-              }`}
+              className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer"
               onClick={() => navigate(`/portal/orders/create?catalog=${encodeURIComponent(catalog.key)}`)}
             >
               <div className="relative h-72 overflow-hidden bg-surface-container">
@@ -361,7 +359,7 @@ export default function CustomerPortal() {
                    </div>
                 )}
               </div>
-              <div className="p-8 flex flex-col flex-grow">
+              <div className="p-6 flex flex-col flex-grow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1 font-label">{catalog.category}</span>

@@ -160,7 +160,7 @@ export default function CustomerPortalHomePage({
             Semua Katalog <span className="material-symbols-outlined text-sm">open_in_new</span>
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {popularProducts.length > 0 ? popularProducts.map((product) => (
             <div key={product._id} onClick={onNavigateToCatalog} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
               <div className="aspect-[4/3] overflow-hidden bg-surface-container">
