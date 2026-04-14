@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-import { OrderCard } from '../OrderCard';
+import { OrderCard } from '../../OrderCard';
 import { SearchBar, EmptyState } from '../shared';
 
 export default function OrdersPage({
