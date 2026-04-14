@@ -378,6 +378,7 @@ export default function ProductDetailPage() {
                                         onSelectVariant={handleSelectVariant}
                                         onSelectSize={handleSelectSize}
                                         onSelectColor={handleSelectColor}
+                                        showDirectVariants={false}
                                         getVariantId={(variant) => variant._id}
                                         getVariantSku={(variant) => variant.sku || product.sku || '-'}
                                     />
