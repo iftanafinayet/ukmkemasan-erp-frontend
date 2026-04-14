@@ -275,6 +275,7 @@ export default function CustomerPortal() {
       onViewOrder={handleViewOrder}
       orders={orders}
       stats={stats}
+      onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
       popularProducts={popularProducts}
     />
   );
@@ -342,7 +343,7 @@ export default function CustomerPortal() {
             <div
               key={catalog.key}
               className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer"
-              onClick={() => navigate(`/portal/orders/create?catalog=${encodeURIComponent(catalog.key)}`)}
+              onClick={() => navigate(`/portal/products/${catalog.productId}`)}
             >
               <div className="relative h-72 overflow-hidden bg-surface-container">
                 {catalog.images?.length > 0 ? (

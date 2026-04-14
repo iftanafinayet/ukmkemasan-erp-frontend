@@ -5,6 +5,7 @@ export default function CustomerPortalHomePage({
   stats,
   landingContent,
   popularProducts = [],
+  onViewProduct,
   onNavigateToCatalog,
   onNavigateToCreateOrder
 }) {
@@ -162,7 +163,7 @@ export default function CustomerPortalHomePage({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
           {popularProducts.length > 0 ? popularProducts.map((product) => (
-            <div key={product._id} onClick={onNavigateToCatalog} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
+            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
               <div className="aspect-[4/3] overflow-hidden bg-surface-container">
                 {product.images?.[0] ? (
                   <img alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src={product.images[0].url} />
