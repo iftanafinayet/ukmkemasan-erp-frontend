@@ -29,14 +29,21 @@ export default function LandingContentSettingsSection({
   onArticleRemoveImage,
   onRemoveActivity,
   onRemoveArticle,
+  onPortfolioChange,
+  onPortfolioImageChange,
+  onPortfolioRemoveImage,
+  onAddPortfolio,
+  onRemovePortfolio,
   onSectionConfigChange,  // New prop for changing section configs
   onSave,
   saving,
 }) {
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
+  const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
   const articleSectionConfig = landingContent?.articleSectionConfig || { pillText: '', title: '', subtitle: '' };
   const gallerySectionConfig = landingContent?.gallerySectionConfig || { pillText: '', title: '', subtitle: '' };
+  const portfolioSectionConfig = landingContent?.portfolioSectionConfig || { pillText: '', title: '', subtitle: '' };
 
   return (
     <div className="space-y-8">
@@ -322,6 +329,132 @@ export default function LandingContentSettingsSection({
                     <button
                       type="button"
                       onClick={() => onActivityRemoveImage(activity.clientId)}
+                      className="rounded-2xl border border-red-100 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-500 transition-colors hover:bg-red-50"
+                    >
+                      Hapus Gambar
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-5 rounded-3xl border border-slate-100 bg-white p-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Portofolio Pelanggan</p>
+            <h4 className="mt-2 text-xl font-black text-slate-900">Hasil Karya & Case Studies</h4>
+          </div>
+          <button
+            type="button"
+            onClick={onAddPortfolio}
+            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary active:scale-95"
+          >
+            <Plus className="h-4 w-4" />
+            Tambah Portofolio
+          </button>
+        </div>
+
+        <div className="space-y-4 border-b border-slate-100 pb-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Header Section Portofolio</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormInput label="Teks Label (Pill)" value={portfolioSectionConfig.pillText} onChange={(value) => onSectionConfigChange('portfolioSectionConfig', 'pillText', value)} placeholder="Contoh: Portofolio" />
+            <FormInput label="Judul Utama" value={portfolioSectionConfig.title} onChange={(value) => onSectionConfigChange('portfolioSectionConfig', 'title', value)} placeholder="Contoh: Hasil Karya Client..." />
+          </div>
+          <TextAreaField label="Subjudul / Deskripsi Singkat" value={portfolioSectionConfig.subtitle} onChange={(value) => onSectionConfigChange('portfolioSectionConfig', 'subtitle', value)} rows={2} />
+        </div>
+
+        <div className="space-y-4 pt-4">
+          {portfolios.map((portfolio, index) => (
+            <div key={portfolio.clientId} className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 font-black text-primary">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-slate-900">{portfolio.clientName || `Portofolio ${index + 1}`}</p>
+                    <p className="text-xs text-slate-400">Tampilkan foto produk asli yang sudah diproduksi untuk client.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onRemovePortfolio(portfolio.clientId)}
+                  className="rounded-2xl border border-red-100 bg-white p-3 text-red-500 transition-colors hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormInput label="Nama Client" value={portfolio.clientName} onChange={(value) => onPortfolioChange(portfolio.clientId, 'clientName', value)} placeholder="Contoh: Kopi Kenangan" />
+                <FormInput label="Label / Kategori" value={portfolio.category} onChange={(value) => onPortfolioChange(portfolio.clientId, 'category', value)} placeholder="Contoh: Standing Pouch" />
+              </div>
+              <div className="mt-4">
+                <FormInput label="Judul Case Study" value={portfolio.title} onChange={(value) => onPortfolioChange(portfolio.clientId, 'title', value)} placeholder="Contoh: Packaging Kopi Premium" />
+              </div>
+              <div className="mt-4">
+                <TextAreaField label="Deskripsi Singkat" value={portfolio.description} onChange={(value) => onPortfolioChange(portfolio.clientId, 'description', value)} rows={3} />
+              </div>
+
+              <div className="mt-4 rounded-3xl border border-dashed border-slate-200 bg-white p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Camera className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-black text-slate-900">Foto Hasil Produksi</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-500">
+                        Upload foto hasil karya untuk ditampilkan sebagai bukti kualitas produksi.
+                      </p>
+                    </div>
+                  </div>
+                  <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary">
+                    <ImagePlus className="h-4 w-4" />
+                    Pilih Gambar
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => {
+                        onPortfolioImageChange(portfolio.clientId, event.target.files?.[0] || null);
+                        event.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-center">
+                  {(portfolio.imageFile || portfolio.imageUrl) && (
+                    <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 lg:h-40 lg:w-64">
+                      <img
+                        src={portfolio.imageFile ? URL.createObjectURL(portfolio.imageFile) : portfolio.imageUrl}
+                        alt={portfolio.clientName || 'Preview'}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-1 text-sm text-slate-500">
+                    {portfolio.imageFile ? (
+                      <p className="font-bold text-primary">File baru terpilih: {portfolio.imageFile.name}</p>
+                    ) : portfolio.imageUrl ? (
+                      <p className="font-bold text-slate-700">Gambar saat ini tersimpan di server.</p>
+                    ) : (
+                      <p>Belum ada gambar untuk portofolio ini.</p>
+                    )}
+                    <div className="inline-flex items-center gap-1 text-xs text-slate-400">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      Akan tampil di homepage sebagai hasil karya client.
+                    </div>
+                  </div>
+                  {(portfolio.imageUrl || portfolio.imageFile) && (
+                    <button
+                      type="button"
+                      onClick={() => onPortfolioRemoveImage(portfolio.clientId)}
                       className="rounded-2xl border border-red-100 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-500 transition-colors hover:bg-red-50"
                     >
                       Hapus Gambar
