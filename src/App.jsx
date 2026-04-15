@@ -127,21 +127,13 @@ function AppRoutes() {
       {/* Customer Portal — khusus customer */}
       <Route
         path="/portal"
-        element={
-          <AuthWrapper>
-            <CustomerPortal />
-          </AuthWrapper>
-        }
+        element={<CustomerPortal />}
       />
 
       {/* Customer Product Detail */}
       <Route
         path="/portal/products/:id"
-        element={
-          <AuthWrapper>
-            <ProductDetailPage />
-          </AuthWrapper>
-        }
+        element={<ProductDetailPage />}
       />
 
       {/* Legacy /dashboard redirect berdasarkan role */}
