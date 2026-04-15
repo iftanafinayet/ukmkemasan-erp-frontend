@@ -37,11 +37,25 @@ export const createEmptyActivity = () => ({
   imageRemoved: false,
 });
 
+export const createEmptyPortfolio = () => ({
+  clientId: createClientId('portfolio'),
+  clientName: '',
+  title: '',
+  category: '',
+  description: '',
+  imageUrl: '',
+  imagePublicId: '',
+  imageFile: null,
+  imageRemoved: false,
+});
+
 export const createEmptyLandingContent = () => ({
   articles: [],
   activities: [],
+  portfolios: [],
   articleSectionConfig: { pillText: 'Informasi Menarik', title: 'Artikel Pilihan Untuk Meningkatkan Produk Anda', subtitle: 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.' },
   gallerySectionConfig: { pillText: 'Galeri', title: '', subtitle: '' },
+  portfolioSectionConfig: { pillText: 'Portofolio', title: 'Hasil Karya Terbaik Bersama Client Kami', subtitle: 'Lihat bagaimana kami membantu berbagai brand meningkatkan nilai jual produk mereka melalui kemasan yang tepat.' },
 });
 
 export const normalizeLandingContent = (payload = {}) => ({
@@ -63,8 +77,18 @@ export const normalizeLandingContent = (payload = {}) => ({
         imageRemoved: false,
       }))
     : [],
+  portfolios: Array.isArray(payload.portfolios)
+    ? payload.portfolios.map((portfolio) => ({
+        ...createEmptyPortfolio(),
+        ...portfolio,
+        clientId: portfolio.clientId || portfolio._id || createClientId('portfolio'),
+        imageFile: null,
+        imageRemoved: false,
+      }))
+    : [],
   articleSectionConfig: payload.articleSectionConfig || { pillText: '', title: '', subtitle: '' },
   gallerySectionConfig: payload.gallerySectionConfig || { pillText: '', title: '', subtitle: '' },
+  portfolioSectionConfig: payload.portfolioSectionConfig || { pillText: 'Portofolio', title: '', subtitle: '' },
 });
 
 export const buildLandingContentPayload = (landingContent = createEmptyLandingContent()) => ({
@@ -98,6 +122,20 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
         removeImage: Boolean(activity.imageRemoved),
       }))
     : [],
+  portfolios: Array.isArray(landingContent.portfolios)
+    ? landingContent.portfolios.map((portfolio) => ({
+        _id: portfolio._id,
+        clientId: portfolio.clientId,
+        clientName: portfolio.clientName,
+        title: portfolio.title,
+        category: portfolio.category,
+        description: portfolio.description,
+        imageUrl: portfolio.imageUrl,
+        imagePublicId: portfolio.imagePublicId,
+        removeImage: Boolean(portfolio.imageRemoved),
+      }))
+    : [],
   articleSectionConfig: landingContent.articleSectionConfig,
   gallerySectionConfig: landingContent.gallerySectionConfig,
+  portfolioSectionConfig: landingContent.portfolioSectionConfig,
 });

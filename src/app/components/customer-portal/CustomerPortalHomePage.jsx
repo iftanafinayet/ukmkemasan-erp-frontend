@@ -23,6 +23,7 @@ export default function CustomerPortalHomePage({
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
+  const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
 
   return (
     <div className="relative space-y-12 animate-in fade-in duration-500">
@@ -216,6 +217,60 @@ export default function CustomerPortalHomePage({
                   <div className="h-6 bg-surface-container rounded w-3/4"></div>
                   <div className="h-4 bg-surface-container rounded w-full"></div>
                   <div className="h-4 bg-surface-container rounded w-1/2"></div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Portofolio Hasil Karya Section */}
+      <section className="space-y-10 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-3">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-[10px] font-black uppercase tracking-[0.2em] text-primary border border-primary/10">
+              {landingContent?.portfolioSectionConfig?.pillText || 'Hasil Karya'}
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 leading-tight">
+              {landingContent?.portfolioSectionConfig?.title || 'Portofolio Client Kami'}
+            </h2>
+            <p className="text-slate-500 font-medium max-w-2xl text-sm md:text-base leading-relaxed">
+              {landingContent?.portfolioSectionConfig?.subtitle || 'Lihat bagaimana brand-brand ternama mempercayakan kemasan produk mereka kepada kami.'}
+            </p>
+          </div>
+          <button onClick={onNavigateToCatalog} className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-[0.18em] rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/10">
+            Mulai Project Anda
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {portfolios.length > 0 ? portfolios.map((portfolio, idx) => (
+            <div key={idx} className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+              <div className="aspect-[4/5] overflow-hidden bg-slate-100">
+                <img
+                  src={portfolio.imageUrl || "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"}
+                  alt={portfolio.clientName}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="space-y-2">
+                  <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{portfolio.category || 'Packaging'}</div>
+                  <h4 className="font-bold text-2xl font-headline leading-tight">{portfolio.clientName}</h4>
+                  <p className="text-sm font-medium text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                    {portfolio.description || portfolio.title}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )) : (
+            // Fallback content
+            [1, 2, 3].map((i) => (
+              <div key={i} className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm">
+                <div className="aspect-[4/5] bg-slate-200 animate-pulse"></div>
+                <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/60 to-transparent">
+                   <div className="h-4 bg-white/20 rounded w-1/4 mb-2"></div>
+                   <div className="h-6 bg-white/40 rounded w-3/4"></div>
                 </div>
               </div>
             ))

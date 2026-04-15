@@ -748,6 +748,15 @@ export default function CustomerDashboard() {
     }));
   };
 
+  const updatePortfolioField = (clientId, field, value) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      portfolios: currentContent.portfolios.map((portfolio) => (
+        portfolio.clientId === clientId ? { ...portfolio, [field]: value } : portfolio
+      )),
+    }));
+  };
+
   const handleAddLandingArticle = () => {
     setLandingContent((currentContent) => ({
       ...currentContent,
@@ -773,6 +782,20 @@ export default function CustomerDashboard() {
     setLandingContent((currentContent) => ({
       ...currentContent,
       activities: currentContent.activities.filter((activity) => activity.clientId !== clientId),
+    }));
+  };
+
+  const handleAddLandingPortfolio = () => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      portfolios: [...currentContent.portfolios, createEmptyPortfolio()],
+    }));
+  };
+
+  const handleRemoveLandingPortfolio = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      portfolios: currentContent.portfolios.filter((portfolio) => portfolio.clientId !== clientId),
     }));
   };
 
@@ -840,6 +863,38 @@ export default function CustomerDashboard() {
     }));
   };
 
+  const handleLandingPortfolioImageChange = (clientId, file) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      portfolios: currentContent.portfolios.map((portfolio) => (
+        portfolio.clientId === clientId
+          ? {
+              ...portfolio,
+              imageFile: file || null,
+              imageRemoved: false,
+            }
+          : portfolio
+      )),
+    }));
+  };
+
+  const handleLandingPortfolioRemoveImage = (clientId) => {
+    setLandingContent((currentContent) => ({
+      ...currentContent,
+      portfolios: currentContent.portfolios.map((portfolio) => (
+        portfolio.clientId === clientId
+          ? {
+              ...portfolio,
+              imageFile: null,
+              imageUrl: '',
+              imagePublicId: '',
+              imageRemoved: true,
+            }
+          : portfolio
+      )),
+    }));
+  };
+
   const handleLandingSectionConfigChange = (sectionType, field, value) => {
     setLandingContent((currentContent) => ({
       ...currentContent,
@@ -863,9 +918,15 @@ export default function CustomerDashboard() {
         }
       });
 
-      landingContent.activities.forEach((activity) => {
+      (landingContent.activities || []).forEach((activity) => {
         if (activity.imageFile) {
           formData.append(`activityImage:${activity.clientId}`, activity.imageFile);
+        }
+      });
+
+      (landingContent.portfolios || []).forEach((portfolio) => {
+        if (portfolio.imageFile) {
+          formData.append(`portfolioImage:${portfolio.clientId}`, portfolio.imageFile);
         }
       });
 
@@ -1043,6 +1104,11 @@ export default function CustomerDashboard() {
             onChangePassword={handleChangePassword}
             onRemoveActivity={handleRemoveLandingActivity}
             onRemoveArticle={handleRemoveLandingArticle}
+            onPortfolioChange={updatePortfolioField}
+            onPortfolioImageChange={handleLandingPortfolioImageChange}
+            onPortfolioRemoveImage={handleLandingPortfolioRemoveImage}
+            onAddPortfolio={handleAddLandingPortfolio}
+            onRemovePortfolio={handleRemoveLandingPortfolio}
             onSaveProfile={handleSaveProfile}
             onSaveLandingContent={handleSaveLandingContent}
             onArticleChange={updateArticleField}

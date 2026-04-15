@@ -28,6 +28,11 @@ export default function SettingsPage({
   onArticleChange,
   onArticleImageChange,
   onArticleRemoveImage,
+  onPortfolioChange,
+  onPortfolioImageChange,
+  onPortfolioRemoveImage,
+  onAddPortfolio,
+  onRemovePortfolio,
   passwords,
   profile,
   savingLandingContent,
@@ -128,6 +133,11 @@ export default function SettingsPage({
           onArticleRemoveImage={onArticleRemoveImage}
           onRemoveActivity={onRemoveActivity}
           onRemoveArticle={onRemoveArticle}
+          onPortfolioChange={onPortfolioChange}
+          onPortfolioImageChange={onPortfolioImageChange}
+          onPortfolioRemoveImage={onPortfolioRemoveImage}
+          onAddPortfolio={onAddPortfolio}
+          onRemovePortfolio={onRemovePortfolio}
           onSectionConfigChange={onSectionConfigChange}
           onSave={onSaveLandingContent}
           saving={savingLandingContent}
