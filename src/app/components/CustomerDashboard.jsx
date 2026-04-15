@@ -48,6 +48,7 @@ import {
   buildLandingContentPayload,
   createEmptyActivity,
   createEmptyArticle,
+  createEmptyPortfolio,
   createEmptyLandingContent,
   normalizeLandingContent,
 } from '../utils/landingContent';
