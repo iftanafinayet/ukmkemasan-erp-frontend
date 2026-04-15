@@ -44,15 +44,32 @@ export default function CustomerPortal() {
   const [orderFilter, setOrderFilter] = useState('all');
 
   const fetchData = useCallback(async () => {
+    const token = storage.getToken();
     setLoading(true);
     try {
       switch (activeMenu) {
         case 'dashboard': {
-          const [ordersResponse, landingContentResponse, popularResponse] = await Promise.all([
-            api.get(ENDPOINTS.MY_ORDERS),
+          const promises = [
             api.get(ENDPOINTS.LANDING_CONTENT),
             api.get(ENDPOINTS.POPULAR_PRODUCTS),
-          ]);
+          ];
+
+          if (token) {
+            promises.unshift(api.get(ENDPOINTS.MY_ORDERS));
+          }
+
+          const results = await Promise.all(promises);
+          
+          let ordersResponse = { data: [] };
+          let landingContentResponse;
+          let popularResponse;
+
+          if (token) {
+            [ordersResponse, landingContentResponse, popularResponse] = results;
+          } else {
+            [landingContentResponse, popularResponse] = results;
+          }
+
           const allOrders = ordersResponse.data || [];
           setOrders(allOrders);
           setLandingContent(normalizeLandingContent(landingContentResponse.data));
@@ -70,6 +87,10 @@ export default function CustomerPortal() {
           break;
         }
         case 'orders': {
+          if (!token) {
+            setOrders([]);
+            break;
+          }
           const response = await api.get(ENDPOINTS.MY_ORDERS);
           setOrders(response.data || []);
           break;
@@ -79,6 +100,10 @@ export default function CustomerPortal() {
           break;
         case 'profile':
         case 'settings': {
+          if (!token) {
+            setProfile({ name: '', email: '', phone: '', address: '' });
+            break;
+          }
           const response = await api.get(ENDPOINTS.PROFILE);
           setProfile({
             name: response.data.name || '',
@@ -94,7 +119,6 @@ export default function CustomerPortal() {
     } catch (error) {
       if (error.response?.status === 401) {
         storage.clear();
-        window.location.href = '/login';
         return;
       }
       toast.error('Gagal memuat data.');
@@ -204,6 +228,13 @@ export default function CustomerPortal() {
   };
 
   const handleCheckoutCart = async () => {
+    const token = storage.getToken();
+    if (!token) {
+      toast.info('Silahkan login terlebih dahulu untuk melakukan checkout.');
+      navigate('/login?redirect=/portal?menu=cart');
+      return;
+    }
+
     const items = getCartItems();
     if (items.length === 0) {
       toast.error('Keranjang masih kosong.');
@@ -281,17 +312,37 @@ export default function CustomerPortal() {
     />
   );
 
-  const renderOrders = () => (
-    <CustomerPortalOrdersSection
-      formatCurrency={formatCurrency}
-      getStatusLabel={getStatusLabel}
-      onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
-      onViewOrder={handleViewOrder}
-      orderFilter={orderFilter}
-      orders={orders}
-      setOrderFilter={setOrderFilter}
-    />
-  );
+  const renderOrders = () => {
+    if (!storage.getToken()) {
+      return (
+        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
+            <RefreshCw size={40} />
+          </div>
+          <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
+          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
+          <button
+            onClick={() => navigate('/login?redirect=/portal?menu=orders')}
+            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            Masuk Sekarang
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <CustomerPortalOrdersSection
+        formatCurrency={formatCurrency}
+        getStatusLabel={getStatusLabel}
+        onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+        onViewOrder={handleViewOrder}
+        orderFilter={orderFilter}
+        orders={orders}
+        setOrderFilter={setOrderFilter}
+      />
+    );
+  };
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
   const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
@@ -310,19 +361,47 @@ export default function CustomerPortal() {
     />
   );
 
-  const renderProfile = () => (
-    <CustomerPortalProfileSection
-      onChangePassword={handleChangePassword}
-      onSaveProfile={handleSaveProfile}
-      passwords={passwords}
-      profile={profile}
-      savingPassword={savingPassword}
-      savingProfile={savingProfile}
-      setPasswords={setPasswords}
-      setProfile={setProfile}
-      user={user}
-    />
-  );
+  const renderProfile = () => {
+    if (!storage.getToken()) {
+      return (
+        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
+            <Plus size={40} />
+          </div>
+          <h3 className="text-xl font-black text-slate-800 mb-2">Akses Terbatas</h3>
+          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengelola profil dan pengaturan akun Anda.</p>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => navigate('/login?redirect=/portal?menu=profile')}
+              className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              Masuk
+            </button>
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
+            >
+              Daftar
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <CustomerPortalProfileSection
+        onChangePassword={handleChangePassword}
+        onSaveProfile={handleSaveProfile}
+        passwords={passwords}
+        profile={profile}
+        savingPassword={savingPassword}
+        savingProfile={savingProfile}
+        setPasswords={setPasswords}
+        setProfile={setProfile}
+        user={user}
+      />
+    );
+  };
 
   const renderPage = () => {
     if (loading) return <LoadingState />;

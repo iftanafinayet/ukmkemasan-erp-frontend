@@ -23,10 +23,17 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear user data dan redirect ke login
+      // Clear user data
       storage.removeToken();
       storage.removeUser();
-      window.location.href = '/login';
+      
+      // Hanya redirect jika bukan di halaman portal (yang sekarang public-friendly)
+      const isPortal = window.location.pathname.startsWith('/portal');
+      const isPublic = isPortal || window.location.pathname === '/login' || window.location.pathname === '/register';
+      
+      if (!isPublic) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

@@ -40,7 +40,6 @@ export default function ProductDetailPage() {
         } catch (err) {
             if (err.response?.status === 401) {
                 storage.clear();
-                window.location.href = '/login';
                 return;
             }
             toast.error('Gagal memuat detail produk.');
@@ -479,7 +478,7 @@ export default function ProductDetailPage() {
                                                         className="w-full h-16 rounded-2xl bg-primary text-white flex items-center justify-center gap-3 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-primary/20"
                                                     >
                                                         <ShoppingCart size={22} />
-                                                        <span className="text-lg font-black">{isAdmin ? 'Mode Admin' : 'Checkout Sekarang'}</span>
+                                                        <span className="text-lg font-black">{isAdmin ? 'Mode Admin' : !storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}</span>
                                                     </button>
                                                 </div>
                                             </div>

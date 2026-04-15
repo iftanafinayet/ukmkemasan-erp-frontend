@@ -76,27 +76,46 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
           })}
         </div>
         <div className="flex items-center space-x-4">
-          <button 
-            onClick={handleLogout} 
-            className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 hover:from-slate-200 hover:to-slate-100 text-slate-700 font-semibold rounded-full border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out active:scale-95 group"
-          >
-            <span className="text-sm">Keluar</span>
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
-          <button 
-            onClick={handleLogout} 
-            className="sm:hidden flex items-center justify-center p-2 text-slate-600 hover:text-slate-900 transition-colors"
-            title="Keluar"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 overflow-hidden flex flex-shrink-0 items-center justify-center text-white font-black text-lg shadow-lg">
-            {user?.name?.charAt(0) || 'C'}
-          </div>
+          {storage.getToken() ? (
+            <>
+              <button 
+                onClick={handleLogout} 
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 hover:from-slate-200 hover:to-slate-100 text-slate-700 font-semibold rounded-full border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out active:scale-95 group"
+              >
+                <span className="text-sm">Keluar</span>
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+              <button 
+                onClick={handleLogout} 
+                className="sm:hidden flex items-center justify-center p-2 text-slate-600 hover:text-slate-900 transition-colors"
+                title="Keluar"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 overflow-hidden flex flex-shrink-0 items-center justify-center text-white font-black text-lg shadow-lg">
+                {user?.name?.charAt(0) || 'C'}
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button 
+                onClick={() => navigate('/login')}
+                className="px-4 py-2 text-primary font-bold text-sm hover:text-primary/80 transition-colors"
+              >
+                Masuk
+              </button>
+              <button 
+                onClick={() => navigate('/register')}
+                className="px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+              >
+                Daftar
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="bg-slate-100 h-[1px] w-full absolute bottom-0"></div>
