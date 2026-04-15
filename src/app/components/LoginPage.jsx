@@ -213,13 +213,27 @@ export default function LoginPage() {
               </div>
             </form>
 
-            <div className="mt-12 text-center">
+            <div className="mt-12 text-center space-y-4">
               <p className="text-sm font-medium text-slate-500">
                 New on our platform?{' '}
                 <Link to="/register" className="text-primary font-black hover:underline underline-offset-4 decoration-2">
                   Create Account
                 </Link>
               </p>
+
+              <div className="relative flex items-center gap-4 py-2">
+                <div className="flex-1 h-px bg-slate-100"></div>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">OR</span>
+                <div className="flex-1 h-px bg-slate-100"></div>
+              </div>
+
+              <button
+                onClick={() => navigate('/portal')}
+                className="w-full flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-slate-600 transition-all hover:border-primary/30 hover:text-primary active:scale-95"
+              >
+                <Eye className="h-4 w-4" />
+                Masuk Sebagai Tamu (Guest)
+              </button>
             </div>
           </div>
 
