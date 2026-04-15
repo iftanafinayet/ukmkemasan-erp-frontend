@@ -19,6 +19,7 @@ function RoleRedirect() {
   if (user?.role === 'admin') {
     return <Navigate to="/admin" replace />;
   }
+  // Default ke portal (bisa untuk guest)
   return <Navigate to="/portal" replace />;
 }
 
@@ -139,16 +140,12 @@ function AppRoutes() {
       {/* Legacy /dashboard redirect berdasarkan role */}
       <Route
         path="/dashboard"
-        element={
-          <AuthWrapper>
-            <RoleRedirect />
-          </AuthWrapper>
-        }
+        element={<RoleRedirect />}
       />
 
       {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/portal" replace />} />
+      <Route path="*" element={<Navigate to="/portal" replace />} />
     </Routes>
   );
 

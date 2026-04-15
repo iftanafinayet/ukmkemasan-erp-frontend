@@ -26,10 +26,11 @@ api.interceptors.response.use(
       // Clear user data
       storage.removeToken();
       storage.removeUser();
-      
-      // Hanya redirect jika bukan di halaman portal (yang sekarang public-friendly)
+
+      // Hanya redirect jika bukan di halaman public atau portal
       const isPortal = window.location.pathname.startsWith('/portal');
-      const isPublic = isPortal || window.location.pathname === '/login' || window.location.pathname === '/register';
+      const isPublic = isPortal || 
+                       ['/', '/dashboard', '/login', '/register'].includes(window.location.pathname);
       
       if (!isPublic) {
         window.location.href = '/login';
