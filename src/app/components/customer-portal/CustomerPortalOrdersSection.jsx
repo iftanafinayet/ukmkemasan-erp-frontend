@@ -8,7 +8,8 @@ export default function CustomerPortalOrdersSection({
   getStatusLabel,
   formatCurrency,
   onNavigateToCreateOrder,
-  onViewOrder
+  onViewOrder,
+  onNavigateToPayment
 }) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -127,7 +128,7 @@ export default function CustomerPortalOrdersSection({
                     </div>
                     <div className="flex items-end shrink-0">
                        {isPending ? (
-                         <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">Panduan Bayar</button>
+                         <button onClick={(e) => { e.stopPropagation(); onNavigateToPayment(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">Bayar Sekarang</button>
                        ) : isCompleted ? (
                          <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
                        ) : (
