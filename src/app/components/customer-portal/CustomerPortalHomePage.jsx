@@ -243,39 +243,57 @@ export default function CustomerPortalHomePage({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {portfolios.length > 0 ? portfolios.map((portfolio, idx) => (
-            <div key={idx} className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-              <div className="aspect-[4/5] overflow-hidden bg-slate-100">
-                <img
-                  src={portfolio.imageUrl || "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"}
-                  alt={portfolio.clientName}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <div className="space-y-2">
-                  <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{portfolio.category || 'Packaging'}</div>
-                  <h4 className="font-bold text-2xl font-headline leading-tight">{portfolio.clientName}</h4>
-                  <p className="text-sm font-medium text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    {portfolio.description || portfolio.title}
-                  </p>
+        <Carousel
+          className="w-full"
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+        >
+          <CarouselContent className="-ml-4 md:-ml-8">
+            {portfolios.length > 0 ? portfolios.map((portfolio, idx) => (
+              <CarouselItem key={idx} className="pl-4 md:pl-8 basis-full sm:basis-1/2 lg:basis-1/3">
+                <div className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 h-full">
+                  <div className="aspect-[4/5] overflow-hidden bg-slate-100">
+                    <img
+                      src={portfolio.imageUrl || "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"}
+                      alt={portfolio.clientName}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/95 via-black/60 to-transparent text-white pt-20">
+                    <div className="space-y-2">
+                      <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{portfolio.category || 'Packaging'}</div>
+                      <h4 className="font-bold text-2xl font-headline leading-tight">{portfolio.clientName}</h4>
+                      <p className="text-sm font-medium text-white/70 line-clamp-2">
+                        {portfolio.description || portfolio.title}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </CarouselItem>
+            )) : (
+              // Fallback content
+              [1, 2, 3].map((i) => (
+                <CarouselItem key={i} className="pl-4 md:pl-8 basis-full sm:basis-1/2 lg:basis-1/3">
+                  <div className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm h-full">
+                    <div className="aspect-[4/5] bg-slate-200 animate-pulse"></div>
+                    <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/60 to-transparent">
+                      <div className="h-4 bg-white/20 rounded w-1/4 mb-2"></div>
+                      <div className="h-6 bg-white/40 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))
+            )}
+          </CarouselContent>
+          {portfolios.length > 3 && (
+            <div className="flex justify-center gap-4 mt-8">
+              <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-200 text-slate-400 hover:border-primary hover:text-primary transition-all shadow-sm" />
+              <CarouselNext className="static translate-y-0 h-12 w-12 border-slate-200 text-slate-400 hover:border-primary hover:text-primary transition-all shadow-sm" />
             </div>
-          )) : (
-            // Fallback content
-            [1, 2, 3].map((i) => (
-              <div key={i} className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm">
-                <div className="aspect-[4/5] bg-slate-200 animate-pulse"></div>
-                <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/60 to-transparent">
-                   <div className="h-4 bg-white/20 rounded w-1/4 mb-2"></div>
-                   <div className="h-6 bg-white/40 rounded w-3/4"></div>
-                </div>
-              </div>
-            ))
           )}
-        </div>
+        </Carousel>
       </section>
 
       {/* Artikel Terkini Section */}
