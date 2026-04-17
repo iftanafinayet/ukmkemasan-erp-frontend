@@ -188,9 +188,9 @@ export default function CustomerPaymentPage() {
               </div>
             </div>
 
-            {/* Content Section - Single Column matching Cart Style */}
-            <div className="max-w-4xl space-y-8">
-              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
+            {/* Middle Section - 2 Grid: Invoice Left, Konfirmasi Right */}
+            <div className="grid gap-8 lg:grid-cols-[1fr_0.4fr]">
+              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm h-fit">
                 <div className="flex flex-col gap-4 border-b border-slate-100 pb-8 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Invoice</p>
@@ -251,51 +251,53 @@ export default function CustomerPaymentPage() {
                 </div>
               </div>
 
-              {/* Payment History Section */}
-              {payments.length > 0 && (
-                <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Riwayat Pembayaran</p>
-                  <h3 className="mt-3 text-2xl font-black text-slate-900 mb-6">Payment Ledger</h3>
-                  <div className="space-y-4">
-                    {payments.map((payment) => (
-                      <div key={payment._id || payment.paymentNumber} className="rounded-3xl border border-slate-100 bg-slate-50 px-6 py-5">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                          <div>
-                            <p className="text-sm font-black text-slate-900">{payment.paymentNumber}</p>
-                            <p className="mt-1 text-xs font-medium text-slate-500">
-                              {formatDateTime(payment.paymentDate || payment.createdAt)}
-                            </p>
-                          </div>
-                          <div className="text-left sm:text-right">
-                            <p className="text-lg font-black text-primary">{formatCurrency(payment.amount)}</p>
-                            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{payment.method || 'Payment'}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Help Section matching help card style */}
-              <div className="rounded-[40px] bg-emerald-50 border border-emerald-100 p-8 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Butuh Bantuan?</p>
-                <h3 className="mt-3 text-2xl font-black text-slate-900">Konfirmasi Pembayaran</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami untuk konfirmasi manual dengan menyertakan nomor Order: <span className="font-bold text-slate-900">{order?.orderNumber || orderId}</span>
-                </p>
-                <div className="mt-8 flex gap-8 border-t border-emerald-200/50 pt-8">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Order dibuat</p>
-                    <p className="mt-1 text-sm font-bold text-slate-900">{formatDate(order?.createdAt)}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Customer</p>
-                    <p className="mt-1 text-sm font-bold text-slate-900">{user?.name || order?.customer?.name}</p>
+              {/* Help/Konfirmasi Card - Right Side */}
+              <div className="space-y-6">
+                <div className="rounded-[40px] bg-emerald-50 border border-emerald-100 p-8 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Konfirmasi Pembayaran</p>
+                  <h3 className="mt-3 text-2xl font-black text-slate-900 leading-tight">Butuh Bantuan?</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami.
+                  </p>
+                  <div className="mt-8 space-y-4 border-t border-emerald-200/50 pt-8">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Order ID</p>
+                      <p className="mt-1 text-sm font-bold text-slate-900">{order?.orderNumber || orderId}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Customer</p>
+                      <p className="mt-1 text-sm font-bold text-slate-900">{user?.name || order?.customer?.name}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Payment Ledger Section - Full Width Bottom */}
+            {payments.length > 0 && (
+              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Riwayat Pembayaran</p>
+                <h3 className="mt-3 text-2xl font-black text-slate-900 mb-8">Payment Ledger</h3>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {payments.map((payment) => (
+                    <div key={payment._id || payment.paymentNumber} className="rounded-[32px] border border-slate-100 bg-slate-50 p-6">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-sm font-black text-slate-900">{payment.paymentNumber}</p>
+                          <p className="mt-1 text-xs font-medium text-slate-500">
+                            {formatDateTime(payment.paymentDate || payment.createdAt)}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-black text-primary">{formatCurrency(payment.amount)}</p>
+                          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{payment.method || 'Payment'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
