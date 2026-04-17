@@ -137,21 +137,22 @@ export default function CustomerPaymentPage() {
     <div className="min-h-screen bg-[#f6f3ed] text-slate-900">
       <CustomerNavbar activeMenu="orders" />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
-        <section className="overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.18),_transparent_42%),linear-gradient(135deg,_#0f172a,_#1f2937)] px-6 py-8 text-white sm:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section className="overflow-hidden rounded-[32px] bg-slate-900 border border-slate-800 px-6 py-8 text-white sm:px-8 relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -mr-32 -mt-32"></div>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between relative z-10">
             <div className="max-w-2xl">
               <button
                 type="button"
                 onClick={() => navigate('/portal?menu=orders')}
-                className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white/90 transition hover:bg-white/15"
+                className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
               >
                 <ArrowLeft size={16} />
                 Kembali ke pesanan
               </button>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-teal-200">Midtrans Checkout</p>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-primary">Midtrans Checkout</p>
               <h1 className="mt-3 text-4xl font-black tracking-tight">Bayar Pesanan #{order?.orderNumber || orderId}</h1>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-slate-200">
-                Halaman ini membuat transaksi Midtrans Snap untuk sisa tagihan order Anda. Pembayaran akan diverifikasi dari notifikasi Midtrans ke backend.
+              <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
+                Penyelesaian pembayaran untuk pesanan Anda. Silakan klik tombol bayar untuk membuka popup Midtrans Snap.
               </p>
             </div>
 
@@ -224,28 +225,14 @@ export default function CustomerPaymentPage() {
                   </div>
 
                   <div className="rounded-3xl bg-slate-50 p-5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Informasi Midtrans</p>
-                    <div className="mt-4 space-y-3 text-sm text-slate-600">
-                      <div className="flex items-start gap-3 rounded-2xl bg-white px-4 py-3">
-                        <ShieldCheck className="mt-0.5 text-emerald-600" size={18} />
-                        <div>
-                          <p className="font-bold text-slate-900">Pembayaran diproses di Midtrans Snap</p>
-                          <p className="mt-1 text-xs leading-5 text-slate-500">
-                            Status invoice akan berubah setelah backend menerima notifikasi resmi dari Midtrans.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex justify-between gap-4">
-                        <span>Client key frontend</span>
-                        <span className={`font-bold ${resolvedClientKey ? 'text-emerald-600' : 'text-rose-600'}`}>
-                          {resolvedClientKey ? 'Configured' : 'Missing'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between gap-4">
-                        <span>Backend Midtrans</span>
-                        <span className={`font-bold ${paymentData?.midtrans?.clientKeyConfigured ? 'text-emerald-600' : 'text-rose-600'}`}>
-                          {paymentData?.midtrans?.clientKeyConfigured ? 'Configured' : 'Missing'}
-                        </span>
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Pesan Pengiriman</p>
+                    <div className="mt-4 flex items-start gap-3 rounded-2xl bg-white px-4 py-3">
+                      <ShieldCheck className="mt-0.5 text-primary" size={18} />
+                      <div>
+                        <p className="font-bold text-slate-900">Pembayaran Aman & Terenkripsi</p>
+                        <p className="mt-1 text-xs leading-5 text-slate-500">
+                          Data pembayaran Anda diproses secara aman melalui gerbang pembayaran Midtrans yang telah tersertifikasi.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -324,11 +311,11 @@ export default function CustomerPaymentPage() {
                 </div>
               </div>
 
-              <div className="rounded-[32px] border border-slate-200 bg-[#0f766e] p-6 text-white shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-teal-100">Butuh Bantuan</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight">Konfirmasi Pembayaran</h2>
-                <p className="mt-4 text-sm leading-6 text-teal-50">
-                  Jika status belum berubah beberapa menit setelah pembayaran selesai, cek webhook Midtrans di backend lalu muat ulang halaman ini.
+              <div className="rounded-[32px] border border-primary/20 bg-primary/10 p-6 text-slate-800 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary">Butuh Bantuan</p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Konfirmasi Pembayaran</h2>
+                <p className="mt-4 text-sm leading-6 text-slate-600">
+                  Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami untuk konfirmasi manual.
                 </p>
                 <div className="mt-6 rounded-3xl bg-white/10 px-4 py-4 text-sm">
                   <p className="font-black">Order dibuat</p>
