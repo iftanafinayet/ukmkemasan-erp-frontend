@@ -136,7 +136,7 @@ export default function CustomerPaymentPage() {
   return (
     <div className="min-h-screen bg-[#f6f3ed] text-slate-900">
       <CustomerNavbar activeMenu="orders" />
-      
+
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
         {/* Header Style matching Catalog/Cart */}
         <section className="relative">
@@ -152,9 +152,8 @@ export default function CustomerPaymentPage() {
               <RefreshCw className={loading ? 'animate-spin' : ''} size={20} />
             </button>
           </div>
-          
+
           <div className="mt-12">
-            <h2 className="text-4xl font-black text-slate-900">Pembayaran Pesanan</h2>
             <p className="mt-2 text-slate-500">Selesaikan transaksi pembayaran untuk pesanan Anda.</p>
           </div>
         </section>
@@ -174,7 +173,7 @@ export default function CustomerPaymentPage() {
                 <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.totalAmount)}</p>
                 <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-slate-50 opacity-50"></div>
               </div>
-              
+
               <div className="relative overflow-hidden rounded-[32px] bg-white p-8 shadow-sm border border-slate-100/50">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sudah Dibayar</p>
                 <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.paidAmount)}</p>
@@ -199,9 +198,8 @@ export default function CustomerPaymentPage() {
                       Diterbitkan {formatDate(invoice?.issuedDate)} • Jatuh tempo {formatDate(invoice?.dueDate)}
                     </p>
                   </div>
-                  <div className={`inline-flex items-center rounded-full px-5 py-2.5 text-xs font-black uppercase tracking-widest ${
-                    isPaid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                  }`}>
+                  <div className={`inline-flex items-center rounded-full px-5 py-2.5 text-xs font-black uppercase tracking-widest ${isPaid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                    }`}>
                     {isPaid ? 'Lunas' : invoice?.status || 'Menunggu'}
                   </div>
                 </div>
