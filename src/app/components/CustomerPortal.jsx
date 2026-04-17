@@ -444,13 +444,6 @@ export default function CustomerPortal() {
       <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
         {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
           <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
-            <button
-              type="button"
-              onClick={fetchData}
-              className="self-end rounded-xl border border-outline-variant/15 bg-white p-4 text-on-secondary-container shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-surface-container-low sm:self-auto"
-            >
-              <RefreshCw size={24} className={loading ? 'animate-spin text-primary' : ''} />
-            </button>
           </header>
         )}
 
