@@ -59,7 +59,7 @@ export default function CustomerPortal() {
           }
 
           const results = await Promise.all(promises);
-          
+
           let ordersResponse = { data: [] };
           let landingContentResponse;
           let popularResponse;
@@ -444,10 +444,6 @@ export default function CustomerPortal() {
       <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
         {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
           <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">The Archive Portal</span>
-              <h1 className="text-3xl font-black tracking-tighter text-slate-900 capitalize sm:text-4xl mt-2 font-headline">{pageTitle}</h1>
-            </div>
             <button
               type="button"
               onClick={fetchData}
