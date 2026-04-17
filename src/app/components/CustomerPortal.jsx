@@ -177,6 +177,10 @@ export default function CustomerPortal() {
     }
   };
 
+  const handleNavigateToPayment = (orderId) => {
+    navigate(`/portal/orders/${orderId}/payment`);
+  };
+
   const handleSaveProfile = async (event) => {
     event.preventDefault();
     setSavingProfile(true);
@@ -336,6 +340,7 @@ export default function CustomerPortal() {
         formatCurrency={formatCurrency}
         getStatusLabel={getStatusLabel}
         onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+        onNavigateToPayment={handleNavigateToPayment}
         onViewOrder={handleViewOrder}
         orderFilter={orderFilter}
         orders={orders}
@@ -464,10 +469,10 @@ export default function CustomerPortal() {
           formatDate={formatDate}
           getStatusLabel={getStatusLabel}
           onClose={() => setIsDetailOpen(false)}
+          onOpenPayment={handleNavigateToPayment}
           order={selectedOrder}
         />
       )}
     </div>
   );
 }
-

@@ -145,6 +145,8 @@ export const ENDPOINTS = {
   SALES_INVOICES: '/sales/invoices',
   SALES_PAYMENTS: '/sales/payments',
   SALES_RETURNS: '/sales/returns',
+  PAYMENT_ORDER: (orderId) => `/payments/orders/${orderId}`,
+  MIDTRANS_SNAP_TOKEN: (orderId) => `/payments/orders/${orderId}/midtrans/token`,
 
   // Products
   PRODUCTS: '/products',

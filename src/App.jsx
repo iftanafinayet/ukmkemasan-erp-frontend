@@ -7,6 +7,7 @@ import CustomerDashboard from './app/components/CustomerDashboard';
 import CustomerPortal from './app/components/CustomerPortal';
 import CreateOrderPage from './app/components/CreateOrderPage';
 import ProductDetailPage from './app/components/ProductDetailPage';
+import CustomerPaymentPage from './app/components/customer-portal/CustomerPaymentPage';
 import AuthWrapper from './app/components/AuthWrapper';
 import { storage } from './app/config/environment';
 import { Toaster, toast } from 'sonner';
@@ -121,6 +122,15 @@ function AppRoutes() {
         element={
           <AuthWrapper>
             <CreateOrderPage />
+          </AuthWrapper>
+        }
+      />
+
+      <Route
+        path="/portal/orders/:id/payment"
+        element={
+          <AuthWrapper>
+            <CustomerPaymentPage />
           </AuthWrapper>
         }
       />

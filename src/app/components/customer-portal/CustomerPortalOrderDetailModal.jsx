@@ -8,9 +8,11 @@ export default function CustomerPortalOrderDetailModal({
   formatDate,
   getStatusLabel,
   onClose,
+  onOpenPayment,
   order,
 }) {
   if (!order) return null;
+  const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
 
   return (
     <ModalWrapper onClose={onClose} wide>
@@ -52,6 +54,18 @@ export default function CustomerPortalOrderDetailModal({
           <InfoBlock label="Total" value={formatCurrency(order.totalPrice)} highlight />
         </div>
       </div>
+
+      {canPay && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => onOpenPayment(order._id)}
+            className="rounded-full bg-primary px-6 py-3 text-sm font-black text-white transition hover:bg-primary/90"
+          >
+            Bayar dengan Midtrans
+          </button>
+        </div>
+      )}
     </ModalWrapper>
   );
 }
