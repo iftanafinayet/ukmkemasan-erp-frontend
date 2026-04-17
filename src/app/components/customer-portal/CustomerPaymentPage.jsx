@@ -136,36 +136,26 @@ export default function CustomerPaymentPage() {
   return (
     <div className="min-h-screen bg-[#f6f3ed] text-slate-900">
       <CustomerNavbar activeMenu="orders" />
+      
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
-        <section className="overflow-hidden rounded-[32px] bg-slate-900 border border-slate-800 px-6 py-8 text-white sm:px-8 relative">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -mr-32 -mt-32"></div>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between relative z-10">
-            <div className="max-w-2xl">
-              <button
-                type="button"
-                onClick={() => navigate('/portal?menu=orders')}
-                className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
-              >
-                <ArrowLeft size={16} />
-                Kembali ke pesanan
-              </button>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-primary">Midtrans Checkout</p>
-              <h1 className="mt-3 text-4xl font-black tracking-tight">Bayar Pesanan #{order?.orderNumber || orderId}</h1>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
-                Penyelesaian pembayaran untuk pesanan Anda. Silakan klik tombol bayar untuk membuka popup Midtrans Snap.
-              </p>
+        {/* Header Style matching Catalog/Cart */}
+        <section className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.28em] text-primary">The Payment Portal</p>
+              <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-900">Pembayaran</h1>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">Customer</p>
-                <p className="mt-2 text-lg font-bold text-white">{user?.name || order?.customer?.name || '-'}</p>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">Status Order</p>
-                <p className="mt-2 text-lg font-bold text-white">{order?.status || '-'}</p>
-              </div>
-            </div>
+            <button
+              onClick={fetchPaymentData}
+              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50"
+            >
+              <RefreshCw className={loading ? 'animate-spin' : ''} size={20} />
+            </button>
+          </div>
+          
+          <div className="mt-12">
+            <h2 className="text-4xl font-black text-slate-900">Pembayaran Pesanan</h2>
+            <p className="mt-2 text-slate-500">Selesaikan transaksi pembayaran untuk pesanan Anda.</p>
           </div>
         </section>
 
@@ -177,104 +167,98 @@ export default function CustomerPaymentPage() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[1.35fr_0.9fr]">
-            <section className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-3">
-                <SummaryCard label="Total Tagihan" value={formatCurrency(summary?.totalAmount)} />
-                <SummaryCard label="Sudah Dibayar" value={formatCurrency(summary?.paidAmount)} />
-                <SummaryCard label="Sisa Tagihan" value={formatCurrency(outstandingAmount)} accent />
+          <>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="relative overflow-hidden rounded-[32px] bg-white p-8 shadow-sm border border-slate-100/50">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Tagihan</p>
+                <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.totalAmount)}</p>
+                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-slate-50 opacity-50"></div>
+              </div>
+              
+              <div className="relative overflow-hidden rounded-[32px] bg-white p-8 shadow-sm border border-slate-100/50">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sudah Dibayar</p>
+                <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.paidAmount)}</p>
+                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-slate-50 opacity-50"></div>
               </div>
 
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex flex-col gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="relative overflow-hidden rounded-[32px] bg-primary p-8 shadow-lg shadow-primary/20 text-white">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Sisa Tagihan</p>
+                <p className="mt-3 text-3xl font-black">{formatCurrency(outstandingAmount)}</p>
+                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-white/10"></div>
+              </div>
+            </div>
+
+            {/* Content Section - Single Column matching Cart Style */}
+            <div className="max-w-4xl space-y-8">
+              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
+                <div className="flex flex-col gap-4 border-b border-slate-100 pb-8 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Invoice</p>
-                    <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">{invoice?.invoiceNumber || 'Draft'}</h2>
+                    <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">{invoice?.invoiceNumber || 'Draft'}</h2>
                     <p className="mt-2 text-sm text-slate-500">
                       Diterbitkan {formatDate(invoice?.issuedDate)} • Jatuh tempo {formatDate(invoice?.dueDate)}
                     </p>
                   </div>
-                  <div className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-black ${
+                  <div className={`inline-flex items-center rounded-full px-5 py-2.5 text-xs font-black uppercase tracking-widest ${
                     isPaid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                   }`}>
                     {isPaid ? 'Lunas' : invoice?.status || 'Menunggu'}
                   </div>
                 </div>
 
-                <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                  <div className="rounded-3xl bg-slate-50 p-5">
+                <div className="mt-8">
+                  <div className="rounded-[32px] bg-slate-50 p-8">
                     <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Ringkasan Pesanan</p>
-                    <div className="mt-4 space-y-3 text-sm text-slate-600">
-                      <div className="flex justify-between gap-4">
-                        <span>Produk</span>
+                    <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-6 sm:grid-cols-2 text-sm">
+                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-slate-500">Produk</span>
                         <span className="font-bold text-slate-900">{order?.product?.name || '-'}</span>
                       </div>
-                      <div className="flex justify-between gap-4">
-                        <span>Jumlah</span>
+                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-slate-500">Jumlah</span>
                         <span className="font-bold text-slate-900">{order?.details?.quantity?.toLocaleString?.() || 0} pcs</span>
                       </div>
-                      <div className="flex justify-between gap-4">
-                        <span>Material</span>
+                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-slate-500">Material</span>
                         <span className="font-bold text-slate-900">{order?.details?.material || order?.product?.material || '-'}</span>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <span>Valve</span>
+                        <span className="text-slate-500">Valve</span>
                         <span className="font-bold text-slate-900">{order?.details?.useValve ? 'Ya' : 'Tidak'}</span>
                       </div>
                     </div>
                   </div>
-
-                  <div className="rounded-3xl bg-slate-50 p-5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Pesan Pengiriman</p>
-                    <div className="mt-4 flex items-start gap-3 rounded-2xl bg-white px-4 py-3">
-                      <ShieldCheck className="mt-0.5 text-primary" size={18} />
-                      <div>
-                        <p className="font-bold text-slate-900">Pembayaran Aman & Terenkripsi</p>
-                        <p className="mt-1 text-xs leading-5 text-slate-500">
-                          Data pembayaran Anda diproses secara aman melalui gerbang pembayaran Midtrans yang telah tersertifikasi.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                   <button
                     type="button"
                     onClick={handlePayNow}
                     disabled={creatingToken || isPaid || outstandingAmount <= 0}
-                    className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-6 py-4 text-sm font-black text-white shadow-lg shadow-primary/20 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                    className="flex-1 inline-flex items-center justify-center gap-3 rounded-3xl bg-primary px-8 py-5 text-sm font-black text-white shadow-lg shadow-primary/20 transition hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
                   >
-                    {creatingToken ? <LoaderCircle className="animate-spin" size={18} /> : <CreditCard size={18} />}
-                    {isPaid ? 'Pesanan Sudah Lunas' : 'Bayar dengan Midtrans'}
+                    {creatingToken ? <LoaderCircle className="animate-spin" size={20} /> : <CreditCard size={20} />}
+                    {isPaid ? 'Pesanan Sudah Lunas' : 'Bayar Sekarang'}
                   </button>
                   <button
                     type="button"
-                    onClick={fetchPaymentData}
-                    className="inline-flex items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-6 py-4 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                    onClick={() => navigate('/portal?menu=orders')}
+                    className="inline-flex items-center justify-center gap-3 rounded-3xl border border-slate-200 bg-white px-8 py-5 text-sm font-black text-slate-600 transition hover:bg-slate-50 active:scale-[0.98]"
                   >
-                    <RefreshCw size={18} />
-                    Muat Ulang Status
+                    <ArrowLeft size={20} />
+                    Kembali
                   </button>
                 </div>
               </div>
 
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Riwayat Pembayaran</p>
-                    <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Payment Ledger</h2>
-                  </div>
-                </div>
-
-                {payments.length === 0 ? (
-                  <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-sm font-medium text-slate-500">
-                    Belum ada pembayaran yang tercatat untuk invoice ini.
-                  </div>
-                ) : (
+              {/* Payment History Section */}
+              {payments.length > 0 && (
+                <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Riwayat Pembayaran</p>
+                  <h3 className="mt-3 text-2xl font-black text-slate-900 mb-6">Payment Ledger</h3>
                   <div className="space-y-4">
                     {payments.map((payment) => (
-                      <div key={payment._id || payment.paymentNumber} className="rounded-3xl border border-slate-100 bg-slate-50 px-5 py-4">
+                      <div key={payment._id || payment.paymentNumber} className="rounded-3xl border border-slate-100 bg-slate-50 px-6 py-5">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>
                             <p className="text-sm font-black text-slate-900">{payment.paymentNumber}</p>
@@ -284,46 +268,35 @@ export default function CustomerPaymentPage() {
                           </div>
                           <div className="text-left sm:text-right">
                             <p className="text-lg font-black text-primary">{formatCurrency(payment.amount)}</p>
-                            <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">{payment.method || 'Payment'}</p>
+                            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{payment.method || 'Payment'}</p>
                           </div>
                         </div>
-                        {(payment.referenceNo || payment.notes) && (
-                          <div className="mt-3 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
-                            <p>Ref: <span className="font-bold text-slate-700">{payment.referenceNo || '-'}</span></p>
-                            <p>Catatan: <span className="font-bold text-slate-700">{payment.notes || '-'}</span></p>
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-            </section>
-
-            <aside className="space-y-6">
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Checklist</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Sebelum Membayar</h2>
-                <div className="mt-5 space-y-4 text-sm leading-6 text-slate-600">
-                  <p>Pastikan order yang dibayar sudah sesuai dengan produk dan kuantitas yang Anda pesan.</p>
-                  <p>Midtrans akan menampilkan kanal pembayaran yang tersedia berdasarkan konfigurasi merchant Anda.</p>
-                  <p>Jika popup tertutup sebelum selesai, buka kembali halaman ini dan klik bayar ulang. Backend hanya akan mencatat settlement resmi dari Midtrans.</p>
                 </div>
-              </div>
+              )}
 
-              <div className="rounded-[32px] border border-primary/20 bg-primary/10 p-6 text-slate-800 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary">Butuh Bantuan</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Konfirmasi Pembayaran</h2>
-                <p className="mt-4 text-sm leading-6 text-slate-600">
-                  Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami untuk konfirmasi manual.
+              {/* Help Section matching help card style */}
+              <div className="rounded-[40px] bg-emerald-50 border border-emerald-100 p-8 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Butuh Bantuan?</p>
+                <h3 className="mt-3 text-2xl font-black text-slate-900">Konfirmasi Pembayaran</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami untuk konfirmasi manual dengan menyertakan nomor Order: <span className="font-bold text-slate-900">{order?.orderNumber || orderId}</span>
                 </p>
-                <div className="mt-6 rounded-3xl bg-white/10 px-4 py-4 text-sm">
-                  <p className="font-black">Order dibuat</p>
-                  <p className="mt-1 text-teal-50">{formatDate(order?.createdAt)}</p>
+                <div className="mt-8 flex gap-8 border-t border-emerald-200/50 pt-8">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Order dibuat</p>
+                    <p className="mt-1 text-sm font-bold text-slate-900">{formatDate(order?.createdAt)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Customer</p>
+                    <p className="mt-1 text-sm font-bold text-slate-900">{user?.name || order?.customer?.name}</p>
+                  </div>
                 </div>
               </div>
-            </aside>
-          </div>
+            </div>
+          </>
         )}
       </main>
       <CustomerFooter />
