@@ -164,13 +164,18 @@ export default function ProductDetailPage() {
             return;
         }
 
+        if (safeQuantity % 100 !== 0) {
+            toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
+            return;
+        }
+
         if (selectedVariant.stock <= 0) {
             toast.error('Varian ini sedang habis.');
             return;
         }
 
         if (safeQuantity > selectedVariant.stock) {
-            toast.error(`Stok varian hanya tersedia ${selectedVariant.stock} pcs.`);
+            toast.error(`Stok tidak mencukupi. Hanya tersedia ${selectedVariant.stock} pcs untuk varian ini.`);
             return;
         }
 
@@ -197,7 +202,7 @@ export default function ProductDetailPage() {
         const nextQuantity = (Number(existingItem?.quantity) || 0) + safeQuantity;
 
         if (nextQuantity > selectedVariant.stock) {
-            toast.error(`Total item di keranjang melebihi stok ${selectedVariant.stock} pcs.`);
+            toast.error(`Total item di keranjang (${nextQuantity} pcs) melebihi stok yang tersedia (${selectedVariant.stock} pcs).`);
             return;
         }
 
@@ -215,17 +220,19 @@ export default function ProductDetailPage() {
             <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
                 <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
                     <div className="mb-8 flex items-center justify-between gap-4">
-                        <button
-                            onClick={goBack}
-                            className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
-                        >
+                                <button
+                                    onClick={goBack}
+                                    data-testid="product-detail-back-btn"
+                                    className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
+                                >
                             <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
                             Kembali
                         </button>
-                        <button
-                            onClick={fetchProduct}
-                            className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100"
-                        >
+                                <button
+                                    onClick={fetchProduct}
+                                    data-testid="product-detail-refresh-btn"
+                                    className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100"
+                                >
                             <RefreshCw size={20} className={loading ? 'animate-spin text-primary' : ''} />
                         </button>
                     </div>
@@ -367,15 +374,16 @@ export default function ProductDetailPage() {
                                                     <div>
                                                         <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Jumlah Pesanan</p>
                                                         <div className="relative">
-                                                            <input
-                                                                type="number"
-                                                                min={minimumOrder}
-                                                                step={minimumOrder}
-                                                                max={selectedVariant?.stock || undefined}
-                                                                value={safeQuantity}
-                                                                onChange={(e) => setQuantity(Number(e.target.value) || minimumOrder)}
-                                                                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 pr-16 text-2xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
-                                                            />
+                                  <input
+                                      type="number"
+                                      min={minimumOrder}
+                                      step={minimumOrder}
+                                      max={selectedVariant?.stock || undefined}
+                                      value={safeQuantity}
+                                      onChange={(e) => setQuantity(Number(e.target.value) || minimumOrder)}
+                                      data-testid="product-detail-quantity-input"
+                                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 pr-16 text-2xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                  />
                                                             <span className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">pcs</span>
                                                         </div>
                                                         <p className="mt-2 text-[10px] font-bold text-slate-400">
@@ -422,16 +430,18 @@ export default function ProductDetailPage() {
                                     {isAdmin && (
                                         <div className="rounded-3xl border border-slate-100 bg-white p-8 shadow-sm space-y-4">
                                             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Admin Actions</h3>
-                                            <button
-                                                onClick={() => navigate('/admin')}
-                                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 py-4 text-sm font-black text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-600 active:scale-95"
-                                            >
+                                  <button
+                                      onClick={() => navigate('/admin')}
+                                      data-testid="product-detail-edit-btn"
+                                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 py-4 text-sm font-black text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-600 active:scale-95"
+                                  >
                                                 <Edit3 size={18} /> Edit di Dashboard
                                             </button>
-                                            <button
-                                                onClick={handleDelete}
-                                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-black text-red-500 transition-all hover:bg-red-100 active:scale-95"
-                                            >
+                                  <button
+                                      onClick={handleDelete}
+                                      data-testid="product-detail-delete-btn"
+                                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-black text-red-500 transition-all hover:bg-red-100 active:scale-95"
+                                  >
                                                 <Trash2 size={18} /> Hapus Produk
                                             </button>
                                         </div>
@@ -472,11 +482,12 @@ export default function ProductDetailPage() {
                                                         <p className="text-xs font-black uppercase tracking-widest text-slate-400">Total</p>
                                                         <p className="text-2xl font-black text-slate-900">{formatCurrency(totalPrice)}</p>
                                                     </div>
-                                                    <button
-                                                        onClick={handleAddToCart}
-                                                        disabled={isAdmin || !selectedVariant || displayedStock <= 0}
-                                                        className="w-full h-16 rounded-2xl bg-primary text-white flex items-center justify-center gap-3 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-primary/20"
-                                                    >
+                                  <button
+                                      onClick={handleAddToCart}
+                                      disabled={isAdmin || !selectedVariant || displayedStock <= 0}
+                                      data-testid="product-detail-add-to-cart-btn"
+                                      className="w-full h-16 rounded-2xl bg-primary text-white flex items-center justify-center gap-3 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-primary/20"
+                                  >
                                                         <ShoppingCart size={22} />
                                                         <span className="text-lg font-black">{isAdmin ? 'Mode Admin' : !storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}</span>
                                                     </button>

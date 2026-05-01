@@ -49,15 +49,16 @@ export default function VariantSelectorSection({
                                 const isOutOfStock = stock <= 0;
 
                                 return (
-                                    <button
-                                        key={variantId || `${variant.size}-${variant.color}-${getVariantSku(variant)}`}
-                                        type="button"
-                                        onClick={() => onSelectVariant?.(variant)}
-                                        className={`rounded-2xl border p-4 text-left transition-all ${isSelected
-                                            ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                            : 'border-slate-200 bg-white hover:border-primary/30'
-                                            } ${isOutOfStock ? 'opacity-60' : ''}`}
-                                    >
+                                     <button
+                                         key={variantId || `${variant.size}-${variant.color}-${getVariantSku(variant)}`}
+                                         type="button"
+                                         onClick={() => onSelectVariant?.(variant)}
+                                         aria-pressed={isSelected}
+                                         className={`rounded-2xl border p-4 text-left transition-all ${isSelected
+                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
+                                             : 'border-slate-200 bg-white hover:border-primary/30'
+                                             } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                     >
                                         <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
                                         <p className="mt-1 text-[11px] font-bold text-slate-400">{getVariantSku(variant)}</p>
                                         <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
@@ -109,6 +110,7 @@ const SelectionChip = ({ label, selected, disabled, onClick }) => (
         type="button"
         disabled={disabled}
         onClick={onClick}
+        aria-pressed={selected}
         className={`rounded-2xl border-2 px-4 py-3 text-sm font-black transition-all ${
             selected
                 ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'

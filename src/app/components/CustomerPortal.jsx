@@ -325,12 +325,13 @@ export default function CustomerPortal() {
           </div>
           <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
           <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
-          <button
-            onClick={() => navigate('/login?redirect=/portal?menu=orders')}
-            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-          >
-            Masuk Sekarang
-          </button>
+           <button
+             onClick={() => navigate('/login?redirect=/portal?menu=orders')}
+             data-testid="portal-orders-login-btn"
+             className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+           >
+             Masuk Sekarang
+           </button>
         </div>
       );
     }
@@ -375,20 +376,22 @@ export default function CustomerPortal() {
           </div>
           <h3 className="text-xl font-black text-slate-800 mb-2">Akses Terbatas</h3>
           <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengelola profil dan pengaturan akun Anda.</p>
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={() => navigate('/login?redirect=/portal?menu=profile')}
-              className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-            >
-              Masuk
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
-            >
-              Daftar
-            </button>
-          </div>
+             <div className="flex items-center justify-center gap-4">
+               <button
+                 onClick={() => navigate('/login?redirect=/portal?menu=profile')}
+                 data-testid="portal-profile-login-btn"
+                 className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+               >
+                 Masuk
+               </button>
+               <button
+                 onClick={() => navigate('/register')}
+                 data-testid="portal-profile-register-btn"
+                 className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
+               >
+                 Daftar
+               </button>
+             </div>
         </div>
       );
     }

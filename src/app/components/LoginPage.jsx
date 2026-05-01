@@ -48,7 +48,14 @@ export default function LoginPage() {
       console.error('Login error:', err);
       let errorMessage = 'Login failed. Please try again.';
       if (err.response) {
-        errorMessage = err.response.data?.message || 'Email or password incorrect';
+        const status = err.response.status;
+        if (status === 403) {
+          errorMessage = err.response.data?.message || 'Akun Anda terkunci. Silakan coba beberapa saat lagi.';
+        } else if (status === 429) {
+          errorMessage = 'Terlalu banyak percobaan login. Silakan tunggu beberapa menit sebelum mencoba kembali.';
+        } else {
+          errorMessage = err.response.data?.message || 'Email or password incorrect';
+        }
       } else if (err.request) {
         errorMessage = 'Server is not responding. Please check your connection.';
       } else {
@@ -152,14 +159,15 @@ export default function LoginPage() {
                 <label className="block text-sm font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
                   Email / Username
                 </label>
-                <input
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="w-full text-slate-800 p-4 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
-                  required
-                />
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    data-testid="login-email"
+                    className="w-full text-slate-800 p-4 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                    required
+                  />
               </div>
 
               {/* Input Group: Password */}
@@ -176,21 +184,23 @@ export default function LoginPage() {
                   </Link>
                 </div>
                 <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="w-full text-slate-800 p-4 pr-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-300 hover:text-slate-600 transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+                   <input
+                     type={showPassword ? "text" : "password"}
+                     value={password}
+                     onChange={(e) => setPassword(e.target.value)}
+                     placeholder="Enter your password"
+                     data-testid="login-password"
+                     className="w-full text-slate-800 p-4 pr-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                     required
+                   />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-300 hover:text-slate-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
                 </div>
               </div>
 
@@ -199,6 +209,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
+                  data-testid="login-submit"
                   className="w-full bg-primary hover:opacity-90 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                 >
                   {loading ? (
