@@ -30,7 +30,7 @@ api.interceptors.response.use(
       // Hanya redirect jika bukan di halaman public atau portal
       const isPortal = window.location.pathname.startsWith('/portal');
       const isPublic = isPortal || 
-                       ['/', '/dashboard', '/login', '/register'].includes(window.location.pathname);
+                        ['/', '/dashboard', '/login', '/register'].includes(window.location.pathname);
       
       if (!isPublic) {
         window.location.href = '/login';
@@ -39,5 +39,24 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const exportToFile = async (endpoint, fileName) => {
+  try {
+    const response = await api.get(endpoint, {
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Export failed:', error);
+    throw error;
+  }
+};
 
 export default api;

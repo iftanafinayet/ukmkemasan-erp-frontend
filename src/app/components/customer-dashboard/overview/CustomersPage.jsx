@@ -1,5 +1,7 @@
 import React from 'react';
+import { FileDown } from 'lucide-react';
 import { SearchBar, EmptyState } from '../shared';
+import { exportToFile } from '../../utils/api';
 
 export default function CustomersPage({
   filteredCustomers,
@@ -8,7 +10,17 @@ export default function CustomersPage({
 }) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <SearchBar value={searchTerm} onChange={onSearchChange} placeholder="Cari pelanggan..." />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <SearchBar value={searchTerm} onChange={onSearchChange} placeholder="Cari pelanggan..." />
+        <button
+          type="button"
+          onClick={() => exportToFile('/api/customers/export', 'customers.xlsx')}
+          className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+        >
+          <FileDown size={16} />
+          Export
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.isArray(filteredCustomers) && filteredCustomers.map((customer) => (
           <div key={customer._id} className="bg-white p-6 rounded-3xl border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
