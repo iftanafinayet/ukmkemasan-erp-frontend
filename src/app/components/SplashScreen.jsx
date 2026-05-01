@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import logo from '../assets/LogoUKM.svg';
+import logo from '../../assets/LogoUKM.svg';
 
 const SplashScreen = () => {
   return (
