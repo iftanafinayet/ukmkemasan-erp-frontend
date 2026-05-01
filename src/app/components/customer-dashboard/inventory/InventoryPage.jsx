@@ -5,9 +5,11 @@ import {
   ImagePlus,
   Plus,
   Trash2,
+  FileDown,
 } from 'lucide-react';
 import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
+import { exportToFile } from '../../../utils/api';
 
 export default function InventoryPage({
   filteredProducts,
@@ -40,16 +42,26 @@ export default function InventoryPage({
         <div className="flex-1">
           <SearchBar value={searchTerm} onChange={onSearchChange} placeholder="Cari produk, kategori, material..." />
         </div>
-        {isAdmin && (
+        <div className="flex flex-wrap items-center gap-3">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={onOpenProductModal}
+              className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+            >
+              <Plus size={16} />
+              Tambah Produk
+            </button>
+          )}
           <button
             type="button"
-            onClick={onOpenProductModal}
-            className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+            onClick={() => exportToFile('/api/products/export', 'products.xlsx')}
+            className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
           >
-            <Plus size={16} />
-            Tambah Produk
+            <FileDown size={16} />
+            Export
           </button>
-        )}
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">

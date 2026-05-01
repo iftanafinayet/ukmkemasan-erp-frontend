@@ -7,6 +7,7 @@ import {
   Package,
   Receipt,
   Users,
+  FileDown,
 } from 'lucide-react';
 import { StatusBadge } from '../StatusBadge';
 import {
@@ -16,6 +17,7 @@ import {
   SummaryCards,
   TableHead,
 } from './shared';
+import { exportToFile } from '../../utils/api';
 import {
   getInvoiceOutstanding,
   getInvoiceStatusClasses,
@@ -72,13 +74,23 @@ export function SalesProcessingSection({
         ]}
       />
 
-      <SearchActionBar
-        value={searchTerm}
-        onChange={onSearchChange}
-        placeholder="Cari order, customer, produk, atau invoice..."
-        actionLabel="Terbitkan Invoice"
-        onAction={() => onOpenInvoiceModal()}
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <SearchActionBar
+          value={searchTerm}
+          onChange={onSearchChange}
+          placeholder="Cari order, customer, produk, atau invoice..."
+          actionLabel="Terbitkan Invoice"
+          onAction={() => onOpenInvoiceModal()}
+        />
+        <button
+          type="button"
+          onClick={() => exportToFile('/api/sales/overview/export', 'sales-overview.xlsx')}
+          className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+        >
+          <FileDown size={16} />
+          Export
+        </button>
+      </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
@@ -231,13 +243,23 @@ export function InvoicesSection({
         ]}
       />
 
-      <SearchActionBar
-        value={searchTerm}
-        onChange={onSearchChange}
-        placeholder="Cari nomor invoice, order, atau customer..."
-        actionLabel="Buat Invoice"
-        onAction={() => onOpenInvoiceModal()}
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <SearchActionBar
+          value={searchTerm}
+          onChange={onSearchChange}
+          placeholder="Cari nomor invoice, order, atau customer..."
+          actionLabel="Buat Invoice"
+          onAction={() => onOpenInvoiceModal()}
+        />
+        <button
+          type="button"
+          onClick={() => exportToFile('/api/sales/invoices/export', 'invoices.xlsx')}
+          className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+        >
+          <FileDown size={16} />
+          Export
+        </button>
+      </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
