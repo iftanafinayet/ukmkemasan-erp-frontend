@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileDown } from 'lucide-react';
 import { SearchBar, EmptyState } from '../shared';
-import { exportToFile } from '../../utils/api';
+import { exportToFile } from '../../../utils/api';
 
 export default function CustomersPage({
   filteredCustomers,
