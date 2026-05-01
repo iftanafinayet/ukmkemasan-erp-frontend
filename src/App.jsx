@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from './app/components/LoginPage';
@@ -9,6 +9,7 @@ import CreateOrderPage from './app/components/CreateOrderPage';
 import ProductDetailPage from './app/components/ProductDetailPage';
 import CustomerPaymentPage from './app/components/customer-portal/CustomerPaymentPage';
 import AuthWrapper from './app/components/AuthWrapper';
+import SplashScreen from './app/components/SplashScreen';
 import { storage } from './app/config/environment';
 import { Toaster, toast } from 'sonner';
 
@@ -184,9 +185,21 @@ function AppRoutes() {
 }
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Router>
-      <AppRoutes />
+      <AnimatePresence>
+        {isLoading && <SplashScreen key="splash" />}
+      </AnimatePresence>
+      {!isLoading && <AppRoutes />}
       <Toaster position="top-right" />
     </Router>
   );
