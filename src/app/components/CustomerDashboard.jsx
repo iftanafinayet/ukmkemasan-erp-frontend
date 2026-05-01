@@ -675,6 +675,12 @@ export default function CustomerDashboard() {
 
   const handleCreateOrder = async (event) => {
     event.preventDefault();
+
+    if (Number(orderForm.quantity) % 100 !== 0) {
+      toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
+      return;
+    }
+
     setCreatingOrder(true);
 
     try {

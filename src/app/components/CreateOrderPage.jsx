@@ -230,8 +230,12 @@ export default function CreateOrderPage() {
             return toast.error('Silakan pilih katalog dan varian terlebih dahulu.');
         }
 
+        if (safeQuantity % 100 !== 0) {
+            return toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
+        }
+
         if (safeQuantity > selectedVariant.stock) {
-            return toast.error(`Stok varian hanya tersedia ${selectedVariant.stock} pcs.`);
+            return toast.error(`Stok tidak mencukupi. Hanya tersedia ${selectedVariant.stock} pcs untuk varian ini.`);
         }
 
         const existingCart = getCartItems();
@@ -243,7 +247,7 @@ export default function CreateOrderPage() {
         const nextQuantity = (Number(existingItem?.quantity) || 0) + safeQuantity;
 
         if (nextQuantity > selectedVariant.stock) {
-            return toast.error(`Total item di keranjang melebihi stok ${selectedVariant.stock} pcs.`);
+            return toast.error(`Total item di keranjang (${nextQuantity} pcs) melebihi stok yang tersedia (${selectedVariant.stock} pcs).`);
         }
 
         upsertCartItem({
@@ -270,8 +274,12 @@ export default function CreateOrderPage() {
             return toast.error('Silakan pilih katalog, ukuran, dan warna terlebih dahulu.');
         }
 
+        if (safeQuantity % 100 !== 0) {
+            return toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
+        }
+
         if (safeQuantity > selectedVariant.stock) {
-            return toast.error(`Stok varian hanya tersedia ${selectedVariant.stock} pcs.`);
+            return toast.error(`Stok tidak mencukupi. Hanya tersedia ${selectedVariant.stock} pcs untuk varian ini.`);
         }
 
         setCreatingOrder(true);
@@ -331,15 +339,16 @@ export default function CreateOrderPage() {
                                         </label>
                                         <div className="flex flex-wrap gap-2">
                                             {categories.map((category) => (
-                                                <button
-                                                    key={category}
-                                                    type="button"
-                                                    onClick={() => handleSelectCategory(category)}
-                                                    className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all ${selectedCategory === category
-                                                            ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                                            : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-primary/30 hover:text-primary'
-                                                        }`}
-                                                >
+                                                 <button
+                                                     key={category}
+                                                     type="button"
+                                                     onClick={() => handleSelectCategory(category)}
+                                                     data-testid={`category-btn-${category}`}
+                                                     className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all ${selectedCategory === category
+                                                             ? 'bg-primary text-white shadow-md shadow-primary/20'
+                                                             : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-primary/30 hover:text-primary'
+                                                         }`}
+                                                 >
                                                     {category}
                                                 </button>
                                             ))}
@@ -352,15 +361,16 @@ export default function CreateOrderPage() {
                                         </label>
                                         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                                             {filteredCatalogs.map((catalog) => (
-                                                <button
-                                                    key={catalog.key}
-                                                    type="button"
-                                                    onClick={() => handleSelectCatalog(catalog)}
-                                                    className={`rounded-3xl border p-5 text-left transition-all ${selectedCatalogKey === catalog.key
-                                                            ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                                            : 'border-slate-200 bg-white hover:border-primary/30 hover:shadow-sm'
-                                                        }`}
-                                                >
+                                                 <button
+                                                     key={catalog.key}
+                                                     type="button"
+                                                     onClick={() => handleSelectCatalog(catalog)}
+                                                     data-testid={`catalog-btn-${catalog.key}`}
+                                                     className={`rounded-3xl border p-5 text-left transition-all ${selectedCatalogKey === catalog.key
+                                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
+                                                             : 'border-slate-200 bg-white hover:border-primary/30 hover:shadow-sm'
+                                                         }`}
+                                                 >
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div>
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{catalog.category}</p>
@@ -418,13 +428,14 @@ export default function CreateOrderPage() {
                                                         </label>
                                                         <div className="relative">
                                                             <input
-                                                                type="number"
-                                                                required
-                                                                min={minimumOrder}
-                                                                step={minimumOrder}
-                                                                max={selectedVariant?.stock || undefined}
-                                                                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-6 pr-16 text-xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
-                                                                value={safeQuantity}
+                                                                 type="number"
+                                                                 required
+                                                                 min={minimumOrder}
+                                                                 step={minimumOrder}
+                                                                 max={selectedVariant?.stock || undefined}
+                                                                 data-testid="order-quantity-input"
+                                                                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-6 pr-16 text-xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                                                 value={safeQuantity}
                                                                 onChange={(e) => setOrderForm((current) => ({
                                                                     ...current,
                                                                     quantity: Number(e.target.value) || minimumOrder
