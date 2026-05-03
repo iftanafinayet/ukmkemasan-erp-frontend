@@ -10,8 +10,8 @@ import {
 import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
 import { exportToFile } from '../../../utils/api';
-import { Skeleton, SkeletonCircle } from '../../../app/components/ui/skeleton';
-import { Reveal } from '../../../app/components/ui/Reveal';
+import { Skeleton, SkeletonCircle } from '../../ui/skeleton';
+import { Reveal } from '../../ui/Reveal';
 
 export default function InventoryPage({
   filteredProducts,
