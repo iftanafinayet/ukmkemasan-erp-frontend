@@ -155,10 +155,15 @@ export default function CustomerPortalHomePage({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
           {popularProducts.length > 0 ? popularProducts.map((product) => (
             <div key={product._id} onClick={() => onViewProduct(product._id)} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
-              <div className="aspect-[4/3] overflow-hidden bg-surface-container">
-                {product.images?.[0] ? (
-                  <img alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src={product.images[0].url} />
-                ) : (
+               <div className="aspect-[4/3] overflow-hidden bg-surface-container group-hover:scale-105 transition-transform duration-700 will-change-transform">
+                 {product.images?.[0] ? (
+                   <img 
+                     alt={product.name} 
+                     loading="lazy"
+                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 will-change-transform" 
+                     src={product.images[0].url} 
+                   />
+                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-on-secondary-container opacity-30">
                     <span className="material-symbols-outlined text-4xl">image</span>
                   </div>
@@ -377,7 +382,8 @@ export default function CustomerPortalHomePage({
                       <img
                         src={activity.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDI2tXpsS0B-_5q6ZfR73uO-g27nOtb9lB1VlG_wA_P0tOxb_2q9v9hZ_YvqI4yR0F5_I0sX0l_fD7B1B6tO-y5J1N0kM8mO5M3qO-_I8r1sU6P8XqD1R7kU3L1_vG7Y9cZ0i9q8"}
                         alt={activity.title || "Gallery"}
-                        className="w-full h-full object-cover lg:object-[center_30%]"
+                        loading="lazy"
+                        className="w-full h-full object-cover lg:object-[center_30%] will-change-transform"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                       <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
