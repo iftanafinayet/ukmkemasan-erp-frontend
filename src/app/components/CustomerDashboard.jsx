@@ -394,28 +394,29 @@ export default function CustomerDashboard() {
           />
         );
 
-      case 'inventory':
-      case 'inventory-items':
-        return (
-          <InventoryPage
-            filteredProducts={Array.isArray(filteredData) ? filteredData : []}
-            formatCurrency={formatCurrency}
-            invPage={invPage}
-            invPerPage={invPerPage}
-            isAdmin={isAdmin}
-            onDeleteProduct={handleDeleteProduct}
-            onEditProduct={handleEditProduct}
-            onOpenProductModal={() => {
-              closeProductModal();
-              setIsModalOpen(true);
-            }}
-            onSearchChange={setSearchTerm}
-            onSetInvPage={setInvPage}
-            onSetInvPerPage={setInvPerPage}
-            onViewProduct={(productId) => navigate(`/admin/products/${productId}`)}
-            searchTerm={searchTerm}
-          />
-        );
+        case 'inventory':
+        case 'inventory-items':
+          return (
+            <InventoryPage
+              filteredProducts={Array.isArray(filteredData) ? filteredData : []}
+              formatCurrency={formatCurrency}
+              invPage={invPage}
+              invPerPage={invPerPage}
+              isAdmin={isAdmin}
+              onDeleteProduct={handleDeleteProduct}
+              onEditProduct={handleEditProduct}
+              onOpenProductModal={() => {
+                closeProductModal();
+                setIsModalOpen(true);
+              }}
+              onSearchChange={setSearchTerm}
+              onSetInvPage={setInvPage}
+              onSetInvPerPage={setInvPerPage}
+              onViewProduct={(productId) => navigate(`/admin/products/${productId}`)}
+              searchTerm={searchTerm}
+              loading={loading}
+            />
+          );
 
       case 'warehouse':
       case 'warehouse-retail':
