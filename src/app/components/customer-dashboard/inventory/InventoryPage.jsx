@@ -10,6 +10,8 @@ import {
 import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
 import { exportToFile } from '../../../utils/api';
+import { Skeleton, SkeletonCircle } from '../../../app/components/ui/skeleton';
+import { Reveal } from '../../../app/components/ui/Reveal';
 
 export default function InventoryPage({
   filteredProducts,
@@ -25,6 +27,7 @@ export default function InventoryPage({
   onSetInvPerPage,
   onViewProduct,
   searchTerm,
+  loading = false,
 }) {
   const {
     total,
@@ -81,49 +84,67 @@ export default function InventoryPage({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {paginated.map((product) => (
-              <tr key={product._id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="p-5">
-                  {product.images?.length > 0 ? (
-                    <img src={product.images[0].url} alt={product.images[0].alt || product.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
-                      <ImagePlus className="w-5 h-5 text-slate-300" />
-                    </div>
-                  )}
-                </td>
-                <td className="p-5 text-sm text-slate-500 font-bold">{product.sku || '-'}</td>
-                <td className="p-5 font-bold text-slate-800">
-                  <button type="button" onClick={() => onViewProduct(product._id)} className="hover:text-primary transition-colors text-left">
-                    {product.name}
-                  </button>
-                </td>
-                <td className="p-5 text-xs text-slate-500 font-medium">{product.category}</td>
-                <td className="p-5 text-xs text-slate-500 font-medium">{product.material || '-'}</td>
-                <td className="p-5 text-center">
-                  <span className={`inline-block px-3 py-1 rounded-lg font-black text-xs ${product.stockPolos < 500 ? 'bg-red-50 text-red-500' : 'bg-slate-100 text-slate-600'}`}>
-                    {product.stockPolos?.toLocaleString()} pcs
-                  </span>
-                </td>
-                <td className="p-5 font-bold text-primary text-right">{formatCurrency(product.priceB2C)}</td>
-                <td className="p-5 font-bold text-slate-600 text-right">{formatCurrency(product.priceB2B)}</td>
-                {isAdmin && (
-                  <td className="p-5 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <button type="button" onClick={() => onViewProduct(product._id)} className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors" title="Detail">
-                        <Eye size={16} />
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={`skeleton-${i}`} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="p-5"><SkeletonCircle className="w-12 h-12" /></td>
+                  <td className="p-5"><Skeleton className="w-20 h-4" /></td>
+                  <td className="p-5"><Skeleton className="w-40 h-4" /></td>
+                  <td className="p-5"><Skeleton className="w-24 h-4" /></td>
+                  <td className="p-5"><Skeleton className="w-24 h-4" /></td>
+                  <td className="p-5"><Skeleton className="w-16 h-6 mx-auto" /></td>
+                  <td className="p-5"><Skeleton className="w-20 h-4 ml-auto" /></td>
+                  <td className="p-5"><Skeleton className="w-20 h-4 ml-auto" /></td>
+                  {isAdmin && <td className="p-5"><Skeleton className="w-24 h-8 mx-auto" /></td>}
+                </tr>
+              ))
+            ) : (
+              paginated.map((product, index) => (
+                <Reveal key={product._id} delay={index * 0.05}>
+                  <tr className="hover:bg-slate-50/50 transition-colors">
+                    <td className="p-5">
+                      {product.images?.length > 0 ? (
+                        <img src={product.images[0].url} alt={product.images[0].alt || product.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+                          <ImagePlus className="w-5 h-5 text-slate-300" />
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-5 text-sm text-slate-500 font-bold">{product.sku || '-'}</td>
+                    <td className="p-5 font-bold text-slate-800">
+                      <button type="button" onClick={() => onViewProduct(product._id)} className="hover:text-primary transition-colors text-left">
+                        {product.name}
                       </button>
-                      <button type="button" onClick={() => onEditProduct(product)} className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-colors" title="Edit">
-                        <Edit3 size={16} />
-                      </button>
-                      <button type="button" onClick={() => onDeleteProduct(product._id)} className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors" title="Hapus">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))}
+                    </td>
+                    <td className="p-5 text-xs text-slate-500 font-medium">{product.category}</td>
+                    <td className="p-5 text-xs text-slate-500 font-medium">{product.material || '-'}</td>
+                    <td className="p-5 text-center">
+                      <span className={`inline-block px-3 py-1 rounded-lg font-black text-xs ${product.stockPolos < 500 ? 'bg-red-50 text-red-500' : 'bg-slate-100 text-slate-600'}`}>
+                        {product.stockPolos?.toLocaleString()} pcs
+                      </span>
+                    </td>
+                    <td className="p-5 font-bold text-primary text-right">{formatCurrency(product.priceB2C)}</td>
+                    <td className="p-5 font-bold text-slate-600 text-right">{formatCurrency(product.priceB2B)}</td>
+                    {isAdmin && (
+                      <td className="p-5 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button type="button" onClick={() => onViewProduct(product._id)} className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors" title="Detail">
+                            <Eye size={16} />
+                          </button>
+                          <button type="button" onClick={() => onEditProduct(product)} className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-colors" title="Edit">
+                            <Edit3 size={16} />
+                          </button>
+                          <button type="button" onClick={() => onDeleteProduct(product._id)} className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors" title="Hapus">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                </Reveal>
+              ))
+            )}
           </tbody>
           </table>
         </div>
