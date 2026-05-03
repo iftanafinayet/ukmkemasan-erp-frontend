@@ -50,15 +50,7 @@ const SplashScreen = () => {
 
       <div className="relative z-10 flex flex-col items-center max-w-sm px-6 text-center">
         {/* Logo Animation */}
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ 
-            duration: 0.8, 
-            ease: [0.16, 1, 0.3, 1] 
-          }}
-          className="relative mb-8"
-        >
+        <div className="relative mb-8">
           <motion.div
             animate={{ 
               scale: [1, 1.05, 1],
@@ -83,7 +75,7 @@ const SplashScreen = () => {
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className="absolute inset-0 rounded-3xl border-4 border-white/30 -m-4 pointer-events-none"
           />
-        </motion.div>
+        </div>
 
         {/* Loading Text */}
         <div className="h-6 mb-12">
