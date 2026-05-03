@@ -53,6 +53,12 @@ export const createEmptyLandingContent = () => ({
   articles: [],
   activities: [],
   portfolios: [],
+  heroSectionConfig: {
+    title: 'UKM Kemasan membantu brand tampil lebih siap jual...',
+    subtitle: 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.',
+    pillText: 'Solution for UKM',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO',
+  },
   articleSectionConfig: { pillText: 'Informasi Menarik', title: 'Artikel Pilihan Untuk Meningkatkan Produk Anda', subtitle: 'Selalu update dengan tren dan teknologi terbaru di dunia kemasan. Baca artikel-artikel pilihan kami untuk menemukan solusi kemasan yang tepat bagi bisnis Anda.' },
   gallerySectionConfig: { pillText: 'Galeri', title: '', subtitle: '' },
   portfolioSectionConfig: { pillText: 'Portofolio', title: 'Hasil Karya Terbaik Bersama Client Kami', subtitle: 'Lihat bagaimana kami membantu berbagai brand meningkatkan nilai jual produk mereka melalui kemasan yang tepat.' },
@@ -86,6 +92,7 @@ export const normalizeLandingContent = (payload = {}) => ({
         imageRemoved: false,
       }))
     : [],
+  heroSectionConfig: payload.heroSectionConfig || { title: '', subtitle: '', pillText: '', heroImage: '' },
   articleSectionConfig: payload.articleSectionConfig || { pillText: '', title: '', subtitle: '' },
   gallerySectionConfig: payload.gallerySectionConfig || { pillText: '', title: '', subtitle: '' },
   portfolioSectionConfig: payload.portfolioSectionConfig || { pillText: 'Portofolio', title: '', subtitle: '' },
@@ -135,6 +142,7 @@ export const buildLandingContentPayload = (landingContent = createEmptyLandingCo
         removeImage: Boolean(portfolio.imageRemoved),
       }))
     : [],
+  heroSectionConfig: landingContent.heroSectionConfig,
   articleSectionConfig: landingContent.articleSectionConfig,
   gallerySectionConfig: landingContent.gallerySectionConfig,
   portfolioSectionConfig: landingContent.portfolioSectionConfig,

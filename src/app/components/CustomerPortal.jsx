@@ -39,7 +39,7 @@ export default function CustomerPortal() {
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [landingContent, setLandingContent] = useState(createEmptyLandingContent);
+  const [landingContent, setLandingContent] = useState(createEmptyLandingContent());
   const [popularProducts, setPopularProducts] = useState([]);
   const [orderFilter, setOrderFilter] = useState('all');
 

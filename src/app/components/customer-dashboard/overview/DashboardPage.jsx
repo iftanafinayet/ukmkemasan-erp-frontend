@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   Users,
   BarChart3,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   BarChart,
@@ -41,6 +42,7 @@ export default function DashboardPage({
   isAdmin,
   onViewOrder,
   stats,
+  lowStockProducts = [],
 }) {
   const chartData = isAdmin && Array.isArray(data) ? data.slice(0, 5).map((item) => ({
     name: item.name?.length > 15 ? `${item.name.slice(0, 15)}...` : (item.name || 'Produk'),
@@ -182,7 +184,41 @@ export default function DashboardPage({
         </div>
       </div>
 
-      {isAdmin && adminStats?.productionStatus && (
+       {isAdmin && (
+         <div className="bg-white p-8 rounded-3xl border border-slate-100">
+           <div className="flex items-center justify-between mb-6">
+             <h3 className="font-black text-slate-800 flex items-center gap-2">
+               <AlertTriangle className="w-5 h-5 text-red-500" />
+               Peringatan Stok Rendah
+             </h3>
+             <span className="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[10px] font-black uppercase border border-red-100">
+               {lowStockProducts.length} Produk
+             </span>
+           </div>
+           {lowStockProducts.length > 0 ? (
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+               {lowStockProducts.slice(0, 6).map((product) => (
+                 <div key={product._id} className="p-4 bg-red-50/50 rounded-2xl border border-red-100 flex justify-between items-center">
+                   <div>
+                     <p className="text-sm font-black text-slate-800">{product.name}</p>
+                     <p className="text-[10px] text-slate-500 font-bold uppercase">{product.category}</p>
+                   </div>
+                   <div className="text-right">
+                     <p className="text-lg font-black text-red-600">{product.stockPolos?.toLocaleString()} pcs</p>
+                     <p className="text-[10px] text-red-400 font-bold uppercase">Sisa Stok</p>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           ) : (
+             <div className="py-8 text-center border border-dashed border-slate-200 rounded-2xl">
+               <p className="text-sm text-slate-400 font-medium">Semua stok dalam kondisi aman.</p>
+             </div>
+           )}
+         </div>
+       )}
+
+       {isAdmin && adminStats?.productionStatus && (
         <div className="bg-white p-8 rounded-3xl border border-slate-100">
           <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-primary" />
