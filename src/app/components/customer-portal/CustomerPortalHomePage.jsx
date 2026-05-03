@@ -44,35 +44,35 @@ export default function CustomerPortalHomePage({
 
       {/* Hero and Profile Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        <div className="lg:col-span-8 relative overflow-hidden rounded-xl bg-primary p-12 text-on-primary shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
-          <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO"
-              alt="Packaging Design"
-              className="w-full h-full object-cover mix-blend-overlay"
-            />
-          </div>
-          <div className="relative z-10 max-w-lg space-y-6">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-white border border-white/10">
-              Solution for UKM
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tighter leading-tight font-headline">
-              UKM Kemasan membantu brand tampil lebih siap jual...
-            </h1>
-            <p className="text-white/80 font-body leading-relaxed max-w-md">
-              Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <button onClick={onNavigateToCreateOrder} className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-surface-container-lowest transition-all duration-300 active:scale-95 flex items-center gap-2">
-                Purchase Sekarang
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
-              <button onClick={onNavigateToCatalog} className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-all duration-300 active:scale-95">
-                Lihat Katalog
-              </button>
+          <div className="lg:col-span-8 relative overflow-hidden rounded-xl bg-primary p-12 text-on-primary shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
+            <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+              <img
+                src={landingContent?.heroSectionConfig?.heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO"}
+                alt="Packaging Design"
+                className="w-full h-full object-cover mix-blend-overlay"
+              />
+            </div>
+            <div className="relative z-10 max-w-lg space-y-6">
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-white border border-white/10">
+                {landingContent?.heroSectionConfig?.pillText || 'Solution for UKM'}
+              </span>
+              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tighter leading-tight font-headline">
+                {landingContent?.heroSectionConfig?.title || 'UKM Kemasan membantu brand tampil lebih siap jual...'}
+              </h1>
+              <p className="text-white/80 font-body leading-relaxed max-w-md">
+                {landingContent?.heroSectionConfig?.subtitle || 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.'}
+              </p>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <button onClick={onNavigateToCreateOrder} className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-surface-container-lowest transition-all duration-300 active:scale-95 flex items-center gap-2">
+                  Purchase Sekarang
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+                <button onClick={onNavigateToCatalog} className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-all duration-300 active:scale-95">
+                  Lihat Katalog
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
         <div className="lg:col-span-4 flex flex-col gap-8">
           <div className="bg-surface-container-lowest rounded-xl p-8 shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] flex-1 flex flex-col justify-between">

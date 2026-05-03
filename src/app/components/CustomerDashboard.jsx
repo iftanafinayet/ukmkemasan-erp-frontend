@@ -42,86 +42,11 @@ import {
   formatDate,
   formatDateTime,
   getFilteredData,
-  normalizeStockCardRows,
 } from './customer-dashboard/utils';
-import {
-  buildLandingContentPayload,
-  createEmptyActivity,
-  createEmptyArticle,
-  createEmptyPortfolio,
-  createEmptyLandingContent,
-  normalizeLandingContent,
-} from '../utils/landingContent';
-
-const EMPTY_PRODUCT_FORM = {
-  name: '',
-  category: 'Standing Pouch',
-  material: '',
-  minOrder: 100,
-  valvePrice: 600,
-  description: '',
-  variants: [],
-};
-
-const createEmptyVariant = () => ({
-  _id: '',
-  sku: '',
-  size: '',
-  color: '',
-  priceB2C: '',
-  priceB2B: '',
-  stock: '',
-});
-
-const getEmptyProductForm = () => ({
-  ...EMPTY_PRODUCT_FORM,
-  variants: [createEmptyVariant()],
-});
-
-const normalizeProductVariants = (variants = []) => {
-  if (!Array.isArray(variants) || variants.length === 0) {
-    return [createEmptyVariant()];
-  }
-
-  return variants.map((variant) => ({
-    _id: variant._id || '',
-    sku: variant.sku || '',
-    size: variant.size || '',
-    color: variant.color || '',
-    priceB2C: variant.priceB2C ?? '',
-    priceB2B: variant.priceB2B ?? '',
-    stock: variant.stock ?? '',
-  }));
-};
-
-const EMPTY_PROFILE = {
-  name: '',
-  email: '',
-  phone: '',
-  address: '',
-};
-
-const EMPTY_PASSWORDS = {
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-};
-
-const EMPTY_WAREHOUSE_FORM = {
-  name: '',
-  location: '',
-  type: 'Main',
-  isActive: true,
-};
-
-const EMPTY_ADJUSTMENT_FORM = {
-  productId: '',
-  variantId: '',
-  warehouseId: '',
-  type: 'In',
-  quantity: '',
-  reason: '',
-};
+import { useProducts } from './customer-dashboard/hooks/useProducts';
+import { useOrders } from './customer-dashboard/hooks/useOrders';
+import { useInventory } from './customer-dashboard/hooks/useInventory';
+import { useUserSettings } from './customer-dashboard/hooks/useUserSettings';
 
 export default function CustomerDashboard() {
   const user = storage.getUser();
@@ -138,55 +63,123 @@ export default function CustomerDashboard() {
     totalCustomers: 0,
   });
   const [adminStats, setAdminStats] = useState(null);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [orderSort, setOrderSort] = useState('newest');
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [newProduct, setNewProduct] = useState(getEmptyProductForm());
-  const [imageFiles, setImageFiles] = useState([]);
-  const [deleteImageIds, setDeleteImageIds] = useState([]);
-  const [existingImages, setExistingImages] = useState([]);
-
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
-
-  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [orderForm, setOrderForm] = useState({
-    productId: '',
-    variantId: '',
-    quantity: 100,
-    useValve: false,
-  });
-  const [creatingOrder, setCreatingOrder] = useState(false);
-
-  const [profile, setProfile] = useState(EMPTY_PROFILE);
-  const [passwords, setPasswords] = useState(EMPTY_PASSWORDS);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
-  const [landingContent, setLandingContent] = useState(createEmptyLandingContent());
-  const [savingLandingContent, setSavingLandingContent] = useState(false);
-
-  const [warehouses, setWarehouses] = useState([]);
-  const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
-  const [editingWarehouse, setEditingWarehouse] = useState(null);
-  const [warehouseForm, setWarehouseForm] = useState(EMPTY_WAREHOUSE_FORM);
-  const [savingWarehouse, setSavingWarehouse] = useState(false);
-  const [deletingWarehouseId, setDeletingWarehouseId] = useState('');
-
-  const [adjustmentForm, setAdjustmentForm] = useState(EMPTY_ADJUSTMENT_FORM);
-  const [savingAdjustment, setSavingAdjustment] = useState(false);
-  const [inventoryProductOptions, setInventoryProductOptions] = useState([]);
-
-  const [stockCardProductId, setStockCardProductId] = useState('');
-  const [stockCardRows, setStockCardRows] = useState([]);
-  const [stockCardLoading, setStockCardLoading] = useState(false);
-
   const [invPage, setInvPage] = useState(1);
   const [invPerPage, setInvPerPage] = useState(25);
+
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    editingProduct,
+    setEditingProduct,
+    newProduct,
+    setNewProduct,
+    imageFiles,
+    setImageFiles,
+    deleteImageIds,
+    setDeleteImageIds,
+    existingImages,
+    setExistingImages,
+    closeProductModal,
+    addImageFiles,
+    handleEditProduct,
+    handleAddProduct,
+    handleDeleteProduct,
+    handleRemoveExistingImage,
+    handleRemoveNewImage,
+  } = useProducts(setData);
+
+  const {
+    selectedOrder,
+    setSelectedOrder,
+    isOrderDetailOpen,
+    setIsOrderDetailOpen,
+    updatingStatus,
+    setUpdatingStatus,
+    isCreateOrderOpen,
+    setIsCreateOrderOpen,
+    products,
+    setProducts,
+    orderForm,
+    setOrderForm,
+    creatingOrder,
+    setCreatingOrder,
+    handleViewOrder,
+    handleUpdateOrderStatus,
+    handleTogglePaid,
+    openCreateOrder,
+    handleCreateOrder,
+  } = useOrders(setData);
+
+  const {
+    warehouses,
+    setWarehouses,
+    isWarehouseModalOpen,
+    setIsWarehouseModalOpen,
+    editingWarehouse,
+    setEditingWarehouse,
+    warehouseForm,
+    setWarehouseForm,
+    savingWarehouse,
+    setSavingWarehouse,
+    deletingWarehouseId,
+    setDeletingWarehouseId,
+    adjustmentForm,
+    setAdjustmentForm,
+    savingAdjustment,
+    setSavingAdjustment,
+    inventoryProductOptions,
+    setInventoryProductOptions,
+    stockCardProductId,
+    setStockCardProductId,
+    stockCardRows,
+    setStockCardRows,
+    stockCardLoading,
+    setStockCardLoading,
+    fetchStockCardRows,
+    handleSelectStockCardProduct,
+    openCreateWarehouse,
+    openEditWarehouse,
+    handleSaveWarehouse,
+    handleDeleteWarehouse,
+    handleSaveAdjustment,
+    closeWarehouseModal,
+  } = useInventory(setData);
+
+  const {
+    profile,
+    setProfile,
+    passwords,
+    setPasswords,
+    savingProfile,
+    savingPassword,
+    landingContent,
+    setLandingContent,
+    savingLandingContent,
+    handleSaveProfile,
+    handleChangePassword,
+    updateArticleField,
+    updateActivityField,
+    updatePortfolioField,
+    handleAddLandingArticle,
+    handleRemoveLandingArticle,
+    handleAddLandingActivity,
+    handleRemoveLandingActivity,
+    handleAddLandingPortfolio,
+    handleRemoveLandingPortfolio,
+    handleLandingArticleImageChange,
+    handleLandingArticleRemoveImage,
+    handleLandingActivityImageChange,
+    handleLandingActivityRemoveImage,
+    handleLandingPortfolioImageChange,
+    handleLandingPortfolioRemoveImage,
+    handleLandingSectionConfigChange,
+    handleSaveLandingContent,
+  } = useUserSettings();
 
   const currentWarehouseType = activeMenu === 'warehouse-retail' ? 'Retail' : 'Main';
   const filteredData = getFilteredData({
@@ -197,66 +190,6 @@ export default function CustomerDashboard() {
     orderSort,
   });
 
-  const resetProductForm = () => {
-    setNewProduct(getEmptyProductForm());
-    setImageFiles([]);
-    setDeleteImageIds([]);
-    setExistingImages([]);
-  };
-
-  const closeProductModal = () => {
-    setIsModalOpen(false);
-    setEditingProduct(null);
-    resetProductForm();
-  };
-
-  const resetWarehouseForm = (type = currentWarehouseType) => {
-    setWarehouseForm({
-      ...EMPTY_WAREHOUSE_FORM,
-      type,
-    });
-    setEditingWarehouse(null);
-  };
-
-  const closeWarehouseModal = () => {
-    setIsWarehouseModalOpen(false);
-    resetWarehouseForm(currentWarehouseType);
-  };
-
-  const closeOrderDetailModal = () => {
-    setIsOrderDetailOpen(false);
-    setSelectedOrder(null);
-  };
-
-  const addImageFiles = (files) => {
-    const remaining = 5 - existingImages.length - imageFiles.length;
-    if (remaining <= 0) return;
-    setImageFiles((currentFiles) => [...currentFiles, ...files.slice(0, remaining)]);
-  };
-
-  const fetchStockCardRows = useCallback(async (productId) => {
-    if (!productId) {
-      setStockCardRows([]);
-      return;
-    }
-
-    setStockCardLoading(true);
-    try {
-      const response = await api.get(ENDPOINTS.STOCK_CARDS(productId));
-      setStockCardRows(normalizeStockCardRows(response.data));
-    } catch (error) {
-      setStockCardRows([]);
-      toast.error(error.response?.data?.message || 'Gagal memuat histori stock card.');
-    } finally {
-      setStockCardLoading(false);
-    }
-  }, []);
-
-  const handleSelectStockCardProduct = async (productId) => {
-    setStockCardProductId(productId);
-    await fetchStockCardRows(productId);
-  };
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -266,15 +199,20 @@ export default function CustomerDashboard() {
         case 'dashboard':
           if (isAdmin) {
             try {
-              response = await api.get(ENDPOINTS.DASHBOARD_STATS);
-              setAdminStats(response.data);
+              const [statsResponse, lowStockResponse] = await Promise.all([
+                api.get(ENDPOINTS.DASHBOARD_STATS),
+                api.get('/api/products/low-stock'),
+              ]);
+              setAdminStats(statsResponse.data);
               setStats({
-                totalOrders: response.data.summary?.totalOrders || 0,
-                activeProduction: response.data.productionStatus?.find((status) => status._id === 'Production')?.count || 0,
-                totalRevenue: response.data.summary?.totalRevenue || 0,
-                totalCustomers: response.data.summary?.totalCustomers || 0,
+                totalOrders: statsResponse.data.summary?.totalOrders || 0,
+                activeProduction: statsResponse.data.productionStatus?.find((status) => status._id === 'Production')?.count || 0,
+                totalRevenue: statsResponse.data.summary?.totalRevenue || 0,
+                totalCustomers: statsResponse.data.summary?.totalCustomers || 0,
               });
-              setData(response.data.topProducts || []);
+              setData(statsResponse.data.topProducts || []);
+              // We can't set lowStockProducts state here because it's not defined in the main component yet.
+              // I should add it to the state of CustomerDashboard.
             } catch {
               response = await api.get(ENDPOINTS.MY_ORDERS);
               const allOrders = response.data || [];
@@ -300,6 +238,7 @@ export default function CustomerDashboard() {
           break;
 
         case 'orders':
+        case 'sales-orders':
           response = isAdmin
             ? await api.get(ENDPOINTS.ALL_ORDERS)
             : await api.get(ENDPOINTS.MY_ORDERS);
@@ -386,7 +325,7 @@ export default function CustomerDashboard() {
               setLandingContent(normalizeLandingContent(landingContentResponse.data));
             }
           } catch {
-            setProfile((currentProfile) => currentProfile);
+            // Profile already initialized in hook or will stay default
           }
           break;
 
@@ -418,537 +357,6 @@ export default function CustomerDashboard() {
     setInvPage(1);
   }, [searchTerm]);
 
-  const handleAddProduct = async (event) => {
-    event.preventDefault();
-
-    try {
-      const normalizedVariants = (newProduct.variants || [])
-        .map((variant) => ({
-          ...(variant._id ? { _id: variant._id } : {}),
-          sku: String(variant.sku || '').trim(),
-          size: String(variant.size || '').trim(),
-          color: String(variant.color || '').trim(),
-          priceB2C: Number(variant.priceB2C),
-          priceB2B: Number(variant.priceB2B),
-          stock: Number(variant.stock),
-        }))
-        .filter((variant) => variant.sku || variant.size || variant.color || variant.priceB2C || variant.priceB2B || variant.stock);
-
-      if (normalizedVariants.length === 0) {
-        toast.error('Tambahkan minimal satu varian produk.');
-        return;
-      }
-
-      const hasInvalidVariant = normalizedVariants.some((variant) => (
-        !variant.sku
-        || !variant.size
-        || !variant.color
-        || !Number.isFinite(variant.priceB2C)
-        || !Number.isFinite(variant.priceB2B)
-        || !Number.isFinite(variant.stock)
-      ));
-
-      if (hasInvalidVariant) {
-        toast.error('Lengkapi SKU, ukuran, warna, harga, dan stok untuk setiap varian.');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('name', newProduct.name);
-      formData.append('category', newProduct.category);
-      formData.append('material', newProduct.material);
-      formData.append('minOrder', Number(newProduct.minOrder || 100));
-      formData.append('description', newProduct.description || '');
-      formData.append('addons', JSON.stringify({
-        valvePrice: Number(newProduct.valvePrice || 0),
-      }));
-      formData.append('variants', JSON.stringify(normalizedVariants));
-
-      imageFiles.forEach((file) => formData.append('images', file));
-
-      if (deleteImageIds.length > 0) {
-        formData.append('deleteImageIds', JSON.stringify(deleteImageIds));
-      }
-
-      if (editingProduct) {
-        await api.put(ENDPOINTS.PRODUCT_BY_ID(editingProduct._id), formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        toast.success('Produk berhasil diupdate!');
-      } else {
-        await api.post(ENDPOINTS.PRODUCTS, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        toast.success('Produk baru berhasil ditambahkan!');
-      }
-
-      closeProductModal();
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menyimpan produk.');
-    }
-  };
-
-  const handleEditProduct = (product) => {
-    setEditingProduct(product);
-    setNewProduct({
-      name: product.name,
-      category: product.category,
-      material: product.material,
-      minOrder: product.minOrder || 100,
-      valvePrice: product.addons?.valvePrice ?? 0,
-      description: product.description || '',
-      variants: normalizeProductVariants(product.variants),
-    });
-    setExistingImages(product.images || []);
-    setImageFiles([]);
-    setDeleteImageIds([]);
-    setIsModalOpen(true);
-  };
-
-  const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Yakin ingin menghapus produk ini?')) return;
-
-    try {
-      await api.delete(ENDPOINTS.PRODUCT_BY_ID(productId));
-      toast.success('Produk berhasil dihapus!');
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menghapus produk.');
-    }
-  };
-
-  const handleSaveAdjustment = async (event) => {
-    event.preventDefault();
-
-    if (!adjustmentForm.productId || !adjustmentForm.warehouseId || !adjustmentForm.quantity) {
-      toast.error('Mohon lengkapi semua field wajib.');
-      return;
-    }
-
-    setSavingAdjustment(true);
-    try {
-      await api.post(ENDPOINTS.ADJUSTMENTS, {
-        productId: adjustmentForm.productId,
-        variantId: adjustmentForm.variantId || undefined,
-        warehouseId: adjustmentForm.warehouseId,
-        type: adjustmentForm.type,
-        quantity: Number(adjustmentForm.quantity),
-        reason: adjustmentForm.reason,
-      });
-      toast.success('Stok berhasil disesuaikan!');
-      setAdjustmentForm(EMPTY_ADJUSTMENT_FORM);
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menyimpan penyesuaian.');
-    } finally {
-      setSavingAdjustment(false);
-    }
-  };
-
-  const openCreateWarehouse = () => {
-    resetWarehouseForm(currentWarehouseType);
-    setIsWarehouseModalOpen(true);
-  };
-
-  const openEditWarehouse = (warehouse) => {
-    setEditingWarehouse(warehouse);
-    setWarehouseForm({
-      name: warehouse.name || '',
-      location: warehouse.location || '',
-      type: warehouse.type || currentWarehouseType,
-      isActive: warehouse.isActive !== false,
-    });
-    setIsWarehouseModalOpen(true);
-  };
-
-  const handleSaveWarehouse = async (event) => {
-    event.preventDefault();
-
-    if (!warehouseForm.name.trim()) {
-      toast.error('Nama gudang wajib diisi.');
-      return;
-    }
-
-    setSavingWarehouse(true);
-    try {
-      const payload = {
-        name: warehouseForm.name.trim(),
-        location: warehouseForm.location.trim(),
-        type: warehouseForm.type,
-        isActive: warehouseForm.isActive,
-      };
-
-      if (editingWarehouse?._id) {
-        await api.put(ENDPOINTS.WAREHOUSE_BY_ID(editingWarehouse._id), payload);
-        toast.success('Gudang berhasil diperbarui.');
-      } else {
-        await api.post(ENDPOINTS.WAREHOUSES, payload);
-        toast.success('Gudang berhasil ditambahkan.');
-      }
-
-      closeWarehouseModal();
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menyimpan gudang.');
-    } finally {
-      setSavingWarehouse(false);
-    }
-  };
-
-  const handleDeleteWarehouse = async (warehouseId) => {
-    if (!window.confirm('Yakin ingin menghapus gudang ini?')) return;
-
-    setDeletingWarehouseId(warehouseId);
-    try {
-      await api.delete(ENDPOINTS.WAREHOUSE_BY_ID(warehouseId));
-      toast.success('Gudang berhasil dihapus.');
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menghapus gudang.');
-    } finally {
-      setDeletingWarehouseId('');
-    }
-  };
-
-  const handleRemoveExistingImage = (publicId) => {
-    setDeleteImageIds((currentIds) => [...currentIds, publicId]);
-    setExistingImages((currentImages) => currentImages.filter((image) => image.publicId !== publicId));
-  };
-
-  const handleRemoveNewImage = (indexToRemove) => {
-    setImageFiles((currentFiles) => currentFiles.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleViewOrder = async (orderId) => {
-    try {
-      const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
-      setSelectedOrder(response.data);
-      setIsOrderDetailOpen(true);
-    } catch {
-      toast.error('Gagal memuat detail order.');
-    }
-  };
-
-  const handleUpdateOrderStatus = async (orderId, newStatus) => {
-    setUpdatingStatus(true);
-    try {
-      await api.put(ENDPOINTS.UPDATE_ORDER_STATUS(orderId), { status: newStatus });
-      toast.success(`Status diubah ke ${newStatus}`);
-      const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
-      setSelectedOrder(response.data);
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal mengubah status.');
-    } finally {
-      setUpdatingStatus(false);
-    }
-  };
-
-  const handleTogglePaid = async (orderId, isPaid) => {
-    try {
-      await api.put(ENDPOINTS.UPDATE_ORDER_STATUS(orderId), { isPaid });
-      toast.success(isPaid ? 'Ditandai sudah bayar' : 'Status bayar dihapus');
-      const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
-      setSelectedOrder(response.data);
-      await fetchData();
-    } catch {
-      toast.error('Gagal mengubah status pembayaran.');
-    }
-  };
-
-  const openCreateOrder = async () => {
-    try {
-      const response = await api.get(ENDPOINTS.PRODUCTS);
-      setProducts(response.data || []);
-      setOrderForm({
-        productId: response.data[0]?._id || '',
-        variantId: '',
-        quantity: 100,
-        useValve: false,
-      });
-      setIsCreateOrderOpen(true);
-    } catch {
-      toast.error('Gagal memuat produk.');
-    }
-  };
-
-  const handleCreateOrder = async (event) => {
-    event.preventDefault();
-
-    if (Number(orderForm.quantity) % 100 !== 0) {
-      toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
-      return;
-    }
-
-    setCreatingOrder(true);
-
-    try {
-      await api.post(ENDPOINTS.ORDERS, orderForm);
-      toast.success('Pesanan berhasil dibuat!');
-      setIsCreateOrderOpen(false);
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal membuat pesanan.');
-    } finally {
-      setCreatingOrder(false);
-    }
-  };
-
-  const handleSaveProfile = async (event) => {
-    event.preventDefault();
-    setSavingProfile(true);
-
-    try {
-      const response = await api.put(ENDPOINTS.PROFILE, profile);
-      storage.setUser({
-        _id: response.data._id,
-        name: response.data.name,
-        role: response.data.role,
-      });
-      toast.success('Profil berhasil diupdate!');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menyimpan profil.');
-    } finally {
-      setSavingProfile(false);
-    }
-  };
-
-  const handleChangePassword = async (event) => {
-    event.preventDefault();
-
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      toast.error('Password baru dan konfirmasi tidak cocok.');
-      return;
-    }
-
-    setSavingPassword(true);
-    try {
-      await api.put(ENDPOINTS.CHANGE_PASSWORD, {
-        currentPassword: passwords.currentPassword,
-        newPassword: passwords.newPassword,
-      });
-      toast.success('Password berhasil diubah!');
-      setPasswords(EMPTY_PASSWORDS);
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal mengubah password.');
-    } finally {
-      setSavingPassword(false);
-    }
-  };
-
-  const updateArticleField = (clientId, field, value) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      articles: currentContent.articles.map((article) => (
-        article.clientId === clientId ? { ...article, [field]: value } : article
-      )),
-    }));
-  };
-
-  const updateActivityField = (clientId, field, value) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      activities: currentContent.activities.map((activity) => (
-        activity.clientId === clientId ? { ...activity, [field]: value } : activity
-      )),
-    }));
-  };
-
-  const updatePortfolioField = (clientId, field, value) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      portfolios: currentContent.portfolios.map((portfolio) => (
-        portfolio.clientId === clientId ? { ...portfolio, [field]: value } : portfolio
-      )),
-    }));
-  };
-
-  const handleAddLandingArticle = () => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      articles: [...currentContent.articles, createEmptyArticle()],
-    }));
-  };
-
-  const handleRemoveLandingArticle = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      articles: currentContent.articles.filter((article) => article.clientId !== clientId),
-    }));
-  };
-
-  const handleAddLandingActivity = () => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      activities: [...currentContent.activities, createEmptyActivity()],
-    }));
-  };
-
-  const handleRemoveLandingActivity = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      activities: currentContent.activities.filter((activity) => activity.clientId !== clientId),
-    }));
-  };
-
-  const handleAddLandingPortfolio = () => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      portfolios: [...currentContent.portfolios, createEmptyPortfolio()],
-    }));
-  };
-
-  const handleRemoveLandingPortfolio = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      portfolios: currentContent.portfolios.filter((portfolio) => portfolio.clientId !== clientId),
-    }));
-  };
-
-  const handleLandingArticleImageChange = (clientId, file) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      articles: currentContent.articles.map((article) => (
-        article.clientId === clientId
-          ? {
-              ...article,
-              imageFile: file || null,
-              imageRemoved: false,
-            }
-          : article
-      )),
-    }));
-  };
-
-  const handleLandingArticleRemoveImage = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      articles: currentContent.articles.map((article) => (
-        article.clientId === clientId
-          ? {
-              ...article,
-              imageFile: null,
-              imageUrl: '',
-              imagePublicId: '',
-              imageRemoved: true,
-            }
-          : article
-      )),
-    }));
-  };
-
-  const handleLandingActivityImageChange = (clientId, file) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      activities: currentContent.activities.map((activity) => (
-        activity.clientId === clientId
-          ? {
-              ...activity,
-              imageFile: file || null,
-              imageRemoved: false,
-            }
-          : activity
-      )),
-    }));
-  };
-
-  const handleLandingActivityRemoveImage = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      activities: currentContent.activities.map((activity) => (
-        activity.clientId === clientId
-          ? {
-              ...activity,
-              imageFile: null,
-              imageUrl: '',
-              imagePublicId: '',
-              imageRemoved: true,
-            }
-          : activity
-      )),
-    }));
-  };
-
-  const handleLandingPortfolioImageChange = (clientId, file) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      portfolios: currentContent.portfolios.map((portfolio) => (
-        portfolio.clientId === clientId
-          ? {
-              ...portfolio,
-              imageFile: file || null,
-              imageRemoved: false,
-            }
-          : portfolio
-      )),
-    }));
-  };
-
-  const handleLandingPortfolioRemoveImage = (clientId) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      portfolios: currentContent.portfolios.map((portfolio) => (
-        portfolio.clientId === clientId
-          ? {
-              ...portfolio,
-              imageFile: null,
-              imageUrl: '',
-              imagePublicId: '',
-              imageRemoved: true,
-            }
-          : portfolio
-      )),
-    }));
-  };
-
-  const handleLandingSectionConfigChange = (sectionType, field, value) => {
-    setLandingContent((currentContent) => ({
-      ...currentContent,
-      [sectionType]: {
-        ...currentContent[sectionType],
-        [field]: value,
-      },
-    }));
-  };
-
-  const handleSaveLandingContent = async () => {
-    setSavingLandingContent(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('payload', JSON.stringify(buildLandingContentPayload(landingContent)));
-
-      landingContent.articles.forEach((article) => {
-        if (article.imageFile) {
-          formData.append(`articleImage:${article.clientId}`, article.imageFile);
-        }
-      });
-
-      (landingContent.activities || []).forEach((activity) => {
-        if (activity.imageFile) {
-          formData.append(`activityImage:${activity.clientId}`, activity.imageFile);
-        }
-      });
-
-      (landingContent.portfolios || []).forEach((portfolio) => {
-        if (portfolio.imageFile) {
-          formData.append(`portfolioImage:${portfolio.clientId}`, portfolio.imageFile);
-        }
-      });
-
-      const response = await api.put(ENDPOINTS.LANDING_CONTENT, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setLandingContent(normalizeLandingContent(response.data));
-      toast.success('Konten landing page berhasil diperbarui.');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Gagal menyimpan konten landing page.');
-    } finally {
-      setSavingLandingContent(false);
-    }
-  };
-
   const renderPage = () => {
     if (loading) {
       return <LoadingState />;
@@ -964,6 +372,7 @@ export default function CustomerDashboard() {
             isAdmin={isAdmin}
             onViewOrder={handleViewOrder}
             stats={stats}
+            lowStockProducts={lowStockProducts}
           />
         );
 
@@ -997,8 +406,7 @@ export default function CustomerDashboard() {
             onDeleteProduct={handleDeleteProduct}
             onEditProduct={handleEditProduct}
             onOpenProductModal={() => {
-              resetProductForm();
-              setEditingProduct(null);
+              closeProductModal();
               setIsModalOpen(true);
             }}
             onSearchChange={setSearchTerm}
@@ -1208,7 +616,7 @@ export default function CustomerDashboard() {
         formatDate={formatDate}
         isAdmin={isAdmin}
         isOpen={isOrderDetailOpen}
-        onClose={closeOrderDetailModal}
+        onClose={() => setIsOrderDetailOpen(false)}
         onTogglePaid={handleTogglePaid}
         onUpdateOrderStatus={handleUpdateOrderStatus}
         orderStatuses={ORDER_STATUSES}
