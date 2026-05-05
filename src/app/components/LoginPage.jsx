@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { storage, ENDPOINTS, getAPIUrl } from '../config/environment';
 import logoUrl from '../../assets/LogoUKM.svg';
+import MobileLoginPage from './MobileLoginPage';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -69,9 +70,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex w-full bg-white font-sans overflow-hidden animate-fade-in">
-      {/* Left Panel: Primary branding section with premium pattern */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-primary items-center justify-center p-12 overflow-hidden">
+    <>
+      <MobileLoginPage />
+      <div className="hidden lg:flex min-h-screen w-full bg-white font-sans overflow-hidden animate-fade-in">
+        {/* Left Panel: Primary branding section with premium pattern */}
+        <div className="flex w-1/2 relative bg-primary items-center justify-center p-12 overflow-hidden">
         {/* Advanced Grid Pattern like the image */}
         <div
           className="absolute inset-0 z-0"
@@ -261,5 +264,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  </>
+);
 }

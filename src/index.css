@@ -38,3 +38,21 @@
     @apply min-h-screen bg-gray-50 text-slate-900 antialiased overflow-x-hidden;
   }
 }
+
+/* Sonner Toaster Mobile Override */
+@media (max-width: 1024px) {
+  [data-sonner-toaster] {
+    width: 90vw !important;
+    /* Force transform disable so left works cleanly relative to screen */
+    transform: none !important;
+    left: 5vw !important;
+    right: auto !important;
+    top: calc(env(safe-area-inset-top, 0px) + 20px) !important;
+    bottom: auto !important;
+    --width: 90vw !important;
+  }
+  
+  [data-sonner-toast] {
+    width: 100% !important;
+  }
+}

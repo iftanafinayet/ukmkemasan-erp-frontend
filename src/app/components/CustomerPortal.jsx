@@ -10,6 +10,18 @@ import CustomerPortalOrdersSection from './customer-portal/CustomerPortalOrdersS
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
 import CustomerFooter from './CustomerFooter';
+
+// Mobile Components
+import MobileHeader from './customer-portal/mobile/MobileHeader';
+import MobileBottomNav from './customer-portal/mobile/MobileBottomNav';
+import MobileHomePage from './customer-portal/mobile/MobileHomePage';
+import MobileCatalogPage from './customer-portal/mobile/MobileCatalogPage';
+import MobileOrdersPage from './customer-portal/mobile/MobileOrdersPage';
+import MobileOrderDetailPage from './customer-portal/mobile/MobileOrderDetailPage';
+import MobileProfilePage from './customer-portal/mobile/MobileProfilePage';
+import MobileCartPage from './customer-portal/mobile/MobileCartPage';
+import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
@@ -33,6 +45,8 @@ export default function CustomerPortal() {
   const [checkingOutCart, setCheckingOutCart] = useState(false);
   const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [profile, setProfile] = useState({ name: '', email: '', phone: '', address: '' });
@@ -145,9 +159,7 @@ export default function CustomerPortal() {
     setSearchParams(nextParams, { replace: true });
   }, [activeMenu, menuFromQuery, searchParams, setSearchParams]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+
 
   const getStatusColor = (status) => ({
     Quotation: 'bg-yellow-100 text-yellow-700 border-yellow-200',
@@ -411,7 +423,83 @@ export default function CustomerPortal() {
     );
   };
 
-  const renderPage = () => {
+  const renderMobilePage = () => {
+    if (loading) return <MobilePageSkeleton activeMenu={activeMenu} />;
+
+    switch (activeMenu) {
+      case 'dashboard':
+        return (
+          <MobileHomePage 
+            stats={stats}
+            landingContent={landingContent}
+            popularProducts={popularProducts}
+            user={user || { name: 'Customer' }}
+            onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
+            onNavigateToCatalog={() => setActiveMenu('catalog')}
+            onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+            onViewAllOrders={() => setActiveMenu('orders')}
+          />
+        );
+      case 'catalog':
+        return (
+        <MobileCatalogPage 
+          products={products}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedSize={selectedSize}
+          setSelectedSize={setSelectedSize}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
+          onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
+        />
+        );
+      case 'orders':
+        return (
+          <MobileOrdersPage 
+            orders={orders}
+            orderFilter={orderFilter}
+            setOrderFilter={setOrderFilter}
+            onViewOrder={handleViewOrder}
+            getStatusLabel={getStatusLabel}
+          />
+        );
+      case 'cart':
+        return (
+          <MobileCartPage 
+            cartItems={cartItems}
+            cartTotal={cartTotal}
+            cartQuantity={cartQuantity}
+            checkingOutCart={checkingOutCart}
+            formatCurrency={formatCurrency}
+            onAddItem={() => setActiveMenu('catalog')}
+            onClearCart={handleClearCart}
+            onRemoveItem={handleRemoveCartItem}
+            onCheckout={handleCheckoutCart}
+            onBack={() => setActiveMenu('dashboard')}
+          />
+        );
+      case 'profile':
+      case 'settings':
+        return (
+          <MobileProfilePage 
+            user={user || { name: 'Customer' }}
+            profile={profile}
+            stats={stats}
+            onSaveProfile={handleSaveProfile}
+            onChangePassword={handleChangePassword}
+            savingProfile={savingProfile}
+            savingPassword={savingPassword}
+            passwords={passwords}
+            setPasswords={setPasswords}
+            setProfile={setProfile}
+          />
+        );
+      default:
+        return <EmptyState text="Halaman sedang dikembangkan." />;
+    }
+  };
+
+  const renderDesktopPage = () => {
     if (loading) return <LoadingState />;
 
     switch (activeMenu) {
@@ -443,27 +531,55 @@ export default function CustomerPortal() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-on-surface flex flex-col">
-      <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
-      <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
-        {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
-          <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
-          </header>
-        )}
+      {/* Desktop View */}
+      <div className="hidden lg:flex flex-col flex-1">
+        <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+        <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
+          {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
+            <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
+            </header>
+          )}
 
-        {renderPage()}
-      </main>
+          {renderDesktopPage()}
+        </main>
+        <CustomerFooter />
+      </div>
 
-      <CustomerFooter />
+      {/* Mobile View */}
+      <div className="lg:hidden flex flex-col flex-1 bg-[#faf8ff]">
+        <MobileHeader onMenuChange={setActiveMenu} activeMenu={activeMenu} />
+        <main className="pt-14 pb-20 flex-1">
+          {renderMobilePage()}
+        </main>
+        <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+      </div>
 
       {isDetailOpen && selectedOrder && (
-        <CustomerPortalOrderDetailModal
-          formatCurrency={formatCurrency}
-          formatDate={formatDate}
-          getStatusLabel={getStatusLabel}
-          onClose={() => setIsDetailOpen(false)}
-          onOpenPayment={handleNavigateToPayment}
-          order={selectedOrder}
-        />
+        <>
+          {/* Mobile Order Detail View */}
+          <div className="lg:hidden">
+            <MobileOrderDetailPage
+              formatCurrency={formatCurrency}
+              formatDate={formatDate}
+              getStatusLabel={getStatusLabel}
+              onBack={() => setIsDetailOpen(false)}
+              onOpenPayment={handleNavigateToPayment}
+              order={selectedOrder}
+            />
+          </div>
+
+          {/* Desktop Order Detail Modal */}
+          <div className="hidden lg:block">
+            <CustomerPortalOrderDetailModal
+              formatCurrency={formatCurrency}
+              formatDate={formatDate}
+              getStatusLabel={getStatusLabel}
+              onClose={() => setIsDetailOpen(false)}
+              onOpenPayment={handleNavigateToPayment}
+              order={selectedOrder}
+            />
+          </div>
+        </>
       )}
     </div>
   );
