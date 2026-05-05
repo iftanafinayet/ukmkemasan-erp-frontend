@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../../assets/LogoUKM.svg';
 
 const LOADING_MESSAGES = [
-  'Menyiapkan workspace Anda...',
-  'Sinkronisasi data inventaris...',
-  'Mengoptimalkan tampilan portal...',
+  'Menyiapkan workspace...',
+  'Sinkronisasi data...',
+  'Mengoptimalkan portal...',
   'Hampir siap!',
 ];
 
@@ -15,7 +15,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-    }, 600);
+    }, 800);
     return () => clearInterval(interval);
   }, []);
 
@@ -24,7 +24,7 @@ const SplashScreen = () => {
       initial={{ opacity: 1 }}
       exit={{ 
         opacity: 0, 
-        transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } 
+        transition: { duration: 0.6, ease: "easeInOut" } 
       }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#4dbace] text-white overflow-hidden"
     >
@@ -32,61 +32,66 @@ const SplashScreen = () => {
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 
           animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            rotate: 360,
+            scale: [1, 1.1, 1],
           }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl" 
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-32 -left-32 w-[500px] h-[500px] border border-white/5 rounded-full"
         />
         <motion.div 
           animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
+            rotate: -360,
+            scale: [1, 1.2, 1],
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear", delay: 1 }}
-          className="absolute -bottom-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl" 
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-48 -right-48 w-[600px] h-[600px] border border-white/5 rounded-full"
         />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center max-w-sm px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center w-full max-w-[280px] text-center">
         {/* Logo Animation */}
-        <div className="relative mb-8">
-          <motion.div
-            animate={{ 
-              scale: [1, 1.05, 1],
-            }}
-            transition={{ 
-              duration: 2, 
-              repeat: Infinity, 
-              ease: "easeInOut" 
-            }}
-            className="bg-white p-6 rounded-3xl shadow-2xl"
-          >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="relative mb-12"
+        >
+          <div className="bg-white p-7 rounded-[2rem] shadow-2xl flex items-center justify-center">
             <img 
               src={logo} 
-              alt="UKM Kemasan Logo" 
-              className="w-40 h-auto" 
+              alt="Logo" 
+              className="w-24 h-auto" 
             />
-          </motion.div>
+          </div>
           
-          {/* Logo Pulse Ring */}
           <motion.div 
-            animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+            animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-            className="absolute inset-0 rounded-3xl border-4 border-white/30 -m-4 pointer-events-none"
+            className="absolute inset-0 rounded-[2rem] border-2 border-white/40 pointer-events-none"
           />
-        </div>
+        </motion.div>
+
+        {/* Brand Name */}
+        <motion.div
+           initial={{ y: 20, opacity: 0 }}
+           animate={{ y: 0, opacity: 1 }}
+           transition={{ delay: 0.2 }}
+           className="mb-14"
+        >
+          <h1 className="text-2xl font-black tracking-[0.2em] uppercase mb-1">UKM Kemasan</h1>
+          <div className="h-0.5 w-10 bg-white/40 mx-auto rounded-full"></div>
+        </motion.div>
 
         {/* Loading Text */}
-        <div className="h-6 mb-12">
+        <div className="h-5 mb-8">
           <AnimatePresence mode="wait">
             <motion.p
               key={messageIndex}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4 }}
-              className="text-white/80 font-medium text-sm tracking-wide"
+              transition={{ duration: 0.3 }}
+              className="text-white font-bold text-[12px] tracking-widest uppercase"
             >
               {LOADING_MESSAGES[messageIndex]}
             </motion.p>
@@ -94,24 +99,29 @@ const SplashScreen = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-48 h-1.5 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+        <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
           <motion.div 
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
+            animate={{ x: ["-100%", "100%"] }}
             transition={{ 
-              duration: 2, 
+              duration: 1.5, 
               repeat: Infinity, 
-              ease: "linear" 
+              ease: "easeInOut" 
             }}
-            className="h-full bg-white rounded-full"
+            className="h-full bg-white w-1/3 rounded-full"
           />
         </div>
       </div>
 
       {/* Bottom Version Text */}
-      <div className="absolute bottom-8 text-white/40 text-[10px] font-bold uppercase tracking-widest">
-        Powered by ERP UKM Kemasan v1.0
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-10 flex flex-col items-center gap-2"
+      >
+        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Official Mobile App</p>
+        <p className="text-[8px] opacity-70">v2.4.1 Build 2026</p>
+      </motion.div>
     </motion.div>
   );
 };

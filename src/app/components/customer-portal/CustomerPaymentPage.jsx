@@ -7,6 +7,7 @@ import CustomerFooter from '../CustomerFooter';
 import api from '../../utils/api';
 import { ENDPOINTS, storage } from '../../config/environment';
 import { formatCurrency, formatDate, formatDateTime } from '../../utils/formatters';
+import MobilePaymentPage from './mobile/MobilePaymentPage';
 
 const SANDBOX_SNAP_URL = 'https://app.sandbox.midtrans.com/snap/snap.js';
 const PRODUCTION_SNAP_URL = 'https://app.midtrans.com/snap/snap.js';
@@ -134,10 +135,21 @@ export default function CustomerPaymentPage() {
   const resolvedClientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY || paymentData?.midtrans?.clientKey || '';
 
   return (
-    <div className="min-h-screen bg-[#f6f3ed] text-slate-900">
-      <CustomerNavbar activeMenu="orders" />
+    <>
+      <div className="lg:hidden">
+         <MobilePaymentPage
+            loading={loading}
+            creatingToken={creatingToken}
+            paymentData={paymentData}
+            onPayNow={handlePayNow}
+            onRefresh={fetchPaymentData}
+            onBack={() => navigate('/portal?menu=orders')}
+         />
+      </div>
+      <div className="hidden lg:flex min-h-screen bg-[#f6f3ed] text-slate-900 flex-col">
+        <CustomerNavbar activeMenu="orders" />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
+        <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
         {/* Header Style matching Catalog/Cart */}
         <section className="relative">
           <div className="flex items-start justify-between">
@@ -301,5 +313,6 @@ export default function CustomerPaymentPage() {
       </main>
       <CustomerFooter />
     </div>
+    </>
   );
 }

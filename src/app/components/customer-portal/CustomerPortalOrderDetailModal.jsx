@@ -1,8 +1,8 @@
 import React from 'react';
 import { ModalWrapper, InfoBlock } from '../customer-dashboard/shared';
-
+ 
 const ORDER_STEPS = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
-
+ 
 export default function CustomerPortalOrderDetailModal({
   formatCurrency,
   formatDate,
@@ -13,16 +13,16 @@ export default function CustomerPortalOrderDetailModal({
 }) {
   if (!order) return null;
   const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
-
+ 
   return (
     <ModalWrapper onClose={onClose} wide>
       <h3 className="text-2xl font-black tracking-tight text-slate-800">Pesanan #{order.orderNumber}</h3>
       <p className="mb-8 text-sm font-medium text-slate-500">{formatDate(order.createdAt)}</p>
-
+ 
       <div className="mb-8 rounded-2xl border border-slate-100 bg-slate-50 p-6">
         <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Progress Pesanan</p>
         <div className="overflow-x-auto">
-          <div className="flex min-w-[640px] items-center justify-between">
+          <div className="flex min-w-[640px] items-center justify-between lg:min-w-0">
             {ORDER_STEPS.map((status, idx, arr) => {
               const currentIdx = arr.indexOf(order.status);
               const isDone = idx <= currentIdx;
@@ -41,7 +41,7 @@ export default function CustomerPortalOrderDetailModal({
           </div>
         </div>
       </div>
-
+ 
       <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="space-y-4">
           <InfoBlock label="Produk" value={order.product?.name} />
@@ -54,7 +54,7 @@ export default function CustomerPortalOrderDetailModal({
           <InfoBlock label="Total" value={formatCurrency(order.totalPrice)} highlight />
         </div>
       </div>
-
+ 
       {canPay && (
         <div className="flex justify-end">
           <button

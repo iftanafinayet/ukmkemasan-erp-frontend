@@ -83,7 +83,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex w-full bg-white font-sans overflow-hidden animate-fade-in">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-slate-50 relative overflow-hidden">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 bg-slate-50 relative overflow-hidden">
         <div className="absolute bottom-[-10%] left-[-8%] opacity-[0.045] select-none pointer-events-none grayscale saturate-0 -translate-x-1/4 translate-y-1/4">
           <img
             src={logoUrl}
@@ -93,8 +93,8 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="w-full max-w-[560px] z-10 px-4 md:px-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-8 md:p-12 border border-slate-100/50 backdrop-blur-sm">
+        <div className="w-full max-w-[560px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-6 sm:p-8 md:p-12 border border-slate-100/50 backdrop-blur-sm">
             <div className="text-center mb-10">
               <div className="mb-5 inline-flex items-center justify-center rounded-[1.25rem] border border-slate-200 bg-slate-50/80 px-5 py-4 shadow-sm lg:hidden">
                 <img src={logoUrl} alt="Logo UKM Kemasan" className="h-14 w-auto object-contain" />
@@ -124,7 +124,7 @@ export default function RegisterPage() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Enter your full name or business name"
+                      placeholder="Your name or business name"
                       data-testid="register-name"
                       className="w-full text-slate-800 p-4 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
                       required
@@ -246,12 +246,25 @@ export default function RegisterPage() {
             </form>
 
             <div className="mt-10 text-center">
-              <p className="text-sm font-medium text-slate-500">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary font-black hover:underline underline-offset-4 decoration-2">
+              <p className="text-center mt-8 text-slate-500 text-sm font-bold">
+                Sudah punya akun?{' '}
+                <Link to="/login" className="text-[#4dbace] hover:text-[#3da0b5] transition-colors">
                   Sign In
                 </Link>
               </p>
+
+              <div className="relative flex items-center gap-4 py-6 lg:hidden">
+                <div className="flex-1 h-px bg-slate-200"></div>
+                <span className="text-[10px] font-black text-slate-400 uppercase">ATAU</span>
+                <div className="flex-1 h-px bg-slate-200"></div>
+              </div>
+
+              <button 
+                onClick={() => navigate('/portal')}
+                className="w-full lg:hidden bg-slate-50 border-2 border-slate-100 text-slate-600 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-all"
+              >
+                Masuk Sebagai Tamu
+              </button>
             </div>
           </div>
 

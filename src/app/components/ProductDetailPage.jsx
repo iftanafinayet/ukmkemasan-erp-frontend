@@ -16,6 +16,7 @@ import {
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import MobileProductDetailPage from './customer-portal/mobile/MobileProductDetailPage';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -212,22 +213,24 @@ export default function ProductDetailPage() {
 
     return (
         <div className={isAdmin ? "flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen" : "min-h-screen bg-surface-bright font-sans text-on-surface"}>
-            {isAdmin ? (
-                <Sidebar activeMenu="inventory" onMenuChange={handleMenuChange} />
-            ) : (
-                <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
-            )}
-            <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
-                <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
-                    <div className="mb-8 flex items-center justify-between gap-4">
-                                <button
-                                    onClick={goBack}
-                                    data-testid="product-detail-back-btn"
-                                    className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
-                                >
-                            <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
-                            Kembali
-                        </button>
+            {/* Desktop View */}
+            <div className="hidden lg:flex flex-col flex-1">
+                {isAdmin ? (
+                    <Sidebar activeMenu="inventory" onMenuChange={handleMenuChange} />
+                ) : (
+                    <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
+                )}
+                <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
+                    <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
+                        <div className="mb-8 flex items-center justify-between gap-4">
+                                    <button
+                                        onClick={goBack}
+                                        data-testid="product-detail-back-btn"
+                                        className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
+                                    >
+                                <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
+                                Kembali
+                            </button>
                                 <button
                                     onClick={fetchProduct}
                                     data-testid="product-detail-refresh-btn"
@@ -506,11 +509,37 @@ export default function ProductDetailPage() {
                         </div>
                     )}
                 </div>
-            </main>
-        </div>
-    );
-}
+                </main>
+                </div>
 
+                {/* Mobile View */}
+                {!isAdmin && (
+                <MobileProductDetailPage 
+                product={product}
+                onBack={goBack}
+                activeImageIdx={activeImageIdx}
+                setActiveImageIdx={setActiveImageIdx}
+                selectedSize={selectedSize}
+                onSelectSize={handleSelectSize}
+                selectedColor={selectedColor}
+                onSelectColor={handleSelectColor}
+                quantity={safeQuantity}
+                setQuantity={setQuantity}
+                useValve={useValve}
+                setUseValve={setUseValve}
+                onAddToCart={handleAddToCart}
+                totalPrice={totalPrice}
+                unitPrice={unitPrice}
+                selectedVariant={selectedVariant}
+                sizeOptions={sizeOptions}
+                colorOptions={colorOptions}
+                isSizeDisabled={isSizeDisabled}
+                isColorDisabled={isColorDisabled}
+                />
+                )}
+                </div>
+                );
+                }
 const SpecCard = ({ icon, label, value, highlight }) => {
     const Icon = icon;
 
