@@ -33,8 +33,10 @@ import {
   SettingsPage,
 } from './customer-dashboard/overview-sections';
 import {
+  DashboardSkeleton,
   EmptyState,
   LoadingState,
+  TableSkeleton,
 } from './customer-dashboard/shared';
 import { StockCardPage } from './customer-dashboard/stock-sections';
 import {
@@ -47,6 +49,7 @@ import { useProducts } from './customer-dashboard/hooks/useProducts';
 import { useOrders } from './customer-dashboard/hooks/useOrders';
 import { useInventory } from './customer-dashboard/hooks/useInventory';
 import { useUserSettings } from './customer-dashboard/hooks/useUserSettings';
+import { normalizeLandingContent } from '../utils/landingContent';
 
 export default function CustomerDashboard() {
   const user = storage.getUser();
@@ -75,15 +78,15 @@ export default function CustomerDashboard() {
     isModalOpen,
     setIsModalOpen,
     editingProduct,
-    setEditingProduct,
+    setEditingProduct: _setEditingProduct,
     newProduct,
     setNewProduct,
     imageFiles,
-    setImageFiles,
-    deleteImageIds,
-    setDeleteImageIds,
+    setImageFiles: _setImageFiles,
+    deleteImageIds: _deleteImageIds,
+    setDeleteImageIds: _setDeleteImageIds,
     existingImages,
-    setExistingImages,
+    setExistingImages: _setExistingImages,
     closeProductModal,
     addImageFiles,
     handleEditProduct,
@@ -95,43 +98,43 @@ export default function CustomerDashboard() {
 
   const {
     selectedOrder,
-    setSelectedOrder,
+    setSelectedOrder: _setSelectedOrder,
     isOrderDetailOpen,
     setIsOrderDetailOpen,
     updatingStatus,
-    setUpdatingStatus,
+    setUpdatingStatus: _setUpdatingStatus,
     isCreateOrderOpen,
     setIsCreateOrderOpen,
     products,
-    setProducts,
+    setProducts: _setProducts,
     orderForm,
     setOrderForm,
     creatingOrder,
-    setCreatingOrder,
+    setCreatingOrder: _setCreatingOrder,
     handleViewOrder,
     handleUpdateOrderStatus,
     handleTogglePaid,
     openCreateOrder,
     handleCreateOrder,
-  } = useOrders(setData);
+  } = useOrders();
 
   const {
     warehouses,
     setWarehouses,
     isWarehouseModalOpen,
-    setIsWarehouseModalOpen,
+    setIsWarehouseModalOpen: _setIsWarehouseModalOpen,
     editingWarehouse,
-    setEditingWarehouse,
+    setEditingWarehouse: _setEditingWarehouse,
     warehouseForm,
     setWarehouseForm,
     savingWarehouse,
-    setSavingWarehouse,
+    setSavingWarehouse: _setSavingWarehouse,
     deletingWarehouseId,
-    setDeletingWarehouseId,
+    setDeletingWarehouseId: _setDeletingWarehouseId,
     adjustmentForm,
     setAdjustmentForm,
     savingAdjustment,
-    setSavingAdjustment,
+    setSavingAdjustment: _setSavingAdjustment,
     inventoryProductOptions,
     setInventoryProductOptions,
     stockCardProductId,
@@ -139,7 +142,7 @@ export default function CustomerDashboard() {
     stockCardRows,
     setStockCardRows,
     stockCardLoading,
-    setStockCardLoading,
+    setStockCardLoading: _setStockCardLoading,
     fetchStockCardRows,
     handleSelectStockCardProduct,
     openCreateWarehouse,
@@ -148,7 +151,7 @@ export default function CustomerDashboard() {
     handleDeleteWarehouse,
     handleSaveAdjustment,
     closeWarehouseModal,
-  } = useInventory(setData);
+  } = useInventory();
 
   const {
     profile,
@@ -201,7 +204,7 @@ export default function CustomerDashboard() {
             try {
               const [statsResponse, lowStockResponse] = await Promise.all([
                 api.get(ENDPOINTS.DASHBOARD_STATS),
-                api.get('/products/low-stock'),
+                api.get(ENDPOINTS.LOW_STOCK_PRODUCTS),
               ]);
                setAdminStats(statsResponse.data);
                setStats({
@@ -342,7 +345,18 @@ export default function CustomerDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [activeMenu, fetchStockCardRows, isAdmin, stockCardProductId]);
+  }, [
+    activeMenu,
+    fetchStockCardRows,
+    isAdmin,
+    setInventoryProductOptions,
+    setLandingContent,
+    setProfile,
+    setStockCardProductId,
+    setStockCardRows,
+    setWarehouses,
+    stockCardProductId,
+  ]);
 
   useEffect(() => {
     setSearchTerm('');
@@ -356,10 +370,23 @@ export default function CustomerDashboard() {
     setInvPage(1);
   }, [searchTerm]);
 
-  const renderPage = () => {
-    if (loading) {
-      return <LoadingState />;
+  const renderLoading = () => {
+    switch (activeMenu) {
+      case 'dashboard':
+        return <DashboardSkeleton isAdmin={isAdmin} />;
+      case 'orders':
+      case 'sales-orders':
+      case 'customers':
+      case 'inventory':
+      case 'inventory-items':
+        return <TableSkeleton />;
+      default:
+        return <LoadingState />;
     }
+  };
+
+  const renderPage = () => {
+    if (loading) return renderLoading();
 
     switch (activeMenu) {
       case 'dashboard':

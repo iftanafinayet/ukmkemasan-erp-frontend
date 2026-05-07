@@ -5,13 +5,12 @@ import { getCartCount, subscribeCart } from '../../utils/cart';
 import logoUrl from '../../../assets/LogoUKM.svg';
 
 export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
-  const [cartCount, setCartCount] = useState(0);
+  const [cartCount, setCartCount] = useState(() => getCartCount());
   const user = storage.getUser();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    setCartCount(getCartCount());
     return subscribeCart((items) => {
       const nextCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
       setCartCount(nextCount);

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { FormInput, ModalWrapper } from '../shared';
 import SimplePricingSummary from '../../SimplePricingSummary';
@@ -29,14 +29,37 @@ export default function CreateOrderModal({
   products,
   setOrderForm,
 }) {
-  if (!isOpen) return null;
-
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedCatalogKey, setSelectedCatalogKey] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [prevIsOpen, setPrevIsOpen] = useState(false);
 
   const catalogGroups = useMemo(() => buildCatalogGroups(products), [products]);
+
+  // Adjust state when modal opens
+  if (isOpen && !prevIsOpen) {
+    const nextCatalog = catalogGroups[0];
+    const nextVariant = nextCatalog?.variants.find((variant) => variant.stock > 0)
+      || nextCatalog?.variants[0]
+      || null;
+
+    setSelectedCategory(nextCatalog?.category || 'All');
+    setSelectedCatalogKey(nextCatalog?.key || '');
+    setSelectedSize(nextVariant?.size || '');
+    setSelectedColor(nextVariant?.color || '');
+    
+    setOrderForm((current) => ({
+      ...current,
+      productId: nextVariant?.sourceProductId || nextCatalog?.productId || '',
+      variantId: nextVariant?.variantId || '',
+      quantity: Math.max(nextCatalog?.minOrder || 100, Number(current.quantity) || nextCatalog?.minOrder || 100),
+    }));
+    setPrevIsOpen(true);
+  } else if (!isOpen && prevIsOpen) {
+    setPrevIsOpen(false);
+  }
+
   const categories = ['All', ...new Set(catalogGroups.map((catalog) => catalog.category).filter(Boolean))];
   const filteredCatalogs = selectedCategory === 'All'
     ? catalogGroups
@@ -49,37 +72,6 @@ export default function CreateOrderModal({
   const basePrice = selectedVariant ? (quantity >= 1000 ? selectedVariant.priceB2B : selectedVariant.priceB2C) : 0;
   const valvePrice = orderForm.useValve ? (selectedCatalog?.addons?.valvePrice || 0) : 0;
   const totalPrice = (basePrice + valvePrice) * quantity;
-
-  useEffect(() => {
-    if (!isOpen || catalogGroups.length === 0) return;
-
-    const nextCatalog = catalogGroups[0];
-    const nextVariant = nextCatalog?.variants.find((variant) => variant.stock > 0)
-      || nextCatalog?.variants[0]
-      || null;
-
-    setSelectedCategory(nextCatalog?.category || 'All');
-    setSelectedCatalogKey(nextCatalog?.key || '');
-    setSelectedSize(nextVariant?.size || '');
-    setSelectedColor(nextVariant?.color || '');
-    setOrderForm((current) => ({
-      ...current,
-      productId: nextVariant?.sourceProductId || nextCatalog?.productId || '',
-      variantId: nextVariant?.variantId || '',
-      quantity: Math.max(nextCatalog?.minOrder || 100, Number(current.quantity) || nextCatalog?.minOrder || 100),
-    }));
-  }, [catalogGroups, isOpen, setOrderForm]);
-
-  useEffect(() => {
-    if (!selectedCatalog) return;
-
-    setOrderForm((current) => ({
-      ...current,
-      productId: selectedVariant?.sourceProductId || selectedCatalog.productId || '',
-      variantId: selectedVariant?.variantId || '',
-      quantity: Math.max(selectedCatalog.minOrder || 100, Number(current.quantity) || selectedCatalog.minOrder || 100),
-    }));
-  }, [selectedCatalog, selectedVariant, setOrderForm]);
 
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
@@ -102,6 +94,13 @@ export default function CreateOrderModal({
     setSelectedCatalogKey(nextCatalog.key);
     setSelectedSize(nextVariant?.size || '');
     setSelectedColor(nextVariant?.color || '');
+
+    setOrderForm((current) => ({
+      ...current,
+      productId: nextVariant?.sourceProductId || nextCatalog.productId || '',
+      variantId: nextVariant?.variantId || '',
+      quantity: Math.max(nextCatalog.minOrder || 100, Number(current.quantity) || nextCatalog.minOrder || 100),
+    }));
   };
 
   const handleSelectCatalog = (catalog) => {
@@ -115,6 +114,8 @@ export default function CreateOrderModal({
     setSelectedColor(nextVariant?.color || '');
     setOrderForm((current) => ({
       ...current,
+      productId: nextVariant?.sourceProductId || catalog.productId || '',
+      variantId: nextVariant?.variantId || '',
       useValve: false,
       quantity: Math.max(catalog.minOrder || 100, Number(current.quantity) || catalog.minOrder || 100),
     }));
@@ -133,6 +134,12 @@ export default function CreateOrderModal({
 
     setSelectedSize(size);
     setSelectedColor(nextVariant?.color || '');
+
+    setOrderForm((current) => ({
+      ...current,
+      productId: nextVariant?.sourceProductId || selectedCatalog.productId || '',
+      variantId: nextVariant?.variantId || '',
+    }));
   };
 
   const handleSelectColor = (color) => {
@@ -148,6 +155,12 @@ export default function CreateOrderModal({
 
     setSelectedColor(color);
     setSelectedSize(nextVariant?.size || '');
+
+    setOrderForm((current) => ({
+      ...current,
+      productId: nextVariant?.sourceProductId || selectedCatalog.productId || '',
+      variantId: nextVariant?.variantId || '',
+    }));
   };
 
   const isSizeDisabled = (size) => !selectedCatalog?.variants.some((variant) =>
@@ -161,6 +174,8 @@ export default function CreateOrderModal({
     && (!selectedSize || variant.size === selectedSize)
     && variant.stock > 0
   );
+
+  if (!isOpen) return null;
 
   return (
     <ModalWrapper onClose={onClose} wide>

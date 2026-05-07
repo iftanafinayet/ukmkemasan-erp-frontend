@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import AuthWrapper from './app/components/AuthWrapper';
 import SplashScreen from './app/components/SplashScreen';
@@ -54,16 +54,21 @@ const authPageTransition = {
 function AppRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
-  const previousAuthIndex = useRef(AUTH_ROUTE_ORDER[location.pathname] ?? 0);
   const isAuthRoute = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname);
-  const currentAuthIndex = AUTH_ROUTE_ORDER[location.pathname] ?? previousAuthIndex.current;
-  const direction = currentAuthIndex >= previousAuthIndex.current ? 1 : -1;
+  const [direction, setDirection] = useState(1);
+  const [prevPath, setPrevPath] = useState(location.pathname);
 
-  useEffect(() => {
-    if (Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname)) {
-      previousAuthIndex.current = AUTH_ROUTE_ORDER[location.pathname];
+  if (location.pathname !== prevPath) {
+    const isAuth = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname);
+    const wasAuth = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, prevPath);
+    
+    if (isAuth) {
+      const currentAuthIndex = AUTH_ROUTE_ORDER[location.pathname];
+      const previousAuthIndexValue = wasAuth ? AUTH_ROUTE_ORDER[prevPath] : 0;
+      setDirection(currentAuthIndex >= previousAuthIndexValue ? 1 : -1);
     }
-  }, [location.pathname]);
+    setPrevPath(location.pathname);
+  }
 
   useEffect(() => {
     const expiry = storage.getTokenExpiry();
@@ -108,7 +113,7 @@ function AppRoutes() {
         <Route
           path="/admin"
           element={
-            <AuthWrapper>
+            <AuthWrapper adminOnly>
               <CustomerDashboard />
             </AuthWrapper>
           }
@@ -118,7 +123,7 @@ function AppRoutes() {
         <Route
           path="/admin/products/:id"
           element={
-            <AuthWrapper>
+            <AuthWrapper adminOnly>
               <ProductDetailPage />
             </AuthWrapper>
           }
@@ -175,7 +180,7 @@ function AppRoutes() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-white">
       <AnimatePresence initial={false} mode="sync" custom={direction}>
-        <motion.div
+        <Motion.div
           key={location.pathname}
           custom={direction}
           variants={authPageVariants}
@@ -186,7 +191,7 @@ function AppRoutes() {
           className="absolute inset-0 overflow-y-auto will-change-transform"
         >
           {routes}
-        </motion.div>
+        </Motion.div>
       </AnimatePresence>
     </div>
   );

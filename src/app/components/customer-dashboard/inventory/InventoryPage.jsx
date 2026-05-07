@@ -10,6 +10,7 @@ import {
 import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
 import { exportToFile } from '../../../utils/api';
+import { ENDPOINTS } from '../../../config/environment';
 import { Skeleton, SkeletonCircle } from '../../ui/skeleton';
 import { Reveal } from '../../ui/Reveal';
 
@@ -58,7 +59,7 @@ export default function InventoryPage({
           )}
           <button
             type="button"
-            onClick={() => exportToFile('/api/products/export', 'products.xlsx')}
+            onClick={() => exportToFile(ENDPOINTS.EXPORT_PRODUCTS, 'products.xlsx')}
             className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
           >
             <FileDown size={16} />

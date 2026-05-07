@@ -15,7 +15,7 @@ import {
 } from './ui/carousel';
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency } from '../utils/formatters';
 import MobileProductDetailPage from './customer-portal/mobile/MobileProductDetailPage';
 
 export default function ProductDetailPage() {
@@ -109,7 +109,6 @@ export default function ProductDetailPage() {
     const unitPrice = baseVariantPrice + valvePrice;
     const totalPrice = unitPrice * safeQuantity;
     const displayedStock = selectedVariant?.stock ?? product?.stockPolos ?? 0;
-    const variantCount = variants.length;
 
     const isSizeDisabled = (size) => !variants.some((variant) =>
         variant.size === size

@@ -10,7 +10,7 @@ const EMPTY_ORDER_FORM = {
   useValve: false,
 };
 
-export function useOrders(setData) {
+export function useOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
@@ -37,11 +37,6 @@ export function useOrders(setData) {
       toast.success(`Status diubah ke ${newStatus}`);
       const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
       setSelectedOrder(response.data);
-      
-      // Refresh orders list
-      const ordersResponse = api.get(ENDPOINTS.ALL_ORDERS); // Note: this might need admin check
-      // Since we don't know the role here, we might need to handle it differently or just call setData
-      // But for now, we let the main component handle the refresh via fetchData
     } catch (error) {
       toast.error(error.response?.data?.message || 'Gagal mengubah status.');
     } finally {

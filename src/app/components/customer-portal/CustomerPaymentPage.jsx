@@ -132,7 +132,6 @@ export default function CustomerPaymentPage() {
   const summary = paymentData?.paymentSummary;
   const outstandingAmount = Number(summary?.outstandingAmount || 0);
   const isPaid = Boolean(summary?.isPaid);
-  const resolvedClientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY || paymentData?.midtrans?.clientKey || '';
 
   return (
     <>

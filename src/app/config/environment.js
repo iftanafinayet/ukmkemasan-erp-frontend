@@ -151,7 +151,9 @@ export const ENDPOINTS = {
   // Products
   PRODUCTS: '/products',
   POPULAR_PRODUCTS: '/products/popular',
+  LOW_STOCK_PRODUCTS: '/products/low-stock',
   PRODUCT_BY_ID: (id) => `/products/${id}`,
+  EXPORT_PRODUCTS: '/products/export',
 
   // Landing Content
   LANDING_CONTENT: '/landing-content',
@@ -159,13 +161,18 @@ export const ENDPOINTS = {
   // Customers
   CUSTOMERS: '/customers',
   CUSTOMER_BY_ID: (id) => `/customers/${id}`,
+  EXPORT_CUSTOMERS: '/customers/export',
 
   // Inventory logic
   INVENTORY_PRODUCTS: '/inventory/products',
   WAREHOUSES: '/inventory/warehouses',
   WAREHOUSE_BY_ID: (id) => `/inventory/warehouses/${id}`,
   ADJUSTMENTS: '/inventory/adjustments',
-  STOCK_CARDS: (productId) => `/inventory/stock-cards/${productId}`
+  STOCK_CARDS: (productId) => `/inventory/stock-cards/${productId}`,
+
+  // Exports (Sales)
+  EXPORT_SALES_OVERVIEW: '/sales/overview/export',
+  EXPORT_INVOICES: '/sales/invoices/export'
 };
 
 /**
