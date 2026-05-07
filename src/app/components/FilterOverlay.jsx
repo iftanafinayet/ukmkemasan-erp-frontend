@@ -13,8 +13,6 @@ export default function FilterOverlay({
   colors = [],
   selectedColor,
   onColorChange,
-  priceRange = { min: 0, max: 10000000 },
-  onPriceChange,
 }) {
   const [localCategory, setLocalCategory] = useState(selectedCategory);
   const [localSize, setLocalSize] = useState(selectedSize);

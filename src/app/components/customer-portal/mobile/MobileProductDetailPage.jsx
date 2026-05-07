@@ -16,8 +16,6 @@ export default function MobileProductDetailPage({
   onSelectColor,
   quantity,
   setQuantity,
-  useValve,
-  setUseValve,
   onAddToCart,
   totalPrice,
   unitPrice,

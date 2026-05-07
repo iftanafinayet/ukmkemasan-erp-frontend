@@ -18,6 +18,7 @@ import {
   TableHead,
 } from './shared';
 import { exportToFile } from '../../utils/api';
+import { ENDPOINTS } from '../../config/environment';
 import {
   getInvoiceOutstanding,
   getInvoiceStatusClasses,
@@ -84,7 +85,7 @@ export function SalesProcessingSection({
         />
         <button
           type="button"
-          onClick={() => exportToFile('/api/sales/overview/export', 'sales-overview.xlsx')}
+          onClick={() => exportToFile(ENDPOINTS.EXPORT_SALES_OVERVIEW, 'sales-overview.xlsx')}
           className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
         >
           <FileDown size={16} />
@@ -253,7 +254,7 @@ export function InvoicesSection({
         />
         <button
           type="button"
-          onClick={() => exportToFile('/api/sales/invoices/export', 'invoices.xlsx')}
+          onClick={() => exportToFile(ENDPOINTS.EXPORT_INVOICES, 'invoices.xlsx')}
           className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
         >
           <FileDown size={16} />

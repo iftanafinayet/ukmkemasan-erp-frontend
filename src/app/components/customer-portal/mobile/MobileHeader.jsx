@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCartItems } from '../../../utils/cart';
 import { useNavigate } from 'react-router-dom';
 
-export default function MobileHeader({ onMenuChange, activeMenu }) {
+export default function MobileHeader({ activeMenu }) {
   const navigate = useNavigate();
   const cartItems = getCartItems();
   const cartCount = cartItems.length;

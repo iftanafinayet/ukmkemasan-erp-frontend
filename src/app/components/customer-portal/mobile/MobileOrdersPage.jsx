@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatCurrency, formatDate } from '../../../utils/formatters';
+import { formatCurrency } from '../../../utils/formatters';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 

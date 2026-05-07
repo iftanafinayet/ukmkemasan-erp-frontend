@@ -1,4 +1,5 @@
 import { AlertCircle, ChevronDown, Loader2, Search, X } from 'lucide-react';
+import { Skeleton, SkeletonCircle } from '../ui/skeleton';
 
 const STAT_CARD_STYLES = {
   blue: {
@@ -34,6 +35,61 @@ export function LoadingState() {
       <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
         Menghubungkan ke Server...
       </p>
+    </div>
+  );
+}
+
+export function DashboardSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <SkeletonCircle className="w-8 h-8" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <Skeleton className="h-8 w-24" />
+          </div>
+        ))}
+      </div>
+      <div className="bg-white p-8 rounded-3xl border border-slate-100 h-96">
+        <div className="flex justify-between mb-8">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-6 w-32" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-7 h-64 bg-slate-50 rounded-2xl" />
+          <div className="lg:col-span-5 space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TableSkeleton({ rows = 5 }) {
+  return (
+    <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden animate-pulse">
+      <div className="p-6 border-b border-slate-50 flex justify-between">
+        <Skeleton className="h-8 w-64 rounded-xl" />
+        <Skeleton className="h-8 w-32 rounded-xl" />
+      </div>
+      <div className="p-0">
+        {[...Array(rows)].map((_, i) => (
+          <div key={i} className="px-6 py-5 border-b border-slate-50 flex gap-4 items-center">
+            <SkeletonCircle className="w-10 h-10" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-3 w-1/4" />
+            </div>
+            <Skeleton className="h-6 w-20 rounded-full" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

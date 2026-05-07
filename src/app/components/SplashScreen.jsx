@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import logo from '../../assets/LogoUKM.svg';
 
 const LOADING_MESSAGES = [
@@ -20,7 +20,7 @@ const SplashScreen = () => {
   }, []);
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 1 }}
       exit={{ 
         opacity: 0, 
@@ -30,7 +30,7 @@ const SplashScreen = () => {
     >
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div 
+        <Motion.div 
           animate={{ 
             rotate: 360,
             scale: [1, 1.1, 1],
@@ -38,7 +38,7 @@ const SplashScreen = () => {
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="absolute -top-32 -left-32 w-[500px] h-[500px] border border-white/5 rounded-full"
         />
-        <motion.div 
+        <Motion.div 
           animate={{ 
             rotate: -360,
             scale: [1, 1.2, 1],
@@ -50,7 +50,7 @@ const SplashScreen = () => {
 
       <div className="relative z-10 flex flex-col items-center w-full max-w-[280px] text-center">
         {/* Logo Animation */}
-        <motion.div
+        <Motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -64,15 +64,15 @@ const SplashScreen = () => {
             />
           </div>
           
-          <motion.div 
+          <Motion.div 
             animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className="absolute inset-0 rounded-[2rem] border-2 border-white/40 pointer-events-none"
           />
-        </motion.div>
+        </Motion.div>
 
         {/* Brand Name */}
-        <motion.div
+        <Motion.div
            initial={{ y: 20, opacity: 0 }}
            animate={{ y: 0, opacity: 1 }}
            transition={{ delay: 0.2 }}
@@ -80,12 +80,12 @@ const SplashScreen = () => {
         >
           <h1 className="text-2xl font-black tracking-[0.2em] uppercase mb-1">UKM Kemasan</h1>
           <div className="h-0.5 w-10 bg-white/40 mx-auto rounded-full"></div>
-        </motion.div>
+        </Motion.div>
 
         {/* Loading Text */}
         <div className="h-5 mb-8">
           <AnimatePresence mode="wait">
-            <motion.p
+            <Motion.p
               key={messageIndex}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -94,13 +94,13 @@ const SplashScreen = () => {
               className="text-white font-bold text-[12px] tracking-widest uppercase"
             >
               {LOADING_MESSAGES[messageIndex]}
-            </motion.p>
+            </Motion.p>
           </AnimatePresence>
         </div>
 
         {/* Progress Bar */}
         <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
-          <motion.div 
+          <Motion.div 
             animate={{ x: ["-100%", "100%"] }}
             transition={{ 
               duration: 1.5, 
@@ -113,7 +113,7 @@ const SplashScreen = () => {
       </div>
 
       {/* Bottom Version Text */}
-      <motion.div 
+      <Motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.5 }}
         transition={{ delay: 1 }}
@@ -121,8 +121,8 @@ const SplashScreen = () => {
       >
         <p className="text-[10px] font-black uppercase tracking-[0.3em]">Official Mobile App</p>
         <p className="text-[8px] opacity-70">v2.4.1 Build 2026</p>
-      </motion.div>
-    </motion.div>
+      </Motion.div>
+    </Motion.div>
   );
 };
 

@@ -26,7 +26,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import { formatCurrency, formatDate } from '../utils/formatters';
-import { buildCatalogGroups } from '../utils/catalog';
 import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
 import { EmptyState, LoadingState } from './customer-dashboard/shared';
@@ -502,6 +501,13 @@ export default function CustomerPortal() {
   const renderDesktopPage = () => {
     if (loading) return <LoadingState />;
 
+
+
+
+
+
+
+
     switch (activeMenu) {
       case 'dashboard':
         return renderDashboard();
@@ -518,16 +524,6 @@ export default function CustomerPortal() {
         return <EmptyState text="Halaman sedang dikembangkan." />;
     }
   };
-
-  const pageTitle = activeMenu === 'catalog'
-    ? 'Katalog Produk'
-    : activeMenu === 'orders'
-      ? 'Pesanan Saya'
-      : activeMenu === 'cart'
-        ? 'Keranjang'
-        : activeMenu === 'profile' || activeMenu === 'settings'
-          ? 'Profil'
-          : 'Dashboard';
 
   return (
     <div className="min-h-screen bg-white font-sans text-on-surface flex flex-col">

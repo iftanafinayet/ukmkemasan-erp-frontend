@@ -2,6 +2,7 @@ import React from 'react';
 import { FileDown } from 'lucide-react';
 import { SearchBar, EmptyState } from '../shared';
 import { exportToFile } from '../../../utils/api';
+import { ENDPOINTS } from '../../../config/environment';
 
 export default function CustomersPage({
   filteredCustomers,
@@ -14,7 +15,7 @@ export default function CustomersPage({
         <SearchBar value={searchTerm} onChange={onSearchChange} placeholder="Cari pelanggan..." />
         <button
           type="button"
-          onClick={() => exportToFile('/api/customers/export', 'customers.xlsx')}
+          onClick={() => exportToFile(ENDPOINTS.EXPORT_CUSTOMERS, 'customers.xlsx')}
           className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
         >
           <FileDown size={16} />

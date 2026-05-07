@@ -10,9 +10,7 @@ export default function MobileHomePage({
   popularProducts,
   onViewProduct,
   onNavigateToCatalog,
-  onNavigateToCreateOrder,
   onViewAllOrders,
-  user
 }) {
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();

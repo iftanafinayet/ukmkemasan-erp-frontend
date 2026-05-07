@@ -20,7 +20,7 @@ const EMPTY_ADJUSTMENT_FORM = {
   reason: '',
 };
 
-export function useInventory(setData) {
+export function useInventory() {
   const [warehouses, setWarehouses] = useState([]);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
   const [editingWarehouse, setEditingWarehouse] = useState(null);

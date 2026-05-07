@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import api from '../../../utils/api';
 import { ENDPOINTS, storage } from '../../../config/environment';
