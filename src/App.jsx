@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import LoginPage from './app/components/LoginPage';
-import RegisterPage from './app/components/RegisterPage';
-import CustomerDashboard from './app/components/CustomerDashboard';
-import CustomerPortal from './app/components/CustomerPortal';
-import CreateOrderPage from './app/components/CreateOrderPage';
-import ProductDetailPage from './app/components/ProductDetailPage';
-import CustomerPaymentPage from './app/components/customer-portal/CustomerPaymentPage';
 import AuthWrapper from './app/components/AuthWrapper';
 import SplashScreen from './app/components/SplashScreen';
 import { storage } from './app/config/environment';
 import { Toaster, toast } from 'sonner';
+
+const LoginPage = lazy(() => import('./app/components/LoginPage'));
+const RegisterPage = lazy(() => import('./app/components/RegisterPage'));
+const CustomerDashboard = lazy(() => import('./app/components/CustomerDashboard'));
+const CustomerPortal = lazy(() => import('./app/components/CustomerPortal'));
+const CreateOrderPage = lazy(() => import('./app/components/CreateOrderPage'));
+const ProductDetailPage = lazy(() => import('./app/components/ProductDetailPage'));
+const CustomerPaymentPage = lazy(() => import('./app/components/customer-portal/CustomerPaymentPage'));
 
 /**
  * RoleRedirect: redirect ke portal yang sesuai berdasarkan role user
@@ -92,72 +93,79 @@ function AppRoutes() {
   }, [isAuthRoute, location.pathname, navigate]);
 
   const routes = (
-    <Routes location={location}>
-      {/* Rute publik */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Loading Page...</p>
+      </div>
+    </div>}>
+      <Routes location={location}>
+        {/* Rute publik */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-      {/* Admin Dashboard — khusus admin */}
-      <Route
-        path="/admin"
-        element={
-          <AuthWrapper>
-            <CustomerDashboard />
-          </AuthWrapper>
-        }
-      />
+        {/* Admin Dashboard — khusus admin */}
+        <Route
+          path="/admin"
+          element={
+            <AuthWrapper>
+              <CustomerDashboard />
+            </AuthWrapper>
+          }
+        />
 
-      {/* Admin Product Detail */}
-      <Route
-        path="/admin/products/:id"
-        element={
-          <AuthWrapper>
-            <ProductDetailPage />
-          </AuthWrapper>
-        }
-      />
+        {/* Admin Product Detail */}
+        <Route
+          path="/admin/products/:id"
+          element={
+            <AuthWrapper>
+              <ProductDetailPage />
+            </AuthWrapper>
+          }
+        />
 
-      {/* Customer Create Order */}
-      <Route
-        path="/portal/orders/create"
-        element={
-          <AuthWrapper>
-            <CreateOrderPage />
-          </AuthWrapper>
-        }
-      />
+        {/* Customer Create Order */}
+        <Route
+          path="/portal/orders/create"
+          element={
+            <AuthWrapper>
+              <CreateOrderPage />
+            </AuthWrapper>
+          }
+        />
 
-      <Route
-        path="/portal/orders/:id/payment"
-        element={
-          <AuthWrapper>
-            <CustomerPaymentPage />
-          </AuthWrapper>
-        }
-      />
+        <Route
+          path="/portal/orders/:id/payment"
+          element={
+            <AuthWrapper>
+              <CustomerPaymentPage />
+            </AuthWrapper>
+          }
+        />
 
-      {/* Customer Portal — khusus customer */}
-      <Route
-        path="/portal"
-        element={<CustomerPortal />}
-      />
+        {/* Customer Portal — khusus customer */}
+        <Route
+          path="/portal"
+          element={<CustomerPortal />}
+        />
 
-      {/* Customer Product Detail */}
-      <Route
-        path="/portal/products/:id"
-        element={<ProductDetailPage />}
-      />
+        {/* Customer Product Detail */}
+        <Route
+          path="/portal/products/:id"
+          element={<ProductDetailPage />}
+        />
 
-      {/* Legacy /dashboard redirect berdasarkan role */}
-      <Route
-        path="/dashboard"
-        element={<RoleRedirect />}
-      />
+        {/* Legacy /dashboard redirect berdasarkan role */}
+        <Route
+          path="/dashboard"
+          element={<RoleRedirect />}
+        />
 
-      {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/portal" replace />} />
-      <Route path="*" element={<Navigate to="/portal" replace />} />
-    </Routes>
+        {/* Default redirect */}
+        <Route path="/" element={<Navigate to="/portal" replace />} />
+        <Route path="*" element={<Navigate to="/portal" replace />} />
+      </Routes>
+    </Suspense>
   );
 
   if (!isAuthRoute) {
