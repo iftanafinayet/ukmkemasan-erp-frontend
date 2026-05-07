@@ -201,18 +201,17 @@ export default function CustomerDashboard() {
             try {
               const [statsResponse, lowStockResponse] = await Promise.all([
                 api.get(ENDPOINTS.DASHBOARD_STATS),
-                api.get('/api/products/low-stock'),
+                api.get('/products/low-stock'),
               ]);
-              setAdminStats(statsResponse.data);
-              setStats({
-                totalOrders: statsResponse.data.summary?.totalOrders || 0,
-                activeProduction: statsResponse.data.productionStatus?.find((status) => status._id === 'Production')?.count || 0,
-                totalRevenue: statsResponse.data.summary?.totalRevenue || 0,
-                totalCustomers: statsResponse.data.summary?.totalCustomers || 0,
-              });
-              setData(statsResponse.data.topProducts || []);
-              // We can't set lowStockProducts state here because it's not defined in the main component yet.
-              // I should add it to the state of CustomerDashboard.
+               setAdminStats(statsResponse.data);
+               setStats({
+                 totalOrders: statsResponse.data.summary?.totalOrders || 0,
+                 activeProduction: statsResponse.data.productionStatus?.find((status) => status._id === 'Production')?.count || 0,
+                 totalRevenue: statsResponse.data.summary?.totalRevenue || 0,
+                 totalCustomers: statsResponse.data.summary?.totalCustomers || 0,
+               });
+               setData(statsResponse.data.topProducts || []);
+               setLowStockProducts(lowStockResponse.data || []);
             } catch {
               response = await api.get(ENDPOINTS.MY_ORDERS);
               const allOrders = response.data || [];
