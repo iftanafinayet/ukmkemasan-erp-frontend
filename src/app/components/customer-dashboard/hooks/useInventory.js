@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import api from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
 import { normalizeStockCardRows } from '../utils';
+import { getStockOpnameVariance } from '../phase2-utils';
 
 const EMPTY_WAREHOUSE_FORM = {
   name: '',
@@ -20,6 +21,11 @@ const EMPTY_ADJUSTMENT_FORM = {
   reason: '',
 };
 
+const EMPTY_STOCK_OPNAME_FORM = {
+  warehouseId: '',
+  note: '',
+};
+
 export function useInventory() {
   const [warehouses, setWarehouses] = useState([]);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
@@ -35,6 +41,9 @@ export function useInventory() {
   const [stockCardProductId, setStockCardProductId] = useState('');
   const [stockCardRows, setStockCardRows] = useState([]);
   const [stockCardLoading, setStockCardLoading] = useState(false);
+  const [stockOpnameForm, setStockOpnameForm] = useState(EMPTY_STOCK_OPNAME_FORM);
+  const [stockOpnameRows, setStockOpnameRows] = useState([]);
+  const [savingStockOpname, setSavingStockOpname] = useState(false);
 
   const fetchStockCardRows = useCallback(async (productId) => {
     if (!productId) {
@@ -166,6 +175,75 @@ export function useInventory() {
     }
   };
 
+  const prepareStockOpnameRows = useCallback((products = []) => {
+    setStockOpnameRows((currentRows) => {
+      const currentMap = currentRows.reduce((accumulator, row) => {
+        accumulator[row.productId] = row;
+        return accumulator;
+      }, {});
+
+      return (Array.isArray(products) ? products : []).map((product) => ({
+        productId: product._id,
+        productName: product.name,
+        sku: product.sku || product.variants?.[0]?.sku || '-',
+        category: product.category,
+        systemStock: Number(product.stockPolos || 0),
+        actualStock: currentMap[product._id]?.actualStock ?? Number(product.stockPolos || 0),
+      }));
+    });
+  }, []);
+
+  const updateStockOpnameActual = useCallback((productId, actualStock) => {
+    setStockOpnameRows((currentRows) => currentRows.map((row) => (
+      row.productId === productId
+        ? { ...row, actualStock }
+        : row
+    )));
+  }, []);
+
+  const handleSaveStockOpname = useCallback(async (event) => {
+    event.preventDefault();
+
+    if (!stockOpnameForm.warehouseId) {
+      toast.error('Pilih gudang untuk stock opname.');
+      return;
+    }
+
+    const adjustments = stockOpnameRows
+      .map((row) => ({
+        row,
+        variance: getStockOpnameVariance(row.systemStock, row.actualStock),
+      }))
+      .filter((entry) => !entry.variance.matches);
+
+    if (adjustments.length === 0) {
+      toast.info('Tidak ada selisih stok untuk disimpan.');
+      return;
+    }
+
+    setSavingStockOpname(true);
+    try {
+      for (const { row, variance } of adjustments) {
+        await api.post(ENDPOINTS.ADJUSTMENTS, {
+          productId: row.productId,
+          warehouseId: stockOpnameForm.warehouseId,
+          type: variance.adjustmentType,
+          quantity: variance.adjustmentQuantity,
+          reason: stockOpnameForm.note?.trim()
+            ? `Stock Opname: ${stockOpnameForm.note.trim()}`
+            : 'Stock Opname',
+        });
+      }
+
+      toast.success(`${adjustments.length} selisih stok berhasil dicatat.`);
+      setStockOpnameForm(EMPTY_STOCK_OPNAME_FORM);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Gagal menyimpan stock opname.');
+    } finally {
+      setSavingStockOpname(false);
+    }
+  }, [stockOpnameForm, stockOpnameRows]);
+
   return {
     warehouses,
     setWarehouses,
@@ -192,6 +270,14 @@ export function useInventory() {
     stockCardLoading,
     setStockCardLoading,
     fetchStockCardRows,
+    stockOpnameForm,
+    setStockOpnameForm,
+    stockOpnameRows,
+    setStockOpnameRows,
+    savingStockOpname,
+    prepareStockOpnameRows,
+    updateStockOpnameActual,
+    handleSaveStockOpname,
     handleSelectStockCardProduct,
     openCreateWarehouse,
     openEditWarehouse,

@@ -58,11 +58,16 @@ export function useOrders() {
   const openCreateOrder = useCallback(async () => {
     try {
       const response = await api.get(ENDPOINTS.PRODUCTS);
-      setProducts(response.data || []);
+      const nextProducts = response.data || [];
+      const firstProduct = nextProducts[0] || null;
+      const firstVariant = firstProduct?.variants?.find((variant) => Number(variant.stock || 0) > 0)
+        || firstProduct?.variants?.[0]
+        || null;
+      setProducts(nextProducts);
       setOrderForm({
-        productId: response.data[0]?._id || '',
-        variantId: '',
-        quantity: 100,
+        productId: firstVariant?.sourceProductId || firstProduct?._id || '',
+        variantId: firstVariant?._id || '',
+        quantity: Math.max(Number(firstProduct?.minOrder || 100), 100),
         useValve: false,
       });
       setIsCreateOrderOpen(true);

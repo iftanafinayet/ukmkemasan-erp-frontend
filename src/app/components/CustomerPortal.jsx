@@ -25,7 +25,7 @@ import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters';
 import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
 import { EmptyState, LoadingState } from './customer-dashboard/shared';
@@ -569,6 +569,7 @@ export default function CustomerPortal() {
             <CustomerPortalOrderDetailModal
               formatCurrency={formatCurrency}
               formatDate={formatDate}
+              formatDateTime={formatDateTime}
               getStatusLabel={getStatusLabel}
               onClose={() => setIsDetailOpen(false)}
               onOpenPayment={handleNavigateToPayment}

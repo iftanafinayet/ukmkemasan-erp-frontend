@@ -15,6 +15,7 @@ import {
   InventoryAdjustmentPage,
   InventoryPage,
   ItemCategoriesPage,
+  StockOpnamePage,
   WarehousePage,
 } from './customer-dashboard/inventory-sections';
 import {
@@ -94,6 +95,7 @@ export default function CustomerDashboard() {
     handleDeleteProduct,
     handleRemoveExistingImage,
     handleRemoveNewImage,
+    handleBulkImportProducts,
   } = useProducts(setData);
 
   const {
@@ -143,6 +145,13 @@ export default function CustomerDashboard() {
     setStockCardRows,
     stockCardLoading,
     setStockCardLoading: _setStockCardLoading,
+    stockOpnameForm,
+    setStockOpnameForm,
+    stockOpnameRows,
+    savingStockOpname,
+    prepareStockOpnameRows,
+    updateStockOpnameActual,
+    handleSaveStockOpname,
     fetchStockCardRows,
     handleSelectStockCardProduct,
     openCreateWarehouse,
@@ -261,9 +270,13 @@ export default function CustomerDashboard() {
           break;
 
         case 'inventory-adjustment':
+        case 'stock-opname':
           response = await api.get(ENDPOINTS.INVENTORY_PRODUCTS);
           setInventoryProductOptions(response.data || []);
           setData(response.data || []);
+          if (activeMenu === 'stock-opname') {
+            prepareStockOpnameRows(response.data || []);
+          }
           response = await api.get(ENDPOINTS.WAREHOUSES);
           setWarehouses(response.data || []);
           break;
@@ -284,8 +297,16 @@ export default function CustomerDashboard() {
         case 'reports':
           if (isAdmin) {
             try {
-              response = await api.get(ENDPOINTS.DASHBOARD_CATEGORIES);
-              setData(response.data || {});
+              const [categoriesResponse, statsResponse, ordersResponse] = await Promise.all([
+                api.get(ENDPOINTS.DASHBOARD_CATEGORIES),
+                api.get(ENDPOINTS.DASHBOARD_STATS),
+                api.get(ENDPOINTS.ALL_ORDERS),
+              ]);
+              setData({
+                ...(statsResponse.data || {}),
+                ...(categoriesResponse.data || {}),
+                orders: ordersResponse.data || [],
+              });
             } catch {
               setData({});
             }
@@ -349,6 +370,7 @@ export default function CustomerDashboard() {
     activeMenu,
     fetchStockCardRows,
     isAdmin,
+    prepareStockOpnameRows,
     setInventoryProductOptions,
     setLandingContent,
     setProfile,
@@ -435,6 +457,7 @@ export default function CustomerDashboard() {
                 closeProductModal();
                 setIsModalOpen(true);
               }}
+              onImportProducts={handleBulkImportProducts}
               onSearchChange={setSearchTerm}
               onSetInvPage={setInvPage}
               onSetInvPerPage={setInvPerPage}
@@ -513,7 +536,18 @@ export default function CustomerDashboard() {
         );
 
       case 'stock-opname':
-        return <EmptyState text="Stock Opname Page" />;
+        return (
+          <StockOpnamePage
+            formatDateTime={formatDateTime}
+            onSubmit={handleSaveStockOpname}
+            savingStockOpname={savingStockOpname}
+            setStockOpnameForm={setStockOpnameForm}
+            stockOpnameForm={stockOpnameForm}
+            stockOpnameRows={stockOpnameRows}
+            updateStockOpnameActual={updateStockOpnameActual}
+            warehouses={warehouses}
+          />
+        );
 
       case 'customers':
         return (
@@ -641,6 +675,7 @@ export default function CustomerDashboard() {
       <OrderDetailModal
         formatCurrency={formatCurrency}
         formatDate={formatDate}
+        formatDateTime={formatDateTime}
         isAdmin={isAdmin}
         isOpen={isOrderDetailOpen}
         onClose={() => setIsOrderDetailOpen(false)}

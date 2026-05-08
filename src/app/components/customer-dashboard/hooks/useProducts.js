@@ -2,6 +2,10 @@ import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import api from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
+import {
+  parseProductImportCsv,
+  validateImportedProducts,
+} from '../phase2-utils';
 
 const EMPTY_PRODUCT_FORM = {
   name: '',
@@ -182,6 +186,53 @@ export function useProducts(setData) {
     setImageFiles((currentFiles) => currentFiles.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleBulkImportProducts = useCallback(async (file) => {
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const importedProducts = parseProductImportCsv(text);
+      const validationErrors = validateImportedProducts(importedProducts);
+
+      if (validationErrors.length > 0) {
+        toast.error(validationErrors[0]);
+        return;
+      }
+
+      for (const product of importedProducts) {
+        const formData = new FormData();
+        formData.append('name', product.name);
+        formData.append('category', product.category);
+        formData.append('material', product.material);
+        formData.append('minOrder', Number(product.minOrder || 100));
+        formData.append('description', product.description || '');
+        formData.append('addons', JSON.stringify({
+          valvePrice: Number(product.valvePrice || 0),
+        }));
+        formData.append('variants', JSON.stringify(
+          product.variants.map((variant) => ({
+            sku: variant.sku,
+            size: variant.size,
+            color: variant.color,
+            priceB2C: Number(variant.priceB2C),
+            priceB2B: Number(variant.priceB2B),
+            stock: Number(variant.stock),
+          })),
+        ));
+
+        await api.post(ENDPOINTS.PRODUCTS, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
+      const response = await api.get(ENDPOINTS.PRODUCTS);
+      setData(response.data || []);
+      toast.success(`${importedProducts.length} produk berhasil diimpor.`);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || 'Gagal mengimpor produk.');
+    }
+  }, [setData]);
+
   return {
     isModalOpen,
     setIsModalOpen,
@@ -203,5 +254,6 @@ export function useProducts(setData) {
     handleDeleteProduct,
     handleRemoveExistingImage,
     handleRemoveNewImage,
+    handleBulkImportProducts,
   };
 }

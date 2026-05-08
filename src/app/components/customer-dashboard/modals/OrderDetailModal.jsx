@@ -1,9 +1,12 @@
 import React from 'react';
+import { Download } from 'lucide-react';
 import { InfoBlock, ModalWrapper } from '../shared';
+import { normalizePaymentHistory, printInvoicePdf } from '../phase2-utils';
 
 export default function OrderDetailModal({
   formatCurrency,
   formatDate,
+  formatDateTime,
   isAdmin,
   isOpen,
   onClose,
@@ -15,11 +18,29 @@ export default function OrderDetailModal({
 }) {
   if (!isOpen || !selectedOrder) return null;
 
+  const payments = normalizePaymentHistory(selectedOrder);
+
   return (
     <ModalWrapper onClose={onClose} wide>
-      <div className="mb-8">
-        <h3 className="text-2xl font-black text-slate-800 tracking-tight">Detail Order #{selectedOrder.orderNumber}</h3>
-        <p className="text-slate-500 text-sm font-medium">{formatDate(selectedOrder.createdAt)}</p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-2xl font-black tracking-tight text-slate-800">Detail Order #{selectedOrder.orderNumber}</h3>
+          <p className="text-sm font-medium text-slate-500">{formatDate(selectedOrder.createdAt)}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => printInvoicePdf({
+            order: selectedOrder,
+            payments,
+            formatCurrency,
+            formatDate,
+            formatDateTime,
+          })}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.22em] text-slate-700 transition-all hover:bg-slate-50"
+        >
+          <Download className="h-4 w-4" />
+          Invoice PDF
+        </button>
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -35,23 +56,54 @@ export default function OrderDetailModal({
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Status Produksi</p>
-          <span className="px-4 py-2 bg-primary/10 rounded-full text-sm font-black text-primary">{selectedOrder.status}</span>
+        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Status Produksi</p>
+          <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-black text-primary">{selectedOrder.status}</span>
         </div>
-        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembayaran</p>
-          <span className={`px-4 py-2 rounded-full text-sm font-black ${selectedOrder.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Pembayaran</p>
+          <span className={`rounded-full px-4 py-2 text-sm font-black ${selectedOrder.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
             {selectedOrder.isPaid ? 'Lunas' : 'Belum Bayar'}
           </span>
         </div>
       </div>
 
+      <div className="mb-8 rounded-3xl border border-slate-100 bg-white p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Payment History</p>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+            {payments.length} transaksi
+          </span>
+        </div>
+        {payments.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            {payments.map((payment) => (
+              <div key={payment.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-black text-slate-900">{payment.paymentNumber}</p>
+                    <p className="mt-1 text-xs font-medium text-slate-400">{payment.paymentDate ? formatDateTime(payment.paymentDate) : '-'}</p>
+                  </div>
+                  <p className="text-sm font-black text-primary">{formatCurrency(payment.amount)}</p>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                  <span>{payment.method}</span>
+                  <span>{payment.status}</span>
+                </div>
+                {payment.note && <p className="mt-3 text-xs font-medium text-slate-500">{payment.note}</p>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm font-medium text-slate-400">Belum ada riwayat pembayaran pada order ini.</p>
+        )}
+      </div>
+
       {isAdmin && (
         <div className="space-y-4 border-t border-slate-100 pt-6">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi Admin</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Aksi Admin</p>
           <div>
-            <label className="text-xs font-bold text-slate-600 mb-2 block">Ubah Status Produksi</label>
+            <label className="mb-2 block text-xs font-bold text-slate-600">Ubah Status Produksi</label>
             <div className="flex flex-wrap gap-2">
               {orderStatuses.map((status) => (
                 <button
@@ -59,7 +111,7 @@ export default function OrderDetailModal({
                   type="button"
                   onClick={() => onUpdateOrderStatus(selectedOrder._id, status)}
                   disabled={updatingStatus || selectedOrder.status === status}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedOrder.status === status ? 'bg-primary text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} disabled:opacity-50`}
+                  className={`rounded-xl px-4 py-2 text-xs font-bold transition-all ${selectedOrder.status === status ? 'bg-primary text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} disabled:opacity-50`}
                 >
                   {status}
                 </button>
@@ -69,7 +121,7 @@ export default function OrderDetailModal({
           <button
             type="button"
             onClick={() => onTogglePaid(selectedOrder._id, !selectedOrder.isPaid)}
-            className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all ${selectedOrder.isPaid ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-500 text-white hover:bg-green-600 shadow-lg'}`}
+            className={`rounded-2xl px-6 py-3 text-sm font-bold transition-all ${selectedOrder.isPaid ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-500 text-white shadow-lg hover:bg-green-600'}`}
           >
             {selectedOrder.isPaid ? 'Tandai Belum Bayar' : 'Tandai Sudah Bayar'}
           </button>
