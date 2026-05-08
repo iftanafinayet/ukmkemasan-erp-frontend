@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ArrowRightLeft,
   CalendarDays,
@@ -10,6 +10,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { toNumber } from '../utils';
+import { filterStockCardRows } from '../phase2-utils';
 
 export default function StockCardPage({
   formatDate,
@@ -21,11 +22,18 @@ export default function StockCardPage({
   stockCardProductId,
   stockCardRows,
 }) {
+  const [filters, setFilters] = useState({
+    dateFrom: '',
+    dateTo: '',
+    refType: 'all',
+  });
   const stockProducts = Array.isArray(products) ? products : [];
   const selectedProduct = stockProducts.find((product) => product._id === stockCardProductId);
-  const totalIn = Array.isArray(stockCardRows) ? stockCardRows.reduce((sum, row) => sum + toNumber(row.qtyIn), 0) : 0;
-  const totalOut = Array.isArray(stockCardRows) ? stockCardRows.reduce((sum, row) => sum + toNumber(row.qtyOut), 0) : 0;
-  const latestMutation = Array.isArray(stockCardRows) && stockCardRows.length > 0 ? (stockCardRows[0]?.date || stockCardRows[stockCardRows.length - 1]?.date) : null;
+  const filteredRows = useMemo(() => filterStockCardRows(stockCardRows, filters), [filters, stockCardRows]);
+  const totalIn = Array.isArray(filteredRows) ? filteredRows.reduce((sum, row) => sum + toNumber(row.qtyIn), 0) : 0;
+  const totalOut = Array.isArray(filteredRows) ? filteredRows.reduce((sum, row) => sum + toNumber(row.qtyOut), 0) : 0;
+  const latestMutation = Array.isArray(filteredRows) && filteredRows.length > 0 ? (filteredRows[0]?.date || filteredRows[filteredRows.length - 1]?.date) : null;
+  const refTypeOptions = Array.from(new Set((Array.isArray(stockCardRows) ? stockCardRows : []).map((row) => row.refType).filter(Boolean)));
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -73,7 +81,7 @@ export default function StockCardPage({
         </div>
 
         <div className="p-8 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr_1fr_1.4fr]">
             <div className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Produk</p>
@@ -97,10 +105,41 @@ export default function StockCardPage({
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-sky-600">Mutasi Tercatat</p>
                 <CalendarDays className="w-4 h-4 text-sky-400" />
               </div>
-              <p className="text-3xl font-black text-sky-700">{Array.isArray(stockCardRows) ? stockCardRows.length : 0}</p>
+              <p className="text-3xl font-black text-sky-700">{Array.isArray(filteredRows) ? filteredRows.length : 0}</p>
               <p className="text-xs text-sky-700/80 font-bold mt-1">
                 {latestMutation ? `Update terakhir ${formatDateTime(latestMutation)}` : 'Belum ada histori mutasi'}
               </p>
+            </div>
+
+            <div className="rounded-3xl border border-slate-100 bg-white p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Filter Histori</p>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <input
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(event) => setFilters((current) => ({ ...current, dateFrom: event.target.value }))}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                />
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(event) => setFilters((current) => ({ ...current, dateTo: event.target.value }))}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                />
+                <div className="relative">
+                  <select
+                    value={filters.refType}
+                    onChange={(event) => setFilters((current) => ({ ...current, refType: event.target.value }))}
+                    className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-10 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                  >
+                    <option value="all">Semua referensi</option>
+                    {refTypeOptions.map((refType) => (
+                      <option key={refType} value={refType}>{refType}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -119,8 +158,8 @@ export default function StockCardPage({
               <div className="rounded-2xl border border-slate-100 bg-white p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Saldo Akhir Histori</p>
                 <p className="text-2xl font-black text-slate-800 mt-2">
-                  {Array.isArray(stockCardRows) && stockCardRows.length > 0 
-                    ? toNumber(stockCardRows[stockCardRows.length - 1]?.balance || stockCardRows[0]?.balance).toLocaleString()
+                  {Array.isArray(filteredRows) && filteredRows.length > 0
+                    ? toNumber(filteredRows[filteredRows.length - 1]?.balance || filteredRows[0]?.balance).toLocaleString()
                     : 0}
                 </p>
                 <p className="text-xs text-slate-500 font-medium mt-1">pcs berdasarkan baris terakhir yang tersedia</p>
@@ -162,7 +201,7 @@ export default function StockCardPage({
                     </tr>
                   )}
 
-                  {stockCardProductId && !stockCardLoading && (!Array.isArray(stockCardRows) || stockCardRows.length === 0) && (
+                  {stockCardProductId && !stockCardLoading && (!Array.isArray(filteredRows) || filteredRows.length === 0) && (
                     <tr>
                       <td className="px-6 py-20 text-center" colSpan={7}>
                         <div className="flex flex-col items-center gap-3 text-slate-400">
@@ -170,15 +209,15 @@ export default function StockCardPage({
                             <ClipboardList className="w-7 h-7 text-slate-300" />
                           </div>
                           <div>
-                            <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Belum ada histori</p>
-                            <p className="text-sm font-medium text-slate-400 mt-1">Produk ini belum memiliki mutasi stok yang tercatat.</p>
+                            <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Histori tidak ditemukan</p>
+                            <p className="text-sm font-medium text-slate-400 mt-1">Produk ini belum punya histori yang cocok dengan filter aktif.</p>
                           </div>
                         </div>
                       </td>
                     </tr>
                   )}
 
-                  {stockCardProductId && !stockCardLoading && Array.isArray(stockCardRows) && stockCardRows.map((row) => (
+                  {stockCardProductId && !stockCardLoading && Array.isArray(filteredRows) && filteredRows.map((row) => (
                     <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="px-5 py-4">
                         <p className="font-bold text-slate-800 text-sm">{formatDate(row.date)}</p>

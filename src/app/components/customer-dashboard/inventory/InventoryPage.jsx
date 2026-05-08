@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   Edit3,
   Eye,
@@ -6,13 +6,18 @@ import {
   Plus,
   Trash2,
   FileDown,
+  FileSpreadsheet,
+  Upload,
 } from 'lucide-react';
 import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
 import { exportToFile } from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
 import { Skeleton, SkeletonCircle } from '../../ui/skeleton';
-import { Reveal } from '../../ui/Reveal';
+import {
+  downloadProductImportTemplate,
+  exportProductsToCsv,
+} from '../phase2-utils';
 
 export default function InventoryPage({
   filteredProducts,
@@ -23,6 +28,7 @@ export default function InventoryPage({
   onDeleteProduct,
   onEditProduct,
   onOpenProductModal,
+  onImportProducts,
   onSearchChange,
   onSetInvPage,
   onSetInvPerPage,
@@ -30,6 +36,7 @@ export default function InventoryPage({
   searchTerm,
   loading = false,
 }) {
+  const importInputRef = useRef(null);
   const {
     total,
     totalPages,
@@ -48,14 +55,43 @@ export default function InventoryPage({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {isAdmin && (
-            <button
-              type="button"
-              onClick={onOpenProductModal}
-              className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
-            >
-              <Plus size={16} />
-              Tambah Produk
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onOpenProductModal}
+                className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+              >
+                <Plus size={16} />
+                Tambah Produk
+              </button>
+              <button
+                type="button"
+                onClick={() => importInputRef.current?.click()}
+                className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-xs font-black uppercase tracking-widest text-emerald-700 shadow-sm transition-all hover:bg-emerald-100 active:scale-95"
+              >
+                <Upload size={16} />
+                Import CSV
+              </button>
+              <button
+                type="button"
+                onClick={downloadProductImportTemplate}
+                className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+              >
+                <FileSpreadsheet size={16} />
+                Template CSV
+              </button>
+              <input
+                ref={importInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={(event) => {
+                  const [file] = Array.from(event.target.files || []);
+                  if (file) onImportProducts?.(file);
+                  event.target.value = '';
+                }}
+              />
+            </>
           )}
           <button
             type="button"
@@ -63,7 +99,15 @@ export default function InventoryPage({
             className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
           >
             <FileDown size={16} />
-            Export
+            Export XLSX
+          </button>
+          <button
+            type="button"
+            onClick={() => exportProductsToCsv(filteredProducts)}
+            className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white border border-slate-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+          >
+            <FileSpreadsheet size={16} />
+            Export CSV
           </button>
         </div>
       </div>

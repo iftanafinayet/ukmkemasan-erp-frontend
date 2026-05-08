@@ -19,16 +19,16 @@
 ## Goal: Fill functional gaps and optimize core business workflows.
 
 ### Inventory Module:
-    *   [ ] Implement the Stock Opname page (currently an EmptyState).
-    *   [ ] Add "Bulk Import/Export" functionality for products using Excel/CSV.
-    *   [ ] Enhance Stock Card filters (filter by date range, reference type).
+    *   [x] Implement the Stock Opname page (currently an EmptyState).
+    *   [x] Add "Bulk Import/Export" functionality for products using Excel/CSV.
+    *   [x] Enhance Stock Card filters (filter by date range, reference type).
 ### Sales & Order Module:
-    *   [ ] Build a more robust "Order Preview" before submission.
-    *   [ ] Implement "Invoice PDF" generation/download for customers.
-    *   [ ] Add a "Payment History" view within the Order Detail page.
+    *   [x] Build a more robust "Order Preview" before submission.
+    *   [x] Implement "Invoice PDF" generation/download for customers.
+    *   [x] Add a "Payment History" view within the Order Detail page.
 ### Admin Intelligence:
-    *   [ ] Expand the ReportsPage with actual data visualizations (Revenue trends, Category performance).
-    *   [ ] Implement a "Notification Center" for low-stock alerts and new orders.
+    *   [x] Expand the ReportsPage with actual data visualizations (Revenue trends, Category performance).
+    *   [x] Implement a "Notification Center" for low-stock alerts and new orders.
 
 ## Phase 3: Performance & Scaling (Medium-Term)
 ## Goal: Optimize for speed, maintainability, and larger data sets.

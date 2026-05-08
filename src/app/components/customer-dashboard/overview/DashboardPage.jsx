@@ -1,12 +1,13 @@
 import React from 'react';
 import {
   Award,
+  BarChart3,
   Clock,
   DollarSign,
   ShoppingCart,
   Users,
-  BarChart3,
   AlertTriangle,
+  BellRing,
 } from 'lucide-react';
 import {
   BarChart,
@@ -19,6 +20,8 @@ import {
   YAxis,
 } from 'recharts';
 import { StatCard, EmptyState } from '../shared';
+import { buildDashboardNotifications } from '../phase2-utils';
+import { toNumber } from '../utils';
 
 function ReportTooltip({ active, payload, label, formatCurrency }) {
   if (!active || !payload?.length) return null;
@@ -28,7 +31,7 @@ function ReportTooltip({ active, payload, label, formatCurrency }) {
       <p className="font-black text-slate-800 text-sm mb-1">{label}</p>
       {payload.map((entry, index) => (
         <p key={`${entry.name}-${index}`} className="text-xs font-bold" style={{ color: entry.color }}>
-          {entry.name}: {entry.name === 'Revenue' ? formatCurrency(entry.value) : entry.value.toLocaleString()}
+          {entry.name}: {entry.name === 'Revenue' ? formatCurrency(toNumber(entry.value)) : toNumber(entry.value).toLocaleString()}
         </p>
       ))}
     </div>
@@ -49,6 +52,7 @@ export default function DashboardPage({
     fullName: item.name || 'Produk',
     Terjual: item.totalSold || 0,
   })) : [];
+  const notifications = buildDashboardNotifications({ adminStats, lowStockProducts });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -148,7 +152,7 @@ export default function DashboardPage({
                         <span className="font-bold text-slate-800 text-sm">{item.name}</span>
                       </div>
                       <span className="px-3 py-1 bg-white border border-slate-100 rounded-full text-[10px] font-black text-primary">
-                        {item.totalSold.toLocaleString()} terjual
+                        {toNumber(item.totalSold).toLocaleString()} terjual
                       </span>
                     </div>
                   ))}
@@ -185,36 +189,73 @@ export default function DashboardPage({
       </div>
 
        {isAdmin && (
-         <div className="bg-white p-8 rounded-3xl border border-slate-100">
-           <div className="flex items-center justify-between mb-6">
-             <h3 className="font-black text-slate-800 flex items-center gap-2">
-               <AlertTriangle className="w-5 h-5 text-red-500" />
-               Peringatan Stok Rendah
-             </h3>
-             <span className="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[10px] font-black uppercase border border-red-100">
-               {lowStockProducts.length} Produk
-             </span>
+         <div className="grid grid-cols-1 gap-8 xl:grid-cols-[0.95fr_1.05fr]">
+           <div className="rounded-3xl border border-slate-100 bg-white p-8">
+             <div className="mb-6 flex items-center justify-between">
+               <h3 className="flex items-center gap-2 font-black text-slate-800">
+                 <BellRing className="h-5 w-5 text-primary" />
+                 Notification Center
+               </h3>
+               <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase text-slate-500">
+                 {notifications.length} notifikasi
+               </span>
+             </div>
+             {notifications.length > 0 ? (
+               <div className="space-y-3">
+                 {notifications.map((notification) => (
+                   <div
+                     key={notification.id}
+                     className={`rounded-2xl border p-4 ${
+                       notification.tone === 'red'
+                         ? 'border-red-100 bg-red-50/60'
+                         : notification.tone === 'emerald'
+                           ? 'border-emerald-100 bg-emerald-50/60'
+                           : 'border-sky-100 bg-sky-50/60'
+                     }`}
+                   >
+                     <p className="text-sm font-black text-slate-800">{notification.title}</p>
+                     <p className="mt-1 text-xs font-medium text-slate-500">{notification.description}</p>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="rounded-2xl border border-dashed border-slate-200 py-8 text-center">
+                 <p className="text-sm font-medium text-slate-400">Belum ada notifikasi penting.</p>
+               </div>
+             )}
            </div>
-           {lowStockProducts.length > 0 ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-               {lowStockProducts.slice(0, 6).map((product) => (
-                 <div key={product._id} className="p-4 bg-red-50/50 rounded-2xl border border-red-100 flex justify-between items-center">
-                   <div>
-                     <p className="text-sm font-black text-slate-800">{product.name}</p>
-                     <p className="text-[10px] text-slate-500 font-bold uppercase">{product.category}</p>
-                   </div>
-                   <div className="text-right">
-                     <p className="text-lg font-black text-red-600">{product.stockPolos?.toLocaleString()} pcs</p>
-                     <p className="text-[10px] text-red-400 font-bold uppercase">Sisa Stok</p>
-                   </div>
-                 </div>
-               ))}
+
+           <div className="rounded-3xl border border-slate-100 bg-white p-8">
+             <div className="mb-6 flex items-center justify-between">
+               <h3 className="flex items-center gap-2 font-black text-slate-800">
+                 <AlertTriangle className="h-5 w-5 text-red-500" />
+                 Peringatan Stok Rendah
+               </h3>
+               <span className="rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[10px] font-black uppercase text-red-600">
+                 {lowStockProducts.length} Produk
+               </span>
              </div>
-           ) : (
-             <div className="py-8 text-center border border-dashed border-slate-200 rounded-2xl">
-               <p className="text-sm text-slate-400 font-medium">Semua stok dalam kondisi aman.</p>
-             </div>
-           )}
+             {lowStockProducts.length > 0 ? (
+               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                 {lowStockProducts.slice(0, 6).map((product) => (
+                   <div key={product._id} className="flex items-center justify-between rounded-2xl border border-red-100 bg-red-50/50 p-4">
+                     <div>
+                       <p className="text-sm font-black text-slate-800">{product.name}</p>
+                       <p className="text-[10px] font-bold uppercase text-slate-500">{product.category}</p>
+                     </div>
+                     <div className="text-right">
+                       <p className="text-lg font-black text-red-600">{toNumber(product.stockPolos).toLocaleString()} pcs</p>
+                       <p className="text-[10px] font-bold uppercase text-red-400">Sisa Stok</p>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="rounded-2xl border border-dashed border-slate-200 py-8 text-center">
+                 <p className="text-sm font-medium text-slate-400">Semua stok dalam kondisi aman.</p>
+               </div>
+             )}
+           </div>
          </div>
        )}
 
@@ -227,7 +268,7 @@ export default function DashboardPage({
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {adminStats.productionStatus.map((status, index) => (
               <div key={`${status._id}-${index}`} className="text-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <p className="text-2xl font-black text-slate-800">{status.count}</p>
+                <p className="text-2xl font-black text-slate-800">{toNumber(status.count).toLocaleString()}</p>
                 <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">{status._id}</p>
               </div>
             ))}
