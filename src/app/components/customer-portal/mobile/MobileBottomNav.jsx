@@ -3,8 +3,8 @@ import React from 'react';
 export default function MobileBottomNav({ activeMenu, onMenuChange }) {
   const items = [
     { id: 'dashboard', label: 'Beranda', icon: 'home' },
-    { id: 'catalog', label: 'Kategori', icon: 'grid_view' },
-    { id: 'orders', label: 'Transaksi', icon: 'receipt_long' },
+    { id: 'catalog', label: 'Katalog', icon: 'grid_view' },
+    { id: 'orders', label: 'Pesanan', icon: 'receipt_long' },
     { id: 'profile', label: 'Akun', icon: 'person' },
   ];
 
@@ -14,11 +14,10 @@ export default function MobileBottomNav({ activeMenu, onMenuChange }) {
         <button
           key={item.id}
           onClick={() => onMenuChange(item.id)}
-          className={`flex flex-col items-center justify-center flex-1 ${
-            activeMenu === item.id ? 'text-[#4dbace]' : 'text-[#3c4947]'
-          }`}
+          className={`flex flex-col items-center justify-center flex-1 ${activeMenu === item.id ? 'text-[#4dbace]' : 'text-[#3c4947]'
+            }`}
         >
-          <span 
+          <span
             className="material-symbols-outlined text-[24px]"
             style={{ fontVariationSettings: `'FILL' ${activeMenu === item.id ? 1 : 0}` }}
           >

@@ -3,7 +3,7 @@ import { getCartItems, subscribeCart } from '../../../utils/cart';
 import { useNavigate } from 'react-router-dom';
 import { storage } from '../../../config/environment';
 
-export default function MobileHeader({ activeMenu, onMenuChange }) {
+export default function MobileHeader({ activeMenu, onMenuChange, onToggleFilter, hasActiveFilters }) {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
     const items = getCartItems();
@@ -21,16 +21,18 @@ export default function MobileHeader({ activeMenu, onMenuChange }) {
   }, []);
 
   const isOrdersMenu = activeMenu === 'orders';
+  const isCatalogMenu = activeMenu === 'catalog';
 
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    if (query.length > 2) {
-      if (isOrdersMenu) {
-        navigate(`/portal?menu=orders&search=${query}`);
-      } else {
+    if (query.length > 2 || query.length === 0) {
+      if (activeMenu === 'dashboard' || activeMenu === 'catalog') {
+        if (onMenuChange) onMenuChange('catalog');
         navigate(`/portal?menu=catalog&search=${query}`);
+      } else if (isOrdersMenu) {
+        navigate(`/portal?menu=orders&search=${query}`);
       }
     }
   };
@@ -51,13 +53,24 @@ export default function MobileHeader({ activeMenu, onMenuChange }) {
         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#3c4947] text-xl">search</span>
         <input
           className="w-full bg-[#f2f3ff] border-none rounded-lg py-1.5 pl-10 pr-4 text-sm focus:ring-1 focus:ring-[#4dbace]"
-          placeholder={isOrdersMenu ? "Cari transaksi/order..." : "Cari kemasan kopi..."}
+          placeholder={isOrdersMenu ? "Cari transaksi..." : "Cari kemasan..."}
           type="text"
           value={searchQuery}
           onChange={handleSearch}
         />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
+        {isCatalogMenu && (
+          <button 
+            onClick={onToggleFilter} 
+            className={`p-2 active:scale-90 transition-transform relative ${hasActiveFilters ? 'text-[#4dbace]' : 'text-[#3c4947]'}`}
+          >
+            <span className="material-symbols-outlined text-[24px]">filter_list</span>
+            {hasActiveFilters && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#4dbace] rounded-full border border-white"></span>
+            )}
+          </button>
+        )}
         <button 
           onClick={handleCartClick} 
           className="relative p-1 active:scale-90 transition-transform"
