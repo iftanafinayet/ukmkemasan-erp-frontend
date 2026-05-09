@@ -43,7 +43,7 @@ export default function MobileProductDetailPage({
     <div className="lg:hidden bg-[#faf8ff] min-h-screen pb-32">
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-[#bbc9c7]/20 px-4 h-14 flex items-center justify-between">
-        <button onClick={onBack} className="p-2 -ml-2">
+        <button onClick={() => navigate('/portal?menu=catalog')} className="p-2 -ml-2">
           <ArrowLeft size={24} className="text-[#131b2e]" />
         </button>
         <h1 className="text-[16px] font-bold text-[#131b2e] truncate max-w-[180px] font-headline">{product.name}</h1>

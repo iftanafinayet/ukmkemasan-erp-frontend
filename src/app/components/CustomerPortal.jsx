@@ -48,6 +48,7 @@ export default function CustomerPortal() {
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [profile, setProfile] = useState({ name: '', email: '', phone: '', address: '' });
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [savingProfile, setSavingProfile] = useState(false);
@@ -336,13 +337,13 @@ export default function CustomerPortal() {
           </div>
           <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
           <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
-           <button
-             onClick={() => navigate('/login?redirect=/portal?menu=orders')}
-             data-testid="portal-orders-login-btn"
-             className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-           >
-             Masuk Sekarang
-           </button>
+          <button
+            onClick={() => navigate('/login?redirect=/portal?menu=orders')}
+            data-testid="portal-orders-login-btn"
+            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            Masuk Sekarang
+          </button>
         </div>
       );
     }
@@ -387,22 +388,22 @@ export default function CustomerPortal() {
           </div>
           <h3 className="text-xl font-black text-slate-800 mb-2">Akses Terbatas</h3>
           <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengelola profil dan pengaturan akun Anda.</p>
-             <div className="flex items-center justify-center gap-4">
-               <button
-                 onClick={() => navigate('/login?redirect=/portal?menu=profile')}
-                 data-testid="portal-profile-login-btn"
-                 className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-               >
-                 Masuk
-               </button>
-               <button
-                 onClick={() => navigate('/register')}
-                 data-testid="portal-profile-register-btn"
-                 className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
-               >
-                 Daftar
-               </button>
-             </div>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => navigate('/login?redirect=/portal?menu=profile')}
+              data-testid="portal-profile-login-btn"
+              className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              Masuk
+            </button>
+            <button
+              onClick={() => navigate('/register')}
+              data-testid="portal-profile-register-btn"
+              className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
+            >
+              Daftar
+            </button>
+          </div>
         </div>
       );
     }
@@ -428,7 +429,7 @@ export default function CustomerPortal() {
     switch (activeMenu) {
       case 'dashboard':
         return (
-          <MobileHomePage 
+          <MobileHomePage
             stats={stats}
             landingContent={landingContent}
             popularProducts={popularProducts}
@@ -441,20 +442,22 @@ export default function CustomerPortal() {
         );
       case 'catalog':
         return (
-        <MobileCatalogPage 
-          products={products}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedSize={selectedSize}
-          setSelectedSize={setSelectedSize}
-          selectedColor={selectedColor}
-          setSelectedColor={setSelectedColor}
-          onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
-        />
+          <MobileCatalogPage
+            products={products}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedSize={selectedSize}
+            setSelectedSize={setSelectedSize}
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
+            isFilterOpen={isMobileFilterOpen}
+            setIsFilterOpen={setIsMobileFilterOpen}
+          />
         );
       case 'orders':
         return (
-          <MobileOrdersPage 
+          <MobileOrdersPage
             orders={orders}
             orderFilter={orderFilter}
             setOrderFilter={setOrderFilter}
@@ -464,7 +467,7 @@ export default function CustomerPortal() {
         );
       case 'cart':
         return (
-          <MobileCartPage 
+          <MobileCartPage
             cartItems={cartItems}
             cartTotal={cartTotal}
             cartQuantity={cartQuantity}
@@ -480,7 +483,7 @@ export default function CustomerPortal() {
       case 'profile':
       case 'settings':
         return (
-          <MobileProfilePage 
+          <MobileProfilePage
             user={user || { name: 'Customer' }}
             profile={profile}
             stats={stats}
@@ -525,6 +528,8 @@ export default function CustomerPortal() {
     }
   };
 
+  const hasActiveFilters = selectedCategory !== 'All' || selectedSize || selectedColor;
+
   return (
     <div className="min-h-screen bg-white font-sans text-on-surface flex flex-col">
       {/* Desktop View */}
@@ -543,13 +548,17 @@ export default function CustomerPortal() {
 
       {/* Mobile View */}
       <div className="lg:hidden flex flex-col flex-1 bg-[#faf8ff]">
-        <MobileHeader onMenuChange={setActiveMenu} activeMenu={activeMenu} />
-        <main className="pt-14 pb-20 flex-1">
+        <MobileHeader 
+          onMenuChange={setActiveMenu} 
+          activeMenu={activeMenu} 
+          onToggleFilter={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+          hasActiveFilters={hasActiveFilters}
+        />
+        <main className="pt-[52px] pb-[56px] flex-1">
           {renderMobilePage()}
         </main>
         <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} />
       </div>
-
       {isDetailOpen && selectedOrder && (
         <>
           {/* Mobile Order Detail View */}
