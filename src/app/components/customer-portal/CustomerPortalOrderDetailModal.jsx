@@ -4,6 +4,78 @@ import { ModalWrapper, InfoBlock } from '../customer-dashboard/shared';
 import { normalizePaymentHistory, printInvoicePdf } from '../customer-dashboard/phase2-utils';
  
 const ORDER_STEPS = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
+
+const STEP_DATE_FORMATTER = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'short',
+});
+
+const STATUS_HISTORY_KEYS = [
+  'statusHistory',
+  'history',
+  'timeline',
+  'progressHistory',
+  'trackingHistory',
+];
+
+const normalizeStatusKey = (value) => String(value || '').trim().toLowerCase();
+
+const resolveHistoryStatus = (entry) => (
+  entry?.status
+  || entry?.toStatus
+  || entry?.nextStatus
+  || entry?.stage
+  || entry?.step
+  || entry?.label
+  || entry?.name
+  || entry?.title
+);
+
+const resolveHistoryDate = (entry) => (
+  entry?.date
+  || entry?.timestamp
+  || entry?.changedAt
+  || entry?.createdAt
+  || entry?.updatedAt
+);
+
+const getStepTimestamps = (order, payments) => {
+  const timestamps = new Map();
+  const addTimestamp = (status, value) => {
+    if (!status || !value) return;
+    const key = normalizeStatusKey(status);
+    if (!timestamps.has(key)) timestamps.set(key, value);
+  };
+
+  addTimestamp('Quotation', order?.quotationDate || order?.createdAt || order?.orderDate);
+  addTimestamp('Payment', payments.find((payment) => payment?.paymentDate)?.paymentDate || order?.paidAt || order?.paymentDate);
+  addTimestamp('Production', order?.productionDate || order?.productionAt);
+  addTimestamp('Quality Control', order?.qualityControlDate || order?.qualityControlAt);
+  addTimestamp('Shipping', order?.shippingDate || order?.shippingAt || order?.deliveryDate);
+  addTimestamp('Completed', order?.completedAt || order?.deliveredAt || order?.receivedAt);
+
+  STATUS_HISTORY_KEYS.forEach((key) => {
+    const history = order?.[key];
+    if (!Array.isArray(history)) return;
+
+    history.forEach((entry) => {
+      addTimestamp(resolveHistoryStatus(entry), resolveHistoryDate(entry));
+    });
+  });
+
+  if (order?.status && order?.updatedAt) {
+    addTimestamp(order.status, order.updatedAt);
+  }
+
+  return timestamps;
+};
+
+const formatStepTimestamp = (dateValue) => {
+  if (!dateValue) return null;
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return STEP_DATE_FORMATTER.format(parsed);
+};
  
 export default function CustomerPortalOrderDetailModal({
   formatCurrency,
@@ -17,6 +89,7 @@ export default function CustomerPortalOrderDetailModal({
   if (!order) return null;
   const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
   const payments = normalizePaymentHistory(order);
+  const stepTimestamps = getStepTimestamps(order, payments);
  
   return (
     <ModalWrapper onClose={onClose} wide>
@@ -41,22 +114,35 @@ export default function CustomerPortalOrderDetailModal({
         </button>
       </div>
  
-      <div className="mb-8 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-        <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Progress Pesanan</p>
+      <div className="mb-8 rounded-[28px] border border-primary/10 bg-gradient-to-br from-slate-50 via-cyan-50/40 to-white p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Progress Pesanan</p>
+            <p className="mt-2 text-sm font-medium text-slate-500">Pantau tahapan yang sudah selesai dan proses berikutnya.</p>
+          </div>
+          <span className="rounded-full border border-primary/15 bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary shadow-sm">
+            {getStatusLabel(order.status)}
+          </span>
+        </div>
         <div className="overflow-x-auto">
           <div className="flex min-w-[640px] items-center justify-between lg:min-w-0">
             {ORDER_STEPS.map((status, idx, arr) => {
               const currentIdx = arr.indexOf(order.status);
               const isDone = idx <= currentIdx;
+              const isCurrent = idx === currentIdx;
+              const stepDate = isDone ? formatStepTimestamp(stepTimestamps.get(normalizeStatusKey(status))) : null;
               return (
                 <React.Fragment key={status}>
                   <div className="text-center">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-black ${isDone ? 'bg-primary text-white' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`mx-auto flex h-9 w-9 items-center justify-center rounded-full text-xs font-black ring-4 ring-white ${isDone ? 'bg-primary text-white shadow-lg shadow-primary/20' : isCurrent ? 'border border-slate-300 bg-slate-100 text-slate-700' : 'border border-slate-300 bg-slate-100 text-slate-600'}`}>
                       {isDone ? '✓' : idx + 1}
                     </div>
-                    <p className="mt-1 max-w-12 text-[8px] font-bold leading-tight text-slate-400">{getStatusLabel(status)}</p>
+                    <p className={`mt-2 max-w-16 text-[10px] font-bold leading-tight ${isDone ? 'text-slate-700' : 'text-slate-500'}`}>{getStatusLabel(status)}</p>
+                    <p className="mt-1 min-h-[14px] text-[10px] font-semibold text-slate-400">
+                      {stepDate || '\u00A0'}
+                    </p>
                   </div>
-                  {idx < arr.length - 1 && <div className={`mx-1 h-0.5 flex-1 ${idx < currentIdx ? 'bg-primary' : 'bg-slate-200'}`} />}
+                  {idx < arr.length - 1 && <div className={`mx-2 h-0.5 flex-1 rounded-full ${idx < currentIdx ? 'bg-primary' : 'bg-slate-300'}`} />}
                 </React.Fragment>
               );
             })}
