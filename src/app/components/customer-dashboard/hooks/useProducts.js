@@ -70,7 +70,7 @@ export function useProducts(setData) {
   }, [resetProductForm]);
 
   const addImageFiles = useCallback((files) => {
-    const remaining = 5 - existingImages.length - imageFiles.length;
+    const remaining = 10 - existingImages.length - imageFiles.length;
     if (remaining <= 0) return;
     setImageFiles((currentFiles) => [...currentFiles, ...files.slice(0, remaining)]);
   }, [existingImages.length, imageFiles.length]);
