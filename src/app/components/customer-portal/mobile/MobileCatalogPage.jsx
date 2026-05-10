@@ -75,33 +75,37 @@ export default function MobileCatalogPage({
           {paginated.map((catalog) => (
             <div
               key={catalog._id}
-              className="group flex flex-col bg-white rounded-[1rem] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-[#e2e7ff]/60"
+              className="group flex flex-col bg-white rounded-[1rem] overflow-hidden shadow-[0_4px_12px_-2px_rgba(0,106,98,0.06)] hover:shadow-md transition-all duration-300 cursor-pointer border border-[#e2e7ff]/40"
               onClick={() => onViewProduct(catalog._id)}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-[#f8f9ff]">
+              <div className="relative aspect-square overflow-hidden bg-[#f8f9ff]">
                 {catalog.images?.length > 0 ? (
                   <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-[#3c4947] opacity-40">
-                    <span className="material-symbols-outlined text-2xl mb-1">image</span>
+                    <span className="material-symbols-outlined text-xl mb-1">image</span>
                   </div>
                 )}
               </div>
-              <div className="p-3 flex flex-col flex-grow">
-                <span className="text-[9px] font-bold text-[#4dbace] uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
-                <h3 className="text-[13px] font-bold text-[#131b2e] tracking-tight font-headline line-clamp-2 leading-tight mb-2">{catalog.name}</h3>
-                <div className="mt-auto flex flex-col gap-2">
-                  <div className="text-[14px] font-bold text-[#4dbace] flex items-baseline gap-1">
-                    {formatCurrency(catalog.priceB2B)} <span className="text-[9px] font-normal text-[#3c4947]">/ pcs</span>
+              <div className="p-2.5 flex flex-col flex-grow">
+                <span className="text-[8px] font-bold text-[#4dbace] uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
+                <h3 className="text-[12px] font-bold text-[#131b2e] tracking-tight font-headline line-clamp-1 leading-tight mb-1.5">{catalog.name}</h3>
+                
+                <div className="space-y-1 mb-2.5 flex-grow">
+                  <div className="text-[14px] font-black text-[#4dbace] flex items-baseline gap-0.5">
+                    {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-[#3c4947]/40 uppercase tracking-tighter">/ pcs</span>
                   </div>
-                  <div className="text-[#3c4947] text-[10px] leading-tight font-medium">
-                    Varian: {catalog.variants?.length || 0} opsi
+                  <div className="flex flex-wrap gap-1">
+                    <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">
+                      {catalog.variants?.length || 0} Opsi
+                    </div>
                   </div>
-                  <button className="w-full mt-1 bg-[#4dbace] text-white font-bold py-2 rounded-full text-[11px] hover:bg-[#3ea0b5] transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                    <span className="material-symbols-outlined text-[14px]">shopping_cart</span>
-                    Pesan
-                  </button>
                 </div>
+
+                <button className="w-full bg-[#4dbace] text-white font-bold py-2 rounded-lg text-[10px] hover:bg-[#3ea0b5] transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-[#4dbace]/10 active:scale-95">
+                  <span className="material-symbols-outlined text-[13px]">shopping_cart</span>
+                  Pesan
+                </button>
               </div>
             </div>
           ))}
