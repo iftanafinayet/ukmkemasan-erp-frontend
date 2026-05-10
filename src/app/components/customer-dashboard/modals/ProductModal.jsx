@@ -239,7 +239,7 @@ export default function ProductModal({
         </div>
 
         <div className="space-y-3">
-          <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Gambar Produk (Maks. 5)</label>
+          <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Gambar Produk (Maks. 10)</label>
 
           {existingImages.length > 0 && (
             <div className="flex flex-wrap gap-3">
@@ -275,7 +275,7 @@ export default function ProductModal({
             </div>
           )}
 
-          {totalImages < 5 && (
+          {totalImages < 10 && (
             <label className="group flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-5 transition-all hover:border-primary/40 hover:bg-slate-100">
               <ImagePlus className="h-6 w-6 text-slate-400 transition-colors group-hover:text-primary" />
               <span className="text-sm font-bold text-slate-500 transition-colors group-hover:text-primary">

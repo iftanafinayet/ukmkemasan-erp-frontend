@@ -72,68 +72,68 @@ export default function CustomerPortalCatalogSection({
         {filteredCatalogs.map((catalog, index) => (
           <div
             key={catalog.key}
-            className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer"
+            className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer border border-outline-variant/10"
             onClick={() => onViewProduct(catalog.productId)}
           >
-            <div className="relative h-72 overflow-hidden bg-surface-container">
+            <div className="relative aspect-[4/3] overflow-hidden bg-surface-container">
               {catalog.images?.length > 0 ? (
                  <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
               ) : (
                  <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-50">
-                   <span className="material-symbols-outlined !text-4xl mb-2">image</span>
-                   <span className="text-sm font-semibold">No Image</span>
+                   <span className="material-symbols-outlined !text-3xl mb-1">image</span>
+                   <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
                  </div>
               )}
               {index === 0 && (
-                 <div className="absolute top-4 left-4">
-                   <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-full">New</span>
+                 <div className="absolute top-3 left-3">
+                   <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-on-primary text-[9px] font-bold uppercase tracking-widest rounded-full">New</span>
                  </div>
               )}
             </div>
-            <div className="p-6 flex flex-col flex-grow">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1 font-label">{catalog.category}</span>
-                  <h3 className="text-2xl font-extrabold text-on-surface tracking-tight font-headline">{catalog.name}</h3>
+            <div className="p-5 flex flex-col flex-grow">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1 min-w-0 mr-2">
+                  <span className="text-[9px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
+                  <h3 className="text-xl font-black text-on-surface tracking-tight font-headline line-clamp-1 group-hover:text-primary transition-colors">{catalog.name}</h3>
                 </div>
-                <span className="text-lg font-bold text-primary text-right pl-2 shrink-0">
-                  {formatCurrency(catalog.priceB2B)} <span className="text-[10px] block opacity-70">/ pcs</span>
-                </span>
+                <div className="text-right shrink-0">
+                  <span className="text-base font-black text-primary block leading-none">
+                    {formatCurrency(catalog.priceB2B)}
+                  </span>
+                  <span className="text-[9px] font-bold text-on-surface/40 uppercase">/ pcs</span>
+                </div>
               </div>
-              <div className="text-on-secondary-container text-sm leading-relaxed mb-6 flex-grow font-body">
+              
+              <div className="space-y-2 mb-5 flex-grow">
+                <div className="flex flex-wrap gap-1.5">
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high rounded-lg text-[10px] font-bold text-on-surface/70">
+                    <span className="material-symbols-outlined !text-xs opacity-50">straighten</span>
+                    {catalog.availableSizes?.length > 1 
+                      ? `${catalog.availableSizes[0]} - ${catalog.availableSizes[catalog.availableSizes.length - 1]}`
+                      : catalog.availableSizes?.[0] || '-'}
+                  </div>
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high rounded-lg text-[10px] font-bold text-on-surface/70">
+                    <span className="material-symbols-outlined !text-xs opacity-50">layers</span>
+                    {catalog.materialLabel}
+                  </div>
+                </div>
+                
                 {(() => {
-                  const desc = catalog.description || `${catalog.materialLabel} - Tersedia dalam ${catalog.variants.length} varian dan ${catalog.availableSizes.length} ukuran.`;
-                  const parts = desc.split('. ').map(p => p.trim()).filter(Boolean);
-                  
-                  const uniqueParts = parts.reduce((acc, current) => {
-                    if (current.startsWith('Varian ukuran:')) {
-                      const sizes = current.replace('Varian ukuran:', '').split(',').map(s => s.trim());
-                      const uniqueSizes = [...new Set(sizes)].filter(Boolean);
-                      acc.push(`Varian ukuran: ${uniqueSizes.join(', ')}`);
-                    } else if (!acc.includes(current)) {
-                      acc.push(current);
-                    }
-                    return acc;
-                  }, []);
-
-                  return uniqueParts.map((part, i) => (
-                    <p key={i} className="mb-1 last:mb-0 text-xs text-on-secondary-container/70 font-medium">
-                      {part.split(':').length === 2 ? (
-                        <>
-                          <span className="font-bold text-on-surface/80">{part.split(':')[0]}:</span>
-                          {part.split(':')[1]}
-                        </>
-                      ) : part}
-                    </p>
-                  ));
+                   const ketebalanPart = (catalog.description || '').split('. ').find(p => p.trim().startsWith('Ketebalan:'));
+                   if (!ketebalanPart) return null;
+                   return (
+                     <div className="flex items-center gap-1 text-[10px] text-on-surface/40 font-bold uppercase tracking-tight ml-0.5">
+                       <span className="material-symbols-outlined !text-xs opacity-50">line_weight</span>
+                       {ketebalanPart.split(':')[1]?.trim() || '-'}
+                     </div>
+                   );
                 })()}
               </div>
-              <div className="mt-auto flex gap-3">
-                <button className="flex-grow bg-primary text-on-primary font-bold py-3 px-6 rounded-full text-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined text-sm">shopping_cart</span>
-                  Pesan Sekarang
-                </button>
-              </div>
+
+              <button className="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl text-xs hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10 group/btn">
+                <span className="material-symbols-outlined !text-sm transition-transform group-hover/btn:translate-x-0.5">shopping_cart</span>
+                Pesan Sekarang
+              </button>
             </div>
           </div>
         ))}

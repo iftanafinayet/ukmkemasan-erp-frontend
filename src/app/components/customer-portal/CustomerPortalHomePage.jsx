@@ -60,7 +60,7 @@ export default function CustomerPortalHomePage({
               {landingContent?.heroSectionConfig?.title || 'UKM Kemasan membantu brand tampil lebih siap jual...'}
             </h1>
             <p className="text-white/80 font-body leading-relaxed max-w-md">
-              {landingContent?.heroSectionConfig?.subtitle || 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.'}
+              {landingContent?.heroSectionConfig?.subtitle || 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus for pertumbuhan bisnis kecil dan menengah.'}
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <button onClick={onNavigateToCreateOrder} className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-surface-container-lowest transition-all duration-300 active:scale-95 flex items-center gap-2">
@@ -148,80 +148,62 @@ export default function CustomerPortalHomePage({
             <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">Top Sellers</span>
             <h2 className="text-3xl font-bold font-headline mt-2">Katalog Populer</h2>
           </div>
-          <button onClick={onNavigateToCatalog} className="text-teal-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
-            Semua Katalog <span className="material-symbols-outlined text-sm">open_in_new</span>
+          <button onClick={onNavigateToCatalog} className="text-teal-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer text-sm">
+            Semua Katalog <span className="material-symbols-outlined text-xs">open_in_new</span>
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
           {popularProducts.length > 0 ? popularProducts.map((product) => (
-            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
-              <div className="aspect-[4/3] overflow-hidden bg-surface-container group-hover:scale-105 transition-transform duration-700 will-change-transform">
+            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
+              <div className="aspect-[4/3] overflow-hidden bg-surface-container">
                 {product.images?.[0] ? (
                   <img
                     alt={product.name}
                     loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 will-change-transform"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     src={product.images[0].url}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-on-secondary-container opacity-30">
-                    <span className="material-symbols-outlined text-4xl">image</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-30">
+                    <span className="material-symbols-outlined text-3xl mb-1">image</span>
+                    <span className="text-[10px] font-bold uppercase">No Image</span>
                   </div>
                 )}
               </div>
-              <div className="p-6 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-xl line-clamp-1">{product.name}</h4>
-                  <span className="px-2 py-1 bg-primary-fixed text-[10px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Populer</span>
+              <div className="p-5 space-y-3 flex flex-col h-full">
+                <div className="flex justify-between items-start gap-2">
+                  <h4 className="font-black text-lg line-clamp-1 group-hover:text-primary transition-colors flex-1">{product.name}</h4>
+                  <span className="px-2 py-0.5 bg-primary-fixed text-[9px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Hot</span>
                 </div>
-                <div className="text-sm text-on-secondary-container/80 space-y-0.5">
-                  {(() => {
-                    const desc = product.description || `Kemasan ${product.category} berkualitas tinggi.`;
-                    const parts = desc.split('. ').map(p => p.trim()).filter(Boolean);
-
-                    const uniqueParts = parts.reduce((acc, current) => {
-                      if (current.startsWith('Varian ukuran:')) {
-                        const sizes = current.replace('Varian ukuran:', '').split(',').map(s => s.trim());
-                        const uniqueSizes = [...new Set(sizes)].filter(Boolean);
-                        acc.push(`Varian ukuran: ${uniqueSizes.join(', ')}`);
-                      } else if (!acc.includes(current)) {
-                        acc.push(current);
-                      }
-                      return acc;
-                    }, []);
-
-                    return uniqueParts.slice(0, 2).map((part, i) => (
-                      <p key={i} className="line-clamp-1 last:line-clamp-none">
-                        {part.split(':').length === 2 ? (
-                          <>
-                            <span className="font-bold text-on-surface/80">{part.split(':')[0]}:</span>
-                            {part.split(':')[1]}
-                          </>
-                        ) : part}
-                      </p>
-                    ));
-                  })()}
-                </div>
-                <div className="flex items-center justify-between pt-4">
-                  <div className="flex flex-col">
-                    <span className="text-primary font-extrabold">{formatCurrency(product.priceB2B)}</span>
-                    <span className="text-[10px] text-on-secondary-container font-medium">{product.totalSold?.toLocaleString() || 0} terjual</span>
+                
+                <div className="space-y-1.5 flex-grow">
+                  <p className="text-[10px] font-bold text-on-surface/40 uppercase tracking-widest">{product.category}</p>
+                  <div className="flex flex-wrap gap-1">
+                    <div className="px-2 py-0.5 bg-surface-container-high rounded-lg text-[9px] font-black text-on-surface/60">
+                       {product.material || 'Premium Material'}
+                    </div>
                   </div>
-                  <button className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                    <span className="material-symbols-outlined">add_shopping_cart</span>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-outline-variant/10 mt-auto">
+                  <div className="flex flex-col">
+                    <span className="text-primary font-black text-base">{formatCurrency(product.priceB2B)}</span>
+                    <span className="text-[9px] text-on-secondary-container font-bold">{product.totalSold?.toLocaleString() || 0} terjual</span>
+                  </div>
+                  <button className="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-110 transition-all active:scale-95">
+                    <span className="material-symbols-outlined !text-xl">arrow_forward</span>
                   </button>
                 </div>
               </div>
             </div>
           )) : (
-            // Fallback content if empty from DB
+            // Fallback content
             [1, 2, 3, 4].map((i) => (
-              <div key={i} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[380px]">
+              <div key={i} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[300px]">
                 <div className="aspect-[4/3] bg-surface-container"></div>
-                <div className="p-6 space-y-4">
-                  <div className="h-6 bg-surface-container rounded w-3/4"></div>
-                  <div className="h-4 bg-surface-container rounded w-full"></div>
-                  <div className="h-4 bg-surface-container rounded w-1/2"></div>
+                <div className="p-5 space-y-4">
+                  <div className="h-5 bg-surface-container rounded w-3/4"></div>
+                  <div className="h-3 bg-surface-container rounded w-1/2"></div>
                 </div>
               </div>
             ))
