@@ -296,12 +296,12 @@ export default function ProductDetailPage() {
                                         )}
 
                                         {product.images?.length > 1 && (
-                                            <div className="flex gap-3 overflow-x-auto p-4 no-scrollbar">
+                                            <div className="grid grid-cols-5 gap-3 p-4">
                                                 {product.images.map((img, idx) => (
                                                     <button
                                                         key={idx}
                                                         onClick={() => setActiveImageIdx(idx)}
-                                                        className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${activeImageIdx === idx
+                                                        className={`aspect-square overflow-hidden rounded-xl border-2 transition-all ${activeImageIdx === idx
                                                             ? 'scale-105 border-primary shadow-lg shadow-primary/20'
                                                             : 'border-slate-200 opacity-60 hover:opacity-100'
                                                             }`}
