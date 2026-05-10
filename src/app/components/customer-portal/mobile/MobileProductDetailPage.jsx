@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../../utils/formatters';
-import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Layers, Ruler, Box, Package, ImagePlus } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { getCartItems } from '../../../utils/cart';
@@ -16,6 +16,8 @@ export default function MobileProductDetailPage({
   onSelectColor,
   quantity,
   setQuantity,
+  useValve,
+  setUseValve,
   onAddToCart,
   totalPrice,
   unitPrice,
@@ -82,12 +84,12 @@ export default function MobileProductDetailPage({
             )}
           </div>
           {product.images?.length > 1 && (
-            <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
+            <div className="grid grid-cols-5 gap-2 px-4 py-4 overflow-hidden">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIdx(idx)}
-                  className={`w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 ${activeImageIdx === idx ? 'border-[#4dbace]' : 'border-transparent'
+                  className={`aspect-square rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${activeImageIdx === idx ? 'border-[#4dbace] scale-105' : 'border-transparent opacity-60'
                     }`}
                 >
                   <img src={img.url} className="w-full h-full object-cover" />
@@ -117,15 +119,16 @@ export default function MobileProductDetailPage({
           </div>
           <h1 className="text-[18px] font-bold text-[#131b2e] leading-tight mb-3 font-headline">{product.name}</h1>
           <div className="flex items-center gap-4 text-[#3c4947] text-[12px]">
-            <div className="w-px h-3 bg-[#bbc9c7]/30"></div>
             <div>Terjual {product.totalSold || 0}+</div>
+            <div className="w-px h-3 bg-[#bbc9c7]/30"></div>
+            <div className="text-[#4dbace] font-bold">Stok: {selectedVariant?.stock?.toLocaleString() || 0} pcs</div>
           </div>
         </section>
 
         {/* Variant Selection */}
         <section className="bg-white px-4 py-6 mt-2 border-y border-[#bbc9c7]/20">
           <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3">Pilih Ukuran</h3>
+            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Pilih Ukuran</h3>
             <div className="flex flex-wrap gap-2">
               {sizeOptions.map((size) => (
                 <button
@@ -144,7 +147,7 @@ export default function MobileProductDetailPage({
           </div>
 
           <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3">Pilih Warna</h3>
+            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Pilih Warna</h3>
             <div className="flex flex-wrap gap-2">
               {colorOptions.map((color) => (
                 <button
@@ -162,8 +165,40 @@ export default function MobileProductDetailPage({
             </div>
           </div>
 
+          <div className="mb-6">
+            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Add-ons: Valve</h3>
+            <div className="grid grid-cols-2 gap-3">
+                <button
+                    type="button"
+                    onClick={() => setUseValve(true)}
+                    disabled={(product.addons?.valvePrice || 0) <= 0}
+                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all ${useValve
+                        ? 'border-[#4dbace] bg-[#4dbace]/5 text-[#4dbace]'
+                        : 'border-[#bbc9c7]/20 bg-white text-slate-500'
+                        } disabled:cursor-not-allowed disabled:opacity-40`}
+                >
+                    Pakai Valve
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setUseValve(false)}
+                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all ${!useValve
+                        ? 'border-[#4dbace] bg-[#4dbace] text-white'
+                        : 'border-[#bbc9c7]/20 bg-white text-slate-500'
+                        }`}
+                >
+                    Tanpa Valve
+                </button>
+            </div>
+            {useValve && product.addons?.valvePrice > 0 && (
+                <p className="mt-2 text-[10px] font-bold text-[#4dbace]">
+                    + {formatCurrency(product.addons.valvePrice)}/pcs
+                </p>
+            )}
+          </div>
+
           <div>
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3">Jumlah Pesanan</h3>
+            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Jumlah Pesanan</h3>
             <div className="flex items-center gap-4 bg-[#f2f3ff] rounded-xl p-1">
               <button
                 onClick={() => setQuantity(Math.max(product.minOrder, quantity - 100))}
@@ -190,26 +225,34 @@ export default function MobileProductDetailPage({
 
         {/* Specifications */}
         <section className="bg-white px-4 py-6 mt-2 border-y border-[#bbc9c7]/20">
-          <h3 className="text-[14px] font-bold text-[#131b2e] mb-4 font-headline">Informasi Produk</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#6c7a77]">Kategori</span>
-              <span className="text-[#131b2e] font-medium uppercase">{product.category}</span>
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Informasi Produk</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
+              <Layers size={16} className="text-[#4dbace] mb-1.5" />
+              <p className="text-[9px] font-bold text-slate-400 uppercase">Kategori</p>
+              <p className="text-[12px] font-bold text-[#131b2e] truncate">{product.category}</p>
             </div>
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#6c7a77]">Material</span>
-              <span className="text-[#131b2e] font-medium">{product.material || '-'}</span>
+            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
+              <Ruler size={16} className="text-[#4dbace] mb-1.5" />
+              <p className="text-[9px] font-bold text-slate-400 uppercase">Material</p>
+              <p className="text-[12px] font-bold text-[#131b2e] truncate">{product.material || '-'}</p>
             </div>
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#6c7a77]">Min. Order</span>
-              <span className="text-[#131b2e] font-medium">{product.minOrder} pcs</span>
+            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
+              <Package size={16} className="text-[#4dbace] mb-1.5" />
+              <p className="text-[9px] font-bold text-slate-400 uppercase">Varian</p>
+              <p className="text-[12px] font-bold text-[#131b2e]">{product.variants?.length || 0} Opsi</p>
+            </div>
+            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
+              <Box size={16} className="text-[#4dbace] mb-1.5" />
+              <p className="text-[9px] font-bold text-slate-400 uppercase">Min. Order</p>
+              <p className="text-[12px] font-bold text-[#131b2e]">{product.minOrder?.toLocaleString()} pcs</p>
             </div>
           </div>
         </section>
 
         {/* Description */}
         <section className="bg-white px-4 py-6 mt-2 pb-10 border-t border-[#bbc9c7]/20">
-          <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 font-headline">Deskripsi Produk</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Deskripsi Produk</h3>
           <p className="text-[13px] text-[#3c4947] leading-relaxed">
             {product.description}
           </p>
