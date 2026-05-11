@@ -149,12 +149,12 @@ export default function LoginPage() {
             </div>
 
             {/* Error Message */}
-            {error && (
-              <div className="mb-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-4">
-                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
-                <p className="text-red-700 text-sm font-semibold leading-relaxed">{error}</p>
-              </div>
-            )}
+              {error && (
+                <div className="mb-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 error-message" role="alert">
+                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
+                  <p className="text-red-700 text-sm font-semibold leading-relaxed">{error}</p>
+                </div>
+              )}
 
             <form onSubmit={handleLogin} className="space-y-8">
               {/* Input Group: Email */}
@@ -163,7 +163,7 @@ export default function LoginPage() {
                   Email / Username
                 </label>
                   <input
-                    type="text"
+                    type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"

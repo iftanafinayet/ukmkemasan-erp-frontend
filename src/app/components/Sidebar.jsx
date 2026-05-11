@@ -133,6 +133,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
                   <li key={item.id} className="space-y-1">
                     <button
                       onClick={() => handleMenuClick(item)}
+                      data-testid={`menu-item-${item.id}`}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
                         isParentActive && !hasChildren
                           ? 'bg-slate-100 text-primary font-bold'
@@ -161,6 +162,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
                           <li key={sub.id}>
                             <button
                               onClick={(e) => handleSubMenuClick(e, sub.id)}
+                              data-testid={`menu-item-${sub.id}`}
                               className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${
                                 activeMenu === sub.id
                                   ? 'text-primary font-black bg-primary/5'
@@ -180,10 +182,11 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
           </nav>
 
           <div className="p-4 bg-slate-50/50 border-t border-slate-100">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-sm"
-            >
+             <button
+               onClick={handleLogout}
+               data-testid="logout-btn"
+               className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-sm"
+             >
               <LogOut className="w-5 h-5" />
               <span>Keluar Sistem</span>
             </button>

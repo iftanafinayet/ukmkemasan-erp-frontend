@@ -59,6 +59,7 @@ export default function InventoryPage({
               <button
                 type="button"
                 onClick={onOpenProductModal}
+                data-testid="add-product-btn"
                 className="flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
               >
                 <Plus size={16} />
@@ -176,10 +177,10 @@ export default function InventoryPage({
                          <button type="button" onClick={() => onViewProduct(product._id)} className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors" title="Detail">
                            <Eye size={16} />
                          </button>
-                         <button type="button" onClick={() => onEditProduct(product)} className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-colors" title="Edit">
+                         <button type="button" data-testid={`edit-product-${product._id}`} onClick={() => onEditProduct(product)} className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-colors" title="Edit">
                            <Edit3 size={16} />
                          </button>
-                         <button type="button" onClick={() => onDeleteProduct(product._id)} className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors" title="Hapus">
+                         <button type="button" data-testid={`delete-product-${product._id}`} onClick={() => onDeleteProduct(product._id)} className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors" title="Hapus">
                            <Trash2 size={16} />
                          </button>
                        </div>

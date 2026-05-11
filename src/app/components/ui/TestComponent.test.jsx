@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 /* global test, expect */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
