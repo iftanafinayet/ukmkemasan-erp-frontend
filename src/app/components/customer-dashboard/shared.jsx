@@ -144,6 +144,7 @@ export function FormInput({
   type = 'text',
   required = false,
   placeholder = '',
+  dataTestId,
 }) {
   return (
     <div className="space-y-2">
@@ -152,6 +153,7 @@ export function FormInput({
         type={type}
         required={required}
         placeholder={placeholder}
+        data-testid={dataTestId}
         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-bold"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -168,6 +170,7 @@ export function InputField({
   type = 'text',
   required = false,
   placeholder = '',
+  dataTestId,
 }) {
   const Icon = icon;
 
@@ -180,6 +183,7 @@ export function InputField({
           type={type}
           required={required}
           placeholder={placeholder}
+          data-testid={dataTestId}
           className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-bold"
           value={value}
           onChange={(event) => onChange(event.target.value)}

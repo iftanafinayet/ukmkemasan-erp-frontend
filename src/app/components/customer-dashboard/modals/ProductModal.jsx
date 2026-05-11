@@ -94,11 +94,13 @@ export default function ProductModal({
             onChange={(value) => setNewProduct({ ...newProduct, name: value })}
             required
             placeholder="Flat Bottom"
+            dataTestId="product-name"
           />
           <div className="space-y-2">
             <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Kategori</label>
             <select
               required
+              data-testid="product-category"
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 font-bold text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
               value={newProduct.category}
               onChange={(event) => setNewProduct({ ...newProduct, category: event.target.value })}
@@ -118,6 +120,7 @@ export default function ProductModal({
             onChange={(value) => setNewProduct({ ...newProduct, material: value })}
             required
             placeholder="PET / ALU / LLDPE"
+            dataTestId="product-material"
           />
           <FormInput
             label="Min. Order"
@@ -126,6 +129,7 @@ export default function ProductModal({
             onChange={(value) => setNewProduct({ ...newProduct, minOrder: value })}
             required
             placeholder="100"
+            dataTestId="product-min-order"
           />
           <FormInput
             label="Valve / pcs (Rp)"
@@ -133,6 +137,7 @@ export default function ProductModal({
             value={newProduct.valvePrice}
             onChange={(value) => setNewProduct({ ...newProduct, valvePrice: value })}
             placeholder="600"
+            dataTestId="product-valve-price"
           />
         </div>
 
@@ -140,6 +145,7 @@ export default function ProductModal({
           <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Deskripsi</label>
           <textarea
             rows={3}
+            data-testid="product-description"
             value={newProduct.description}
             onChange={(event) => setNewProduct({ ...newProduct, description: event.target.value })}
             placeholder="Contoh: Flat Bottom dengan pilihan ukuran 250 gr, 500 gr, dan 1000 gr."
@@ -185,6 +191,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'sku', value)}
                     required
                     placeholder="FBT-250-BLK"
+                    dataTestId={`variant-sku-${index}`}
                   />
                   <FormInput
                     label="Ukuran"
@@ -192,6 +199,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'size', value)}
                     required
                     placeholder="250 gr"
+                    dataTestId={`variant-size-${index}`}
                   />
                   <FormInput
                     label="Warna"
@@ -199,6 +207,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'color', value)}
                     required
                     placeholder="Black"
+                    dataTestId={`variant-color-${index}`}
                   />
                   <FormInput
                     label="Harga B2C (Rp)"
@@ -207,6 +216,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'priceB2C', value)}
                     required
                     placeholder="2800"
+                    dataTestId={`variant-price-b2c-${index}`}
                   />
                   <FormInput
                     label="Harga B2B (Rp)"
@@ -215,6 +225,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'priceB2B', value)}
                     required
                     placeholder="2400"
+                    dataTestId={`variant-price-b2b-${index}`}
                   />
                   <FormInput
                     label="Stok"
@@ -223,6 +234,7 @@ export default function ProductModal({
                     onChange={(value) => updateVariant(index, 'stock', value)}
                     required
                     placeholder="500"
+                    dataTestId={`variant-stock-${index}`}
                   />
                 </div>
               </div>
@@ -231,6 +243,7 @@ export default function ProductModal({
             <button
               type="button"
               onClick={addVariant}
+              data-testid="add-variant-btn"
               className="flex w-full items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-4 text-sm font-black uppercase tracking-widest text-primary transition-all hover:border-primary hover:bg-primary/10"
             >
               <Plus size={18} /> Tambah Varian
@@ -299,6 +312,7 @@ export default function ProductModal({
 
         <button
           type="submit"
+          data-testid="product-submit"
           className="mt-4 w-full rounded-3xl bg-primary py-5 font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95"
         >
           {editingProduct ? 'Update Produk' : 'Simpan ke Sistem'}
