@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { storage } from '../../config/environment';
 import {
   Carousel,
@@ -18,15 +19,27 @@ export default function CustomerPortalHomePage({
   onNavigateToCatalog,
   onNavigateToCreateOrder
 }) {
+  const navigate = useNavigate();
   const user = storage.getUser() || { name: 'Customer' };
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [bannerApi, setBannerApi] = useState(null);
+
+  useEffect(() => {
+    if (!bannerApi) return;
+
+    const interval = setInterval(() => {
+      bannerApi.scrollNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [bannerApi]);
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
   const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
 
   return (
-    <div className="relative space-y-12 animate-in fade-in duration-500">
+    <div className="relative space-y-0 animate-in fade-in duration-500">
       {/* Floating WhatsApp Button */}
       <a
         href="https://wa.me/6281234567890"
@@ -42,75 +55,44 @@ export default function CustomerPortalHomePage({
         </span>
       </a>
 
-      {/* Hero and Profile Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        <div className="lg:col-span-8 relative overflow-hidden rounded-xl bg-primary p-12 text-on-primary shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
-          <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-            <img
-              src={landingContent?.heroSectionConfig?.heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO"}
-              alt="Packaging Design"
-              className="w-full h-full object-cover mix-blend-overlay"
-            />
+      {/* Hero Banner Carousel */}
+      <section className="relative w-full h-[35vh] md:h-[50vh] overflow-hidden rounded-3xl">
+        <Carousel
+          className="w-full h-full"
+          opts={{
+            loop: true,
+            align: "start",
+          }}
+          setApi={setBannerApi}
+        >
+          <CarouselContent className="h-full ml-0">
+            {/* Carousel Item */}
+            {[
+              { image: '/BANNER WEB/1.png', alt: 'Banner 1' },
+              { image: '/BANNER WEB/2.png', alt: 'Banner 2' },
+            ].map((banner, idx) => (
+              <CarouselItem key={idx} className="pl-0 basis-full h-full">
+                <div className="relative w-full h-full overflow-hidden rounded-3xl">
+                  <img
+                    src={banner.image}
+                    alt={banner.alt}
+                    className="w-full h-full object-cover rounded-3xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-3xl" />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {[0, 1].map((i) => (
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${bannerApi?.selectedScrollSnap() === i ? 'bg-white w-8' : 'bg-white/40 w-2'}`} />
+            ))}
           </div>
-          <div className="relative z-10 max-w-lg space-y-6">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-white border border-white/10">
-              {landingContent?.heroSectionConfig?.pillText || 'Solution for UKM'}
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tighter leading-tight font-headline">
-              {landingContent?.heroSectionConfig?.title || 'UKM Kemasan membantu brand tampil lebih siap jual...'}
-            </h1>
-            <p className="text-white/80 font-body leading-relaxed max-w-md">
-              {landingContent?.heroSectionConfig?.subtitle || 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus for pertumbuhan bisnis kecil dan menengah.'}
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <button onClick={onNavigateToCreateOrder} className="px-8 py-4 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-surface-container-lowest transition-all duration-300 active:scale-95 flex items-center gap-2">
-                Purchase Sekarang
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
-              <button onClick={onNavigateToCatalog} className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-all duration-300 active:scale-95">
-                Lihat Katalog
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:col-span-4 flex flex-col gap-8">
-          <div className="bg-surface-container-lowest rounded-xl p-8 shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] flex-1 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-on-secondary-container uppercase tracking-wider font-label">Profile Snapshot</span>
-                <h2 className="text-2xl font-bold font-headline text-on-surface line-clamp-1">Halo, {user.name}</h2>
-              </div>
-              <div className="w-16 h-16 rounded-2xl bg-primary/20 overflow-hidden flex items-center justify-center font-bold text-3xl text-primary flex-shrink-0">
-                {user.name.charAt(0)}
-              </div>
-            </div>
-            <div className="mt-8 space-y-4">
-              <div className="p-4 rounded-lg bg-surface-container-low flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
-                  <span className="material-symbols-outlined">package_2</span>
-                </div>
-                <div>
-                  <div className="text-xs text-on-secondary-container font-medium">Total Pesanan</div>
-                  <div className="text-lg font-bold text-on-surface">{stats.total} Order</div>
-                </div>
-              </div>
-              <div className="p-4 rounded-lg bg-surface-container-low flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
-                  <span className="material-symbols-outlined">verified</span>
-                </div>
-                <div>
-                  <div className="text-xs text-on-secondary-container font-medium">Produksi Aktif</div>
-                  <div className="text-lg font-bold text-on-surface">{stats.production} Project</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </Carousel>
+      </section>
 
       {/* Quick Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 -mt-2">
         <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
             <span className="material-symbols-outlined">inventory</span>
@@ -142,7 +124,7 @@ export default function CustomerPortalHomePage({
       </div>
 
       {/* Katalog Populer Section */}
-      <section className="space-y-8">
+      <section className="space-y-8 pt-12">
         <div className="flex items-end justify-between">
           <div>
             <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">Top Sellers</span>
@@ -170,17 +152,18 @@ export default function CustomerPortalHomePage({
                   </div>
                 )}
               </div>
-              <div className="p-5 space-y-3 flex flex-col h-full">
+              <div className="p-6 space-y-3 flex flex-col h-full">
                 <div className="flex justify-between items-start gap-2">
+
                   <h4 className="font-black text-lg line-clamp-1 group-hover:text-primary transition-colors flex-1">{product.name}</h4>
                   <span className="px-2 py-0.5 bg-primary-fixed text-[9px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Hot</span>
                 </div>
-                
+
                 <div className="space-y-1.5 flex-grow">
                   <p className="text-[10px] font-bold text-on-surface/40 uppercase tracking-widest">{product.category}</p>
                   <div className="flex flex-wrap gap-1">
                     <div className="px-2 py-0.5 bg-surface-container-high rounded-lg text-[9px] font-black text-on-surface/60">
-                       {product.material || 'Premium Material'}
+                      {product.material || 'Premium Material'}
                     </div>
                   </div>
                 </div>
@@ -201,8 +184,9 @@ export default function CustomerPortalHomePage({
             [1, 2, 3, 4].map((i) => (
               <div key={i} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[300px]">
                 <div className="aspect-[4/3] bg-surface-container"></div>
-                <div className="p-5 space-y-4">
+                <div className="p-6 space-y-4">
                   <div className="h-5 bg-surface-container rounded w-3/4"></div>
+
                   <div className="h-3 bg-surface-container rounded w-1/2"></div>
                 </div>
               </div>
@@ -284,8 +268,9 @@ export default function CustomerPortalHomePage({
       </section>
 
       {/* Artikel Terkini Section */}
-      <section className="bg-surface-container-low rounded-[2.5rem] p-8 md:p-16 lg:p-20 space-y-12">
+      <section className="bg-surface-container-low rounded-[2.5rem] p-6 space-y-12">
         <div className="flex flex-col items-center justify-center text-center space-y-5">
+
           <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
             {landingContent?.articleSectionConfig?.pillText || 'Informasi Menarik'}
           </span>
@@ -298,7 +283,11 @@ export default function CustomerPortalHomePage({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {articles.slice(0, 4).length > 0 ? articles.slice(0, 4).map((article, idx) => (
-            <div key={idx} className="group space-y-6 cursor-pointer text-center">
+            <div
+              key={idx}
+              onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
+              className="group space-y-6 cursor-pointer text-center transition-all duration-300 hover:scale-105"
+            >
               <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
                 <img
                   alt={article.title}
@@ -338,7 +327,7 @@ export default function CustomerPortalHomePage({
       </section>
 
       {/* Berita Terbaru Section (Gallery) */}
-      <section className="space-y-8 pb-12">
+      <section className="space-y-8 pt-12 ">
         <div className="flex flex-col items-center justify-center text-center space-y-5">
           <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
             {landingContent?.gallerySectionConfig?.pillText || 'Galeri'}
@@ -403,8 +392,8 @@ export default function CustomerPortalHomePage({
                     <div
                       key={i}
                       className={`transition-all duration-500 rounded-full h-2 ${i === activeGalleryIndex
-                          ? 'bg-primary w-12'
-                          : 'bg-white/30 w-2 hover:bg-white/50'
+                        ? 'bg-primary w-12'
+                        : 'bg-white/30 w-2 hover:bg-white/50'
                         }`}
                     />
                   ))}

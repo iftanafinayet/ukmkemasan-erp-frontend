@@ -172,7 +172,11 @@ export default function MobileHomePage({
           <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Artikel Pilihan</h2>
           <div className="flex flex-col gap-3">
             {articles.slice(0, 3).map((article, idx) => (
-              <div key={idx} className="flex gap-3 items-center">
+              <div 
+                key={idx} 
+                onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
+                className="flex gap-3 items-center cursor-pointer active:opacity-70 transition-opacity"
+              >
                 <img
                   className="w-16 h-16 rounded-lg object-cover"
                   src={article.imageUrl || "https://via.placeholder.com/100"}
