@@ -13,6 +13,7 @@ const CustomerPortal = lazy(() => import('./app/components/CustomerPortal'));
 const CreateOrderPage = lazy(() => import('./app/components/CreateOrderPage'));
 const ProductDetailPage = lazy(() => import('./app/components/ProductDetailPage'));
 const CustomerPaymentPage = lazy(() => import('./app/components/customer-portal/CustomerPaymentPage'));
+const CustomerPortalArticleDetail = lazy(() => import('./app/components/customer-portal/CustomerPortalArticleDetail'));
 
 /**
  * RoleRedirect: redirect ke portal yang sesuai berdasarkan role user
@@ -155,12 +156,18 @@ function AppRoutes() {
         />
 
         {/* Customer Product Detail */}
-        <Route
-          path="/portal/products/:id"
-          element={<ProductDetailPage />}
-        />
+         <Route
+           path="/portal/products/:id"
+           element={<ProductDetailPage />}
+         />
 
-        {/* Legacy /dashboard redirect berdasarkan role */}
+         {/* Customer Article Detail */}
+         <Route
+           path="/portal/articles/:id"
+           element={<CustomerPortalArticleDetail />}
+         />
+
+         {/* Legacy /dashboard redirect berdasarkan role */}
         <Route
           path="/dashboard"
           element={<RoleRedirect />}

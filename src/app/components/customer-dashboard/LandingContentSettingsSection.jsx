@@ -124,9 +124,12 @@ export default function LandingContentSettingsSection({
               <div className="mt-4">
                 <FormInput label="Judul" value={article.title} onChange={(value) => onArticleChange(article.clientId, 'title', value)} />
               </div>
-              <div className="mt-4">
-                <TextAreaField label="Ringkasan" value={article.excerpt} onChange={(value) => onArticleChange(article.clientId, 'excerpt', value)} rows={3} />
-              </div>
+               <div className="mt-4">
+                 <TextAreaField label="Ringkasan" value={article.excerpt} onChange={(value) => onArticleChange(article.clientId, 'excerpt', value)} rows={3} />
+               </div>
+               <div className="mt-4">
+                 <TextAreaField label="Konten Lengkap" value={article.content} onChange={(value) => onArticleChange(article.clientId, 'content', value)} rows={8} />
+               </div>
               <div className="mt-4">
                 <FormInput label="Alt Gambar" value={article.imageAlt} onChange={(value) => onArticleChange(article.clientId, 'imageAlt', value)} placeholder="Deskripsi gambar artikel" />
               </div>
