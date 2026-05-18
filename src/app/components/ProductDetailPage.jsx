@@ -211,7 +211,19 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <div className={isAdmin ? "flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen" : "min-h-screen bg-surface-bright font-sans text-on-surface"}>
+        <div className={isAdmin ? "flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen" : "min-h-screen bg-transparent font-sans text-on-surface"}>
+            {!isAdmin && (
+                <div
+                  className="hidden lg:block fixed inset-0 -z-10 opacity-20 pointer-events-none"
+                  style={{
+                    backgroundImage: "url('/background/bg.svg')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed'
+                  }}
+                />
+            )}
             {/* Desktop View */}
             <div className="hidden lg:flex flex-col flex-1">
                 {isAdmin ? (
