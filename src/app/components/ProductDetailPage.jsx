@@ -78,7 +78,7 @@ export default function ProductDetailPage() {
         }
     };
 
-    const goBack = () => navigate(isAdmin ? '/admin' : '/portal');
+    const goBack = () => navigate(isAdmin ? '/admin' : '/portal?menu=catalog');
 
     const handleMenuChange = (menuId) => {
         if (isAdmin) {
