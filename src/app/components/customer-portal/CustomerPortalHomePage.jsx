@@ -22,21 +22,39 @@ export default function CustomerPortalHomePage({
   const navigate = useNavigate();
   const user = storage.getUser() || { name: 'Customer' };
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [bannerApi, setBannerApi] = useState(null);
 
   useEffect(() => {
     if (!bannerApi) return;
 
+    const syncBannerIndex = () => {
+      setActiveBannerIndex(bannerApi.selectedScrollSnap());
+    };
+
+    syncBannerIndex();
+    bannerApi.on('select', syncBannerIndex);
+
     const interval = setInterval(() => {
       bannerApi.scrollNext();
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      bannerApi.off('select', syncBannerIndex);
+      clearInterval(interval);
+    };
   }, [bannerApi]);
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
   const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
+
+  const banners = Array.isArray(landingContent?.banners)
+    ? landingContent.banners
+    : [
+      { image: '/BANNER WEB/HeroBanner1.avif', alt: 'Banner 1' },
+      { image: '/BANNER WEB/HeroBanner2.avif', alt: 'Banner 2' },
+    ];
 
   return (
     <div className="relative space-y-0 animate-in fade-in duration-500">
@@ -67,10 +85,7 @@ export default function CustomerPortalHomePage({
         >
           <CarouselContent className="h-full ml-0">
             {/* Carousel Item */}
-            {[
-              { image: '/BANNER WEB/1.png', alt: 'Banner 1' },
-              { image: '/BANNER WEB/2.png', alt: 'Banner 2' },
-            ].map((banner, idx) => (
+            {banners.map((banner, idx) => (
               <CarouselItem key={idx} className="pl-0 basis-full h-full">
                 <div className="relative w-full h-full overflow-hidden rounded-3xl">
                   <img
@@ -83,38 +98,38 @@ export default function CustomerPortalHomePage({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {[0, 1].map((i) => (
-              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${bannerApi?.selectedScrollSnap() === i ? 'bg-white w-8' : 'bg-white/40 w-2'}`} />
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+            {banners.map((_, i) => (
+              <div key={i} className={`rounded-full transition-all duration-300 ${activeBannerIndex === i ? 'h-2.5 w-10 bg-primary shadow-lg shadow-primary/30' : 'h-2 w-2 bg-white/20'}`} />
             ))}
           </div>
         </Carousel>
       </section>
 
       {/* Quick Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 -mt-2">
-        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 -mt-2 pt-4">
+        <div className="bg-surface-container-lowest/95 backdrop-blur-sm p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
             <span className="material-symbols-outlined">inventory</span>
           </div>
           <h3 className="font-bold text-lg">Stok Kemasan</h3>
           <p className="text-on-secondary-container text-sm">Pantau ketersediaan berbagai jenis kemasan siap kirim.</p>
         </div>
-        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-surface-container-lowest/95 backdrop-blur-sm p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-on-primary-fixed-variant">
             <span className="material-symbols-outlined">brush</span>
           </div>
           <h3 className="font-bold text-lg">Kustom Desain</h3>
           <p className="text-on-secondary-container text-sm">Konsultasikan kebutuhan branding unik untuk produk Anda.</p>
         </div>
-        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-surface-container-lowest/95 backdrop-blur-sm p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-tertiary-fixed rounded-lg flex items-center justify-center text-on-tertiary-fixed-variant">
             <span className="material-symbols-outlined">local_shipping</span>
           </div>
           <h3 className="font-bold text-lg">Lacak Pengiriman</h3>
           <p className="text-on-secondary-container text-sm">Informasi real-time perjalanan pesanan sampai tujuan.</p>
         </div>
-        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-surface-container-lowest/95 backdrop-blur-sm p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center text-on-secondary-container">
             <span className="material-symbols-outlined">support_agent</span>
           </div>
@@ -128,16 +143,16 @@ export default function CustomerPortalHomePage({
         <div className="flex items-end justify-between">
           <div>
             <span className="text-xs font-bold text-primary uppercase tracking-widest font-label">Top Sellers</span>
-            <h2 className="text-3xl font-bold font-headline mt-2">Katalog Populer</h2>
+            <h2 className="text-4xl font-extrabold font-headline mt-2">Katalog Populer</h2>
           </div>
           <button onClick={onNavigateToCatalog} className="text-teal-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer text-sm">
             Semua Katalog <span className="material-symbols-outlined text-xs">open_in_new</span>
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
-          {popularProducts.length > 0 ? popularProducts.map((product) => (
-            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 cursor-pointer">
-              <div className="aspect-[4/3] overflow-hidden bg-surface-container">
+          {popularProducts.length > 0 ? popularProducts.map((product, index) => (
+            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group flex flex-col bg-surface-container-lowest/95 backdrop-blur-sm rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer border border-outline-variant/10">
+              <div className="relative aspect-[4/3] overflow-hidden bg-surface-container/90">
                 {product.images?.[0] ? (
                   <img
                     alt={product.name}
@@ -146,48 +161,58 @@ export default function CustomerPortalHomePage({
                     src={product.images[0].url}
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-30">
-                    <span className="material-symbols-outlined text-3xl mb-1">image</span>
-                    <span className="text-[10px] font-bold uppercase">No Image</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-50">
+                    <span className="material-symbols-outlined !text-3xl mb-1">image</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
+                  </div>
+                )}
+                {index === 0 && (
+                  <div className="absolute top-3 left-3">
+                    <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-on-primary text-[9px] font-bold uppercase tracking-widest rounded-full">Hot</span>
                   </div>
                 )}
               </div>
-              <div className="p-6 space-y-3 flex flex-col h-full">
-                <div className="flex justify-between items-start gap-2">
-
-                  <h4 className="font-black text-lg line-clamp-1 group-hover:text-primary transition-colors flex-1">{product.name}</h4>
-                  <span className="px-2 py-0.5 bg-primary-fixed text-[9px] font-bold text-on-primary-fixed-variant rounded uppercase whitespace-nowrap">Hot</span>
+              <div className="p-5 flex flex-col flex-grow">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1 min-w-0 mr-2">
+                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{product.category}</span>
+                    <h3 className="text-xl font-black text-on-surface tracking-tight font-headline line-clamp-1 group-hover:text-primary transition-colors">{product.name}</h3>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-base font-black text-primary block leading-none">
+                      {formatCurrency(product.priceB2B)}
+                    </span>
+                    <span className="text-[9px] font-bold text-on-surface/40 uppercase">/ pcs</span>
+                  </div>
                 </div>
 
-                <div className="space-y-1.5 flex-grow">
-                  <p className="text-[10px] font-bold text-on-surface/40 uppercase tracking-widest">{product.category}</p>
-                  <div className="flex flex-wrap gap-1">
-                    <div className="px-2 py-0.5 bg-surface-container-high rounded-lg text-[9px] font-black text-on-surface/60">
+                <div className="space-y-2 mb-5 flex-grow">
+                  <div className="flex flex-wrap gap-1.5">
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high/90 rounded-lg text-[10px] font-bold text-on-surface/70">
+                      <span className="material-symbols-outlined !text-xs opacity-50">layers</span>
                       {product.material || 'Premium Material'}
                     </div>
                   </div>
+                  <div className="flex items-center gap-1 text-[10px] text-on-surface/40 font-bold uppercase tracking-tight ml-0.5">
+                    <span className="material-symbols-outlined !text-xs opacity-50">trending_up</span>
+                    {product.totalSold?.toLocaleString() || 0} terjual
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-outline-variant/10 mt-auto">
-                  <div className="flex flex-col">
-                    <span className="text-primary font-black text-base">{formatCurrency(product.priceB2B)}</span>
-                    <span className="text-[9px] text-on-secondary-container font-bold">{product.totalSold?.toLocaleString() || 0} terjual</span>
-                  </div>
-                  <button className="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-110 transition-all active:scale-95">
-                    <span className="material-symbols-outlined !text-xl">arrow_forward</span>
-                  </button>
-                </div>
+                <button className="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl text-xs hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10 group/btn">
+                  <span className="material-symbols-outlined !text-sm transition-transform group-hover/btn:translate-x-0.5">shopping_cart</span>
+                  Pesan Sekarang
+                </button>
               </div>
             </div>
           )) : (
             // Fallback content
             [1, 2, 3, 4].map((i) => (
-              <div key={i} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[300px]">
-                <div className="aspect-[4/3] bg-surface-container"></div>
-                <div className="p-6 space-y-4">
-                  <div className="h-5 bg-surface-container rounded w-3/4"></div>
-
-                  <div className="h-3 bg-surface-container rounded w-1/2"></div>
+              <div key={i} className="group bg-surface-container-lowest/95 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm animate-pulse border border-outline-variant/10 h-[350px]">
+                <div className="aspect-[4/3] bg-surface-container/90"></div>
+                <div className="p-5 space-y-4">
+                  <div className="h-5 bg-surface-container/90 rounded w-3/4"></div>
+                  <div className="h-3 bg-surface-container/90 rounded w-1/2"></div>
                 </div>
               </div>
             ))
@@ -199,7 +224,7 @@ export default function CustomerPortalHomePage({
       <section className="space-y-10 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-[10px] font-black uppercase tracking-[0.2em] text-primary border border-primary/10">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
               {landingContent?.portfolioSectionConfig?.pillText || 'Hasil Karya'}
             </span>
             <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 leading-tight">
@@ -224,7 +249,7 @@ export default function CustomerPortalHomePage({
           <CarouselContent className="-ml-4 md:-ml-8">
             {portfolios.length > 0 ? portfolios.map((portfolio, idx) => (
               <CarouselItem key={idx} className="pl-4 md:pl-8 basis-full sm:basis-1/2 lg:basis-1/3">
-                <div className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 h-full">
+                <div className="group relative bg-white/95 backdrop-blur-sm rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 h-full">
                   <div className="aspect-[4/5] overflow-hidden bg-slate-100">
                     <img
                       src={portfolio.imageUrl || "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"}
@@ -247,7 +272,7 @@ export default function CustomerPortalHomePage({
               // Fallback content
               [1, 2, 3].map((i) => (
                 <CarouselItem key={i} className="pl-4 md:pl-8 basis-full sm:basis-1/2 lg:basis-1/3">
-                  <div className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm h-full">
+                  <div className="group relative bg-white/95 backdrop-blur-sm rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm h-full">
                     <div className="aspect-[4/5] bg-slate-200 animate-pulse"></div>
                     <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/60 to-transparent">
                       <div className="h-4 bg-white/20 rounded w-1/4 mb-2"></div>
@@ -268,7 +293,7 @@ export default function CustomerPortalHomePage({
       </section>
 
       {/* Artikel Terkini Section */}
-      <section className="bg-surface-container-low rounded-[2.5rem] p-6 space-y-12">
+      <section className="bg-surface-container-low/90 backdrop-blur-sm rounded-[2.5rem] p-6 space-y-12">
         <div className="flex flex-col items-center justify-center text-center space-y-5">
 
           <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
@@ -288,7 +313,7 @@ export default function CustomerPortalHomePage({
               onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
               className="group space-y-6 cursor-pointer text-center transition-all duration-300 hover:scale-105"
             >
-              <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+              <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container/90 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
                 <img
                   alt={article.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -311,7 +336,7 @@ export default function CustomerPortalHomePage({
                 { cat: 'Compliance', title: 'Standar Keamanan Pangan Nasional', desc: 'Panduan lengkap memenuhi standar BPOM melalui pemilihan kemasan yang tepat.' }
               ].map((item, i) => (
                 <div key={i} className="group space-y-6 cursor-pointer text-center">
-                  <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+                  <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container/90 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
                     <img alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop" />
                   </div>
                   <div className="space-y-3 px-2">
@@ -358,7 +383,7 @@ export default function CustomerPortalHomePage({
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                       <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white space-y-4 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <span className="inline-block px-3 py-1 bg-primary/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-primary-fixed border border-white/10">
+                        <span className="inline-block px-3 py-1 bg-primary rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
                           {activity.label || "Pameran"}
                         </span>
                         <h3 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight font-headline">

@@ -4,7 +4,6 @@ import { ArrowLeft } from 'lucide-react';
 import api from '../../utils/api';
 import { ENDPOINTS } from '../../config/environment';
 import { normalizeLandingContent } from '../../utils/landingContent';
-import CustomerFooter from '../CustomerFooter';
 
 export default function CustomerPortalArticleDetail() {
   const { id } = useParams();
@@ -132,7 +131,18 @@ export default function CustomerPortalArticleDetail() {
 
   return (
     <>
-      <div className="relative min-h-screen animate-in fade-in duration-500 bg-slate-50/50">
+      <div className="relative min-h-screen animate-in fade-in duration-500 bg-transparent">
+        {/* Desktop Background */}
+        <div
+          className="hidden lg:block fixed inset-0 -z-10 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: "url('/background/bg.svg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
+          }}
+        />
         {/* Decorative Background Accents */}
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
         <div className="absolute top-[20%] -right-[5%] w-[30%] h-[30%] rounded-full bg-teal-200/20 blur-[100px] pointer-events-none" />
@@ -298,10 +308,7 @@ export default function CustomerPortalArticleDetail() {
           </div>
         </div>
       </div>
-      <CustomerFooter />
     </>
   );
 }
-
-
 

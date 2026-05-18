@@ -531,9 +531,19 @@ export default function CustomerPortal() {
   const hasActiveFilters = selectedCategory !== 'All' || selectedSize || selectedColor;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-on-surface flex flex-col">
+    <div className="min-h-screen bg-transparent font-sans text-on-surface flex flex-col">
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-col flex-1">
+      <div className="hidden lg:flex flex-col flex-1 relative">
+        <div
+           className="fixed inset-0 -z-10 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: "url('/background/bg.svg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
+          }}
+        />
         <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
         <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
           {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
@@ -543,14 +553,14 @@ export default function CustomerPortal() {
 
           {renderDesktopPage()}
         </main>
-        <CustomerFooter />
+        {['dashboard', 'catalog'].includes(activeMenu) && <CustomerFooter />}
       </div>
 
       {/* Mobile View */}
       <div className="lg:hidden flex flex-col flex-1 bg-[#faf8ff]">
-        <MobileHeader 
-          onMenuChange={setActiveMenu} 
-          activeMenu={activeMenu} 
+        <MobileHeader
+          onMenuChange={setActiveMenu}
+          activeMenu={activeMenu}
           onToggleFilter={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
           hasActiveFilters={hasActiveFilters}
         />

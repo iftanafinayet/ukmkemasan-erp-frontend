@@ -3,7 +3,6 @@ import { ArrowLeft, CreditCard, LoaderCircle, RefreshCw, ShieldCheck } from 'luc
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import CustomerNavbar from './CustomerNavbar';
-import CustomerFooter from '../CustomerFooter';
 import api from '../../utils/api';
 import { ENDPOINTS, storage } from '../../config/environment';
 import { formatCurrency, formatDate, formatDateTime } from '../../utils/formatters';
@@ -145,8 +144,18 @@ export default function CustomerPaymentPage() {
             onBack={() => navigate('/portal?menu=orders')}
          />
       </div>
-      <div className="hidden lg:flex min-h-screen bg-[#f6f3ed] text-slate-900 flex-col">
-        <CustomerNavbar activeMenu="orders" />
+       <div className="hidden lg:flex min-h-screen bg-transparent text-slate-900 flex-col">
+         <div
+           className="fixed inset-0 -z-10 opacity-20 pointer-events-none"
+           style={{
+             backgroundImage: "url('/background/bg.svg')",
+             backgroundSize: 'cover',
+             backgroundPosition: 'center',
+             backgroundRepeat: 'no-repeat',
+             backgroundAttachment: 'fixed'
+           }}
+         />
+         <CustomerNavbar activeMenu="orders" />
 
         <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-32 sm:px-8">
         {/* Header Style matching Catalog/Cart */}
@@ -310,7 +319,6 @@ export default function CustomerPaymentPage() {
           </>
         )}
       </main>
-      <CustomerFooter />
     </div>
     </>
   );
