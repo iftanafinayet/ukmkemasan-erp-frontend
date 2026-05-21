@@ -30,13 +30,13 @@ const contactItems = [
   {
     icon: Phone,
     label: 'Telepon',
-    value: '+62 812 3456 7890',
-    href: 'tel:+6281234567890',
+    value: '+62 817 345 168',
+    href: 'tel:+62817345168',
   },
   {
     icon: MapPin,
     label: 'Lokasi',
-    value: 'Sidoarjo, Jawa Timur, Indonesia',
+    value: 'Tegal, Jawa Tengah, Indonesia',
     href: null,
   },
 ];
@@ -81,7 +81,7 @@ export default function CustomerFooter() {
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl space-y-4">
                 <span className="inline-flex items-center rounded-full border border-primary/10 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary">
-                  Packaging Partner
+                  Packaging Solution
                 </span>
                 <div className="space-y-3">
                   <Link to="/portal" className="inline-block">
