@@ -25,7 +25,7 @@ export const CURRENT_ENV = isDevelopment
 export const API_CONFIG = {
   // Development
   [ENV_MODES.DEVELOPMENT]: {
-    baseURL: 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://ukmkemasan-erp-backend.onrender.com/api',
     timeout: 10000,
     withCredentials: false
   },
