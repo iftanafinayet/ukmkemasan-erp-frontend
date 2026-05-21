@@ -535,7 +535,7 @@ export default function CustomerPortal() {
       {/* Desktop View */}
       <div className="hidden lg:flex flex-col flex-1 relative">
         <div
-           className="fixed inset-0 -z-10 opacity-20 pointer-events-none"
+          className="fixed inset-0 -z-10 opacity-20 pointer-events-none"
           style={{
             backgroundImage: "url('/background/bg.svg')",
             backgroundSize: 'cover',
