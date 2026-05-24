@@ -84,7 +84,7 @@ export default function CustomerPortalCatalogSection({
                    <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
                  </div>
               )}
-              {index === 0 && (
+              {catalog.isNew && (
                  <div className="absolute top-3 left-3">
                    <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-on-primary text-[9px] font-bold uppercase tracking-widest rounded-full">New</span>
                  </div>

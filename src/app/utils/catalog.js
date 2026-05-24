@@ -55,29 +55,35 @@ const compareVariantSizes = (left = '', right = '') => {
   return normalizeWhitespace(left).localeCompare(normalizeWhitespace(right), 'id', { numeric: true });
 };
 
-const createCatalogGroup = (product = {}, variant = {}, familyName = '') => ({
-  key: `${product.category || 'Lain Lain'}::${familyName}`,
-  slug: `${product.category || 'lain-lain'}-${familyName}`
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, ''),
-  name: familyName,
-  category: product.category || 'Lain Lain',
-  representativeProductId: product._id,
-  productId: product._id,
-  materialLabel: normalizeWhitespace(product.material) || '-',
-  description: product.description || '',
-  addons: product.addons || {},
-  minOrder: product.minOrder || 100,
-  images: product.images || [],
-  variants: [],
-  _materials: new Set([normalizeWhitespace(product.material)].filter(Boolean)),
-  _sizes: new Set([normalizeWhitespace(variant.size)].filter(Boolean)),
-  _colors: new Set([normalizeWhitespace(variant.color)].filter(Boolean)),
-  _startingPriceB2C: Number.isFinite(Number(variant.priceB2C)) ? Number(variant.priceB2C) : Number(product.priceB2C) || 0,
-  _startingPriceB2B: Number.isFinite(Number(variant.priceB2B)) ? Number(variant.priceB2B) : Number(product.priceB2B) || 0,
-  _totalStock: Number(variant.stock) || 0
-});
+const createCatalogGroup = (product = {}, variant = {}, familyName = '') => {
+  const createdAt = product.createdAt ? new Date(product.createdAt) : new Date();
+  const isNew = (Date.now() - createdAt.getTime()) < 7 * 24 * 60 * 60 * 1000; // New if created in last 7 days
+
+  return {
+    key: `${product.category || 'Lain Lain'}::${product.material || 'Default'}::${familyName}`,
+    slug: `${product.category || 'lain-lain'}-${familyName}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, ''),
+    name: familyName,
+    category: product.category || 'Lain Lain',
+    representativeProductId: product._id,
+    productId: product._id,
+    materialLabel: normalizeWhitespace(product.material) || '-',
+    description: product.description || '',
+    addons: product.addons || {},
+    minOrder: product.minOrder || 100,
+    images: product.images || [],
+    variants: [],
+    isNew,
+    _materials: new Set([normalizeWhitespace(product.material)].filter(Boolean)),
+    _sizes: new Set([normalizeWhitespace(variant.size)].filter(Boolean)),
+    _colors: new Set([normalizeWhitespace(variant.color)].filter(Boolean)),
+    _startingPriceB2C: Number.isFinite(Number(variant.priceB2C)) ? Number(variant.priceB2C) : Number(product.priceB2C) || 0,
+    _startingPriceB2B: Number.isFinite(Number(variant.priceB2B)) ? Number(variant.priceB2B) : Number(product.priceB2B) || 0,
+    _totalStock: Number(variant.stock) || 0
+  };
+};
 
 export const buildCatalogGroups = (products = []) => {
   const catalogMap = new Map();
@@ -109,13 +115,22 @@ export const buildCatalogGroups = (products = []) => {
       };
 
       const familyName = inferFamilyName(product, normalizedVariant);
-      const catalogKey = `${product.category || 'Lain Lain'}::${familyName}`;
+      const catalogKey = `${product.category || 'Lain Lain'}::${product.material || 'Default'}::${familyName}`;
 
       if (!catalogMap.has(catalogKey)) {
         catalogMap.set(catalogKey, createCatalogGroup(product, normalizedVariant, familyName));
       }
 
       const group = catalogMap.get(catalogKey);
+      
+      // Update isNew if any product in group is new
+      if (product.createdAt) {
+        const pDate = new Date(product.createdAt);
+        if ((Date.now() - pDate.getTime()) < 7 * 24 * 60 * 60 * 1000) {
+          group.isNew = true;
+        }
+      }
+
       const existingVariantIndex = group.variants.findIndex((item) =>
         normalizeWhitespace(item.size).toLowerCase() === normalizedVariant.size.toLowerCase()
         && normalizeWhitespace(item.color).toLowerCase() === normalizedVariant.color.toLowerCase()
