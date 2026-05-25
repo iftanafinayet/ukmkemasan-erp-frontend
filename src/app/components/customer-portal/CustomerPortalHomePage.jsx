@@ -23,7 +23,10 @@ export default function CustomerPortalHomePage({
   const user = storage.getUser() || { name: 'Customer' };
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const [activePortfolioIndex, setActivePortfolioIndex] = useState(0);
   const [bannerApi, setBannerApi] = useState(null);
+  const [portfolioApi, setPortfolioApi] = useState(null);
+  const [galleryApi, setGalleryApi] = useState(null);
 
   useEffect(() => {
     if (!bannerApi) return;
@@ -44,6 +47,46 @@ export default function CustomerPortalHomePage({
       clearInterval(interval);
     };
   }, [bannerApi]);
+
+  useEffect(() => {
+    if (!portfolioApi) return;
+
+    const syncPortfolioIndex = () => {
+      setActivePortfolioIndex(portfolioApi.selectedScrollSnap());
+    };
+
+    syncPortfolioIndex();
+    portfolioApi.on('select', syncPortfolioIndex);
+
+    const interval = setInterval(() => {
+      portfolioApi.scrollNext();
+    }, 4000);
+
+    return () => {
+      portfolioApi.off('select', syncPortfolioIndex);
+      clearInterval(interval);
+    };
+  }, [portfolioApi]);
+
+  useEffect(() => {
+    if (!galleryApi) return;
+
+    const syncGalleryIndex = () => {
+      setActiveGalleryIndex(galleryApi.selectedScrollSnap());
+    };
+
+    syncGalleryIndex();
+    galleryApi.on('select', syncGalleryIndex);
+
+    const interval = setInterval(() => {
+      galleryApi.scrollNext();
+    }, 5000);
+
+    return () => {
+      galleryApi.off('select', syncGalleryIndex);
+      clearInterval(interval);
+    };
+  }, [galleryApi]);
 
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
@@ -98,9 +141,14 @@ export default function CustomerPortalHomePage({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
             {banners.map((_, i) => (
-              <div key={i} className={`rounded-full transition-all duration-300 ${activeBannerIndex === i ? 'h-2.5 w-10 bg-primary shadow-lg shadow-primary/30' : 'h-2 w-2 bg-white/20'}`} />
+              <button
+                key={i}
+                onClick={() => bannerApi?.scrollTo(i)}
+                className={`transition-all duration-500 rounded-full h-2.5 ${activeBannerIndex === i ? 'h-2.5 w-12 bg-primary shadow-lg shadow-primary/30' : 'h-2 w-2.5 bg-white/20 hover:bg-white/40'}`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
             ))}
           </div>
         </Carousel>
@@ -245,6 +293,7 @@ export default function CustomerPortalHomePage({
             align: "start",
             loop: true,
           }}
+          setApi={setPortfolioApi}
         >
           <CarouselContent className="-ml-4 md:-ml-8">
             {portfolios.length > 0 ? portfolios.map((portfolio, idx) => (
@@ -283,10 +332,21 @@ export default function CustomerPortalHomePage({
               ))
             )}
           </CarouselContent>
-          {portfolios.length > 3 && (
-            <div className="flex justify-center gap-4 mt-8">
-              <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-200 text-slate-400 hover:border-primary hover:text-primary transition-all shadow-sm" />
-              <CarouselNext className="static translate-y-0 h-12 w-12 border-slate-200 text-slate-400 hover:border-primary hover:text-primary transition-all shadow-sm" />
+
+          {/* Custom Pill Navigation (Indicators) */}
+          {portfolios.length > 0 && (
+            <div className="flex justify-center gap-3 mt-10">
+              {portfolios.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => portfolioApi?.scrollTo(i)}
+                  className={`transition-all duration-500 rounded-full h-2.5 ${i === activePortfolioIndex
+                    ? 'bg-primary w-12 shadow-lg shadow-primary/30'
+                    : 'bg-slate-200 w-2.5 hover:bg-slate-300'
+                    }`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
             </div>
           )}
         </Carousel>
@@ -317,7 +377,7 @@ export default function CustomerPortalHomePage({
                 <img
                   alt={article.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  src={article.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuC7zXpW1G8K9u_Yv0X9jJ_l9sV9H5j_U_M9K9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9"}
+                  src={article.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuC7zXpW1G8K9u_Yv0X9jJ_l9sV9H5j_U_M9K9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9X9Y9"}
                 />
               </div>
               <div className="space-y-3 px-2">
@@ -352,23 +412,32 @@ export default function CustomerPortalHomePage({
       </section>
 
       {/* Berita Terbaru Section (Gallery) */}
-      <section className="space-y-8 pt-12 ">
-        <div className="flex flex-col items-center justify-center text-center space-y-5">
-          <span className="bg-primary text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
-            {landingContent?.gallerySectionConfig?.pillText || 'Galeri'}
-          </span>
+      <section className="space-y-10 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-3">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
+              {landingContent?.gallerySectionConfig?.pillText || 'Galeri'}
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 leading-tight">
+              {landingContent?.gallerySectionConfig?.title || 'Momen Berharga & Aktivitas Terbaru'}
+            </h2>
+            <p className="text-slate-500 font-medium max-w-2xl text-sm md:text-base leading-relaxed">
+              {landingContent?.gallerySectionConfig?.subtitle || 'Koleksi momen kolaborasi dan kegiatan kami dalam mendukung kemajuan UKM di seluruh Indonesia.'}
+            </p>
+          </div>
+          <button 
+            onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
+            className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-[0.18em] rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/10"
+          >
+            Hubungi Kami
+          </button>
         </div>
 
         <div className="relative w-full">
           <Carousel
             className="w-full"
             opts={{ loop: true }}
-            setApi={(api) => {
-              if (!api) return;
-              api.on('select', () => {
-                setActiveGalleryIndex(api.selectedScrollSnap());
-              });
-            }}
+            setApi={setGalleryApi}
           >
             <CarouselContent className="-ml-0">
               {activities.length > 0 ? (
@@ -407,23 +476,19 @@ export default function CustomerPortalHomePage({
             </CarouselContent>
 
             {activities.length > 1 && (
-              <>
-                <CarouselPrevious className="left-8 h-12 w-12 border-0 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 shadow-2xl transition-all" />
-                <CarouselNext className="right-8 h-12 w-12 border-0 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 shadow-2xl transition-all" />
-
-                {/* Custom Indicators */}
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
-                  {activities.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`transition-all duration-500 rounded-full h-2 ${i === activeGalleryIndex
-                        ? 'bg-primary w-12'
-                        : 'bg-white/30 w-2 hover:bg-white/50'
-                        }`}
-                    />
-                  ))}
-                </div>
-              </>
+              <div className="flex justify-center gap-3 mt-10">
+                {activities.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => galleryApi?.scrollTo(i)}
+                    className={`transition-all duration-500 rounded-full h-2.5 ${i === activeGalleryIndex
+                      ? 'bg-primary w-12 shadow-lg shadow-primary/30'
+                      : 'bg-slate-200 w-2.5 hover:bg-slate-300'
+                      }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
+              </div>
             )}
           </Carousel>
         </div>
