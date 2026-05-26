@@ -21,7 +21,29 @@ export default function MobileHomePage({
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
 
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [carouselApi, setCarouselApi] = useState(null);
+  const [bannerApi, setBannerApi] = useState(null);
+
+  useEffect(() => {
+    if (!bannerApi) return;
+
+    const syncBannerIndex = () => {
+      setActiveBannerIndex(bannerApi.selectedScrollSnap());
+    };
+
+    syncBannerIndex();
+    bannerApi.on('select', syncBannerIndex);
+
+    const interval = setInterval(() => {
+      bannerApi.scrollNext();
+    }, 5000);
+
+    return () => {
+      bannerApi.off('select', syncBannerIndex);
+      clearInterval(interval);
+    };
+  }, [bannerApi]);
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -48,37 +70,58 @@ export default function MobileHomePage({
     callback();
   };
 
+  const banners = Array.isArray(landingContent?.banners)
+    ? landingContent.banners
+    : [
+      { image: '/BANNER WEB/Mobile1.avif', alt: 'Banner 1' },
+      { image: '/BANNER WEB/Mobile2.avif', alt: 'Banner 2' },
+    ];
+
   return (
     <div className="lg:hidden bg-[#faf8ff]">
       <main className="space-y-4 pb-12">
-        {/* Hero Section */}
+        {/* 1. Top Bar & Search (Assume handled by parent/wrapper) */}
+
+        {/* 2. Main Banner Promo */}
         <section className="px-4 pt-4">
-          <div className="grid grid-cols-1 gap-6 items-stretch">
-            {/* Hero Banner */}
-            <div className="relative overflow-hidden rounded-xl bg-primary p-8 text-on-primary shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
-              <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-                <img
-                  src={landingContent?.heroSectionConfig?.heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuB1ZrOr2wdSAxlwsuSmjsQe23TRXhopxwtXl5QI36DFoxs8DkPPk8ts3ubrTp18DphIh32AF8Ohlz_FlR1cXJC0K4cJWPwn6U4qrJYPGV2XylExnns99KoqOHVYUWBanZGsnNKrcYLklBv0oP2BkRy3g_4HLxE0q4U1k06X1V5MS7XpYAC0zLVyMV1gy3rovo51GFhWf79sSo9VTBnUQQw4lEu2n-Ar842FgQf1yaOgHxq9wK5X7IxobXpFZpmPiRbjdJu1dI-ZYWJO"}
-                  alt="Packaging Design"
-                  className="w-full h-full object-cover mix-blend-overlay"
-                />
+          <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
+            <Carousel
+              className="w-full"
+              opts={{
+                loop: true,
+                align: "start",
+              }}
+              setApi={setBannerApi}
+            >
+              <CarouselContent className="ml-0">
+                {banners.map((banner, idx) => (
+                  <CarouselItem key={idx} className="pl-0 basis-full">
+                    <div className="relative w-full overflow-hidden rounded-2xl">
+                      <img
+                        src={banner.image}
+                        alt={banner.alt}
+                        className="w-full h-auto block"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                {banners.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => bannerApi?.scrollTo(i)}
+                    className={`transition-all duration-500 rounded-full h-1.5 ${activeBannerIndex === i ? 'w-6 bg-white shadow-lg' : 'w-1.5 bg-white/40 hover:bg-white/60'}`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
               </div>
-              <div className="relative z-10 space-y-6">
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[9px] font-bold uppercase tracking-widest text-white border border-white/10">
-                  {landingContent?.heroSectionConfig?.pillText || 'Solution for UKM'}
-                </span>
-                <h1 className="text-2xl font-extrabold tracking-tighter leading-tight font-headline">
-                  {landingContent?.heroSectionConfig?.title || 'UKM Kemasan membantu brand tampil lebih siap jual...'}
-                </h1>
-                <p className="text-white/80 font-body leading-relaxed text-[12px]">
-                  {landingContent?.heroSectionConfig?.subtitle || 'Tingkatkan nilai estetika dan keamanan produk Anda dengan kemasan premium yang dirancang khusus untuk pertumbuhan bisnis kecil dan menengah.'}
-                </p>
-              </div>
-            </div>
+            </Carousel>
           </div>
         </section>
 
-        {/* Quick Actions */}
+        {/* 3. Quick Navigation / Menu Kategori */}
         <section className="px-4 py-2">
           <div className="grid grid-cols-4 gap-y-4">
             <div onClick={onNavigateToCatalog} className="flex flex-col items-center gap-1.5 cursor-pointer">
@@ -108,7 +151,7 @@ export default function MobileHomePage({
           </div>
         </section>
 
-        {/* Popular Products */}
+        {/* 4. Pilihan Terbaik / Produk Terlaris */}
         <section className="bg-white py-6 border-y border-[#bbc9c7]/20">
           <div className="px-4 flex justify-between items-end mb-4">
             <div>
@@ -131,7 +174,9 @@ export default function MobileHomePage({
                 />
                 <div className="p-2.5">
                   <p className="text-[11px] text-[#131b2e] line-clamp-2 min-h-[32px]">{product.name}</p>
-                  <p className="text-[13px] font-bold text-[#131b2e] mt-1">{formatCurrency(product.priceB2B)}</p>
+                  <p className="text-[13px] font-bold text-[#131b2e] mt-1">
+                    {product.priceB2B > 0 ? formatCurrency(product.priceB2B) : 'Hubungi Admin'}
+                  </p>
                   <div className="flex flex-col gap-1 mt-1">
                     <div className="text-[9px] text-[#3c4947] font-medium">Varian: {product.variants?.length || 0} opsi</div>
                     <div className="text-[9px] text-[#3c4947]">Terjual {product.totalSold || 0}+</div>
@@ -142,56 +187,7 @@ export default function MobileHomePage({
           </div>
         </section>
 
-        {/* Portfolio Carousel */}
-        <section className="px-4 pt-2 pb-4">
-          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Hasil Karya Terbaik</h2>
-          <div className="relative overflow-hidden rounded-xl">
-            <Carousel className="w-full" opts={{ loop: true, align: 'start' }}>
-              <CarouselContent className="-ml-3">
-                {portfolios.map((portfolio, idx) => (
-                  <CarouselItem key={idx} className="pl-3 basis-[85%]">
-                    <div className="relative rounded-lg overflow-hidden aspect-[16/9] shadow-sm">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={portfolio.imageUrl || "https://via.placeholder.com/300"}
-                        alt={portfolio.clientName}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-                        <h4 className="text-white font-bold text-xs">{portfolio.clientName}</h4>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </div>
-        </section>
-
-        {/* Articles */}
-        <section className="px-4 pt-2 pb-4">
-          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Artikel Pilihan</h2>
-          <div className="flex flex-col gap-3">
-            {articles.slice(0, 3).map((article, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
-                className="flex gap-3 items-center cursor-pointer active:opacity-70 transition-opacity"
-              >
-                <img
-                  className="w-16 h-16 rounded-lg object-cover"
-                  src={article.imageUrl || "https://via.placeholder.com/100"}
-                  alt={article.title}
-                />
-                <div className="flex-1">
-                  <h4 className="font-bold text-[11px] text-[#131b2e] line-clamp-2">{article.title}</h4>
-                  <p className="text-[9px] text-[#3c4947] mt-1">{article.category || 'Tips'}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Aktivitas Terbaru (Gallery) Section */}
+        {/* 5. Aktivitas Terbaru (Naikkan Posisi) */}
         <section className="px-4 pt-2 pb-4">
           <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Aktivitas Terbaru</h2>
           <div className="relative w-full">
@@ -253,7 +249,56 @@ export default function MobileHomePage({
           </div>
         </section>
 
-        {/* CTA Get in Touch - Enhanced Bright Version */}
+        {/* 6. Hasil Karya Terbaik (Portofolio) */}
+        <section className="px-4 pt-2 pb-4">
+          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Hasil Karya Terbaik</h2>
+          <div className="relative overflow-hidden rounded-xl">
+            <Carousel className="w-full" opts={{ loop: true, align: 'start' }}>
+              <CarouselContent className="-ml-3">
+                {portfolios.map((portfolio, idx) => (
+                  <CarouselItem key={idx} className="pl-3 basis-[85%]">
+                    <div className="relative rounded-lg overflow-hidden aspect-[16/9] shadow-sm">
+                      <img
+                        className="w-full h-full object-cover"
+                        src={portfolio.imageUrl || "https://via.placeholder.com/300"}
+                        alt={portfolio.clientName}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
+                        <h4 className="text-white font-bold text-xs">{portfolio.clientName}</h4>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+        </section>
+
+        {/* 7. Artikel Pilihan */}
+        <section className="px-4 pt-2 pb-4">
+          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Artikel Pilihan</h2>
+          <div className="flex flex-col gap-3">
+            {articles.slice(0, 3).map((article, idx) => (
+              <div
+                key={idx}
+                onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
+                className="flex gap-3 items-center cursor-pointer active:opacity-70 transition-opacity"
+              >
+                <img
+                  className="w-16 h-16 rounded-lg object-cover"
+                  src={article.imageUrl || "https://via.placeholder.com/100"}
+                  alt={article.title}
+                />
+                <div className="flex-1">
+                  <h4 className="font-bold text-[11px] text-[#131b2e] line-clamp-2">{article.title}</h4>
+                  <p className="text-[9px] text-[#3c4947] mt-1">{article.category || 'Tips'}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 8. CTA Get in Touch - Banner CTA Konsultasi Whatsapp */}
         <section className="px-4 pt-4">
           <div className="relative overflow-hidden rounded-3xl bg-primary p-8 shadow-xl shadow-primary/20">
             {/* Decorative Elements */}
