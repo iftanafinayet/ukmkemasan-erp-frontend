@@ -15,7 +15,8 @@ import {
   Receipt,
   ArrowRightLeft,
   Truck,
-  Database
+  Database,
+  Cog
 } from 'lucide-react';
 import { storage } from '../config/environment';
 import logoUrl from '../../assets/LogoUKM.svg';
@@ -65,6 +66,14 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
         { id: 'stock-card', label: 'Stock Card' },
         { id: 'stock-card-retail', label: 'Stock Card Retail' },
         { id: 'stock-opname', label: 'Stock Opname' },
+      ]
+    },
+    {
+      id: 'production',
+      label: 'Production',
+      icon: Cog,
+      children: [
+        { id: 'production-dashboard', label: 'Production Dashboard', icon: ClipboardList },
       ]
     },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
