@@ -13,6 +13,7 @@ import {
   ReturnsSection,
   SalesProcessingSection,
 } from './admin-sales-workspace/sections';
+import ProductionSection from './admin-sales-workspace/ProductionSection';
 import {
   getFutureDateInput,
   getInvoiceOutstanding,
@@ -324,6 +325,13 @@ export default function AdminSalesWorkspace({
           searchTerm={searchTerm}
           summary={summary}
           unpaidInvoices={unpaidInvoices}
+        />
+      )}
+
+      {activeMenu === 'production-dashboard' && (
+        <ProductionSection
+          formatCurrency={formatCurrency}
+          formatDate={formatDate}
         />
       )}
 
