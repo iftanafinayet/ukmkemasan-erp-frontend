@@ -11,6 +11,7 @@ import {
   PAGE_TITLES,
   PRODUCT_CATEGORIES,
 } from './customer-dashboard/constants';
+import AdminInboxPage from './customer-dashboard/inquiries/AdminInboxPage';
 import {
   InventoryAdjustmentPage,
   InventoryPage,
@@ -51,6 +52,7 @@ import { useOrders } from './customer-dashboard/hooks/useOrders';
 import { useInventory } from './customer-dashboard/hooks/useInventory';
 import { useUserSettings } from './customer-dashboard/hooks/useUserSettings';
 import { normalizeLandingContent } from '../utils/landingContent';
+import useSocket from '../hooks/useSocket';
 
 export default function CustomerDashboard() {
   const user = storage.getUser();
@@ -192,6 +194,13 @@ export default function CustomerDashboard() {
     handleLandingSectionConfigChange,
     handleSaveLandingContent,
   } = useUserSettings();
+
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const unreadHandler = useCallback((data) => {
+    setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
+  }, []);
+  useSocket({ onUnreadCount: unreadHandler });
+  const inquiryBadge = Object.values(unreadCounts).reduce((sum, c) => sum + (c || 0), 0);
 
   const currentWarehouseType = activeMenu === 'warehouse-retail' ? 'Retail' : 'Main';
   const filteredData = getFilteredData({
@@ -550,6 +559,9 @@ export default function CustomerDashboard() {
           />
         );
 
+      case 'inquiries':
+        return <AdminInboxPage />;
+
       case 'customers':
         return (
           <CustomersPage
@@ -610,7 +622,7 @@ export default function CustomerDashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
-      <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+      <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
 
       <main className="flex-1 overflow-y-auto overflow-x-hidden">
         <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">

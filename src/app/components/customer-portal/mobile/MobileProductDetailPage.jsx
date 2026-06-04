@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../../utils/formatters';
-import { ArrowLeft, ShoppingCart, Layers, Ruler, Box, Package, ImagePlus } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Layers, Ruler, Box, Package, ImagePlus, MessageSquare } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { getCartItems } from '../../../utils/cart';
@@ -260,7 +260,13 @@ export default function MobileProductDetailPage({
       </main>
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-[#bbc9c7]/20 px-4 py-3 flex items-center gap-4">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-[#bbc9c7]/20 px-4 py-3 flex items-center gap-3">
+        <button
+          onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
+          className="p-3.5 rounded-xl border-2 border-[#4dbace]/30 text-[#4dbace] active:scale-95 transition-transform"
+        >
+          <MessageSquare size={18} />
+        </button>
         <div className="flex-1">
           <p className="text-[10px] text-[#6c7a77] font-bold uppercase tracking-wider">Total Harga</p>
           <p className="text-[18px] font-bold text-[#4dbace] font-headline">{formatCurrency(totalPrice)}</p>

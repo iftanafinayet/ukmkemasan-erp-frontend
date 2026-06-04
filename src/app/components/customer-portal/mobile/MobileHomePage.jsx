@@ -13,6 +13,7 @@ export default function MobileHomePage({
   onViewAllOrders,
   user,
   onNavigateToCreateOrder,
+  onNavigateToInquiries,
 }) {
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
@@ -130,7 +131,7 @@ export default function MobileHomePage({
               </div>
               <span className="text-[10px] text-center font-medium leading-tight text-[#131b2e]">Stok Kemasan</span>
             </div>
-            <div onClick={() => window.open('https://wa.me/6282326237919', '_blank')} className="flex flex-col items-center gap-1.5 cursor-pointer">
+            <div onClick={onNavigateToInquiries} className="flex flex-col items-center gap-1.5 cursor-pointer">
               <div className="w-11 h-11 bg-[#4dbace]/10 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-[#4dbace] text-2xl">architecture</span>
               </div>
@@ -319,14 +320,12 @@ export default function MobileHomePage({
                 </p>
               </div>
 
-              <a
-                href="https://wa.me/6282326237919"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={onNavigateToInquiries}
                 className="flex items-center justify-center gap-3 w-full py-3.5 bg-white text-primary text-[12px] font-black rounded-2xl shadow-lg active:scale-[0.98] transition-all uppercase tracking-widest border border-white/10"
               >
-                Konsultasi via WhatsApp
-              </a>
+                Hubungi Admin
+              </button>
 
               <p className="text-white/60 text-[9px] font-medium tracking-wide">
                 Respon Cepat • Konsultasi Gratis • Tanpa Minimal Order*

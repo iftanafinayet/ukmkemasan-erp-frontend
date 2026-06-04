@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { ChevronRight, ImagePlus, Plus, RefreshCw, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import CustomerNavbar from './customer-portal/CustomerNavbar';
@@ -9,6 +9,7 @@ import CustomerPortalCatalogSection from './customer-portal/CustomerPortalCatalo
 import CustomerPortalOrdersSection from './customer-portal/CustomerPortalOrdersSection';
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
+import CustomerInquiriesSection from './customer-portal/CustomerInquiriesSection';
 import CustomerFooter from './CustomerFooter';
 
 // Mobile Components
@@ -29,11 +30,14 @@ import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters'
 import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
 import { EmptyState, LoadingState } from './customer-dashboard/shared';
+import useSocket from '../hooks/useSocket';
 
 export default function CustomerPortal() {
   const user = storage.getUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const prefillProduct = location.state?.prefillProduct || null;
   const menuFromQuery = searchParams.get('menu') || 'dashboard';
 
   const [activeMenu, setActiveMenu] = useState(menuFromQuery);
@@ -56,6 +60,12 @@ export default function CustomerPortal() {
   const [landingContent, setLandingContent] = useState(createEmptyLandingContent());
   const [popularProducts, setPopularProducts] = useState([]);
   const [orderFilter, setOrderFilter] = useState('all');
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const unreadHandler = useCallback((data) => {
+    setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
+  }, []);
+  useSocket({ onUnreadCount: unreadHandler });
+  const inquiryBadge = Object.values(unreadCounts).reduce((sum, c) => sum + (c || 0), 0);
 
   const fetchData = useCallback(async () => {
     const token = storage.getToken();
@@ -148,6 +158,12 @@ export default function CustomerPortal() {
   useEffect(() => {
     setActiveMenu(menuFromQuery);
   }, [menuFromQuery]);
+
+  useEffect(() => {
+    if (prefillProduct) {
+      window.history.replaceState({}, '');
+    }
+  }, [prefillProduct]);
 
   useEffect(() => subscribeCart((items) => setCartItems(items)), []);
 
@@ -308,6 +324,7 @@ export default function CustomerPortal() {
       landingContent={landingContent}
       onNavigateToCatalog={() => setActiveMenu('catalog')}
       onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+      onNavigateToInquiries={() => setActiveMenu('inquiries')}
       onViewAllOrders={() => setActiveMenu('orders')}
       onViewOrder={handleViewOrder}
       orders={orders}
@@ -437,6 +454,7 @@ export default function CustomerPortal() {
             onViewProduct={(productId) => navigate(`/portal/products/${productId}`)}
             onNavigateToCatalog={() => setActiveMenu('catalog')}
             onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
+            onNavigateToInquiries={() => setActiveMenu('inquiries')}
             onViewAllOrders={() => setActiveMenu('orders')}
           />
         );
@@ -496,6 +514,12 @@ export default function CustomerPortal() {
             setProfile={setProfile}
           />
         );
+      case 'inquiries':
+        return (
+          <div className="p-4">
+            <CustomerInquiriesSection />
+          </div>
+        );
       default:
         return <EmptyState text="Halaman sedang dikembangkan." />;
     }
@@ -523,6 +547,8 @@ export default function CustomerPortal() {
       case 'profile':
       case 'settings':
         return renderProfile();
+      case 'inquiries':
+        return <CustomerInquiriesSection prefillProduct={prefillProduct} />;
       default:
         return <EmptyState text="Halaman sedang dikembangkan." />;
     }
@@ -544,7 +570,7 @@ export default function CustomerPortal() {
             backgroundAttachment: 'fixed'
           }}
         />
-        <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+        <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
         <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
           {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
             <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
