@@ -1,9 +1,10 @@
 import React from 'react';
 
-export default function MobileBottomNav({ activeMenu, onMenuChange }) {
+export default function MobileBottomNav({ activeMenu, onMenuChange, inquiryBadge = 0 }) {
   const items = [
     { id: 'dashboard', label: 'Beranda', icon: 'home' },
     { id: 'catalog', label: 'Katalog', icon: 'grid_view' },
+    { id: 'inquiries', label: 'Pesan', icon: 'chat' },
     { id: 'orders', label: 'Pesanan', icon: 'receipt_long' },
     { id: 'profile', label: 'Akun', icon: 'person' },
   ];
@@ -14,7 +15,7 @@ export default function MobileBottomNav({ activeMenu, onMenuChange }) {
         <button
           key={item.id}
           onClick={() => onMenuChange(item.id)}
-          className={`flex flex-col items-center justify-center flex-1 ${activeMenu === item.id ? 'text-[#4dbace]' : 'text-[#3c4947]'
+          className={`flex flex-col items-center justify-center flex-1 relative ${activeMenu === item.id ? 'text-[#4dbace]' : 'text-[#3c4947]'
             }`}
         >
           <span
@@ -26,6 +27,11 @@ export default function MobileBottomNav({ activeMenu, onMenuChange }) {
           <span className={`text-[10px] mt-0.5 ${activeMenu === item.id ? 'font-bold' : 'font-medium'}`}>
             {item.label}
           </span>
+          {item.id === 'inquiries' && inquiryBadge > 0 && (
+            <span className="absolute top-0 right-1/2 translate-x-[14px] bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full min-w-[14px] text-center leading-none">
+              {inquiryBadge > 99 ? '99+' : inquiryBadge}
+            </span>
+          )}
         </button>
       ))}
     </nav>
