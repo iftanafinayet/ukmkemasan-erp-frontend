@@ -323,21 +323,24 @@ export default function ProductDetailPage() {
                                                         </>
                                                     )}
                                                 </Carousel>
+                                                {/* Thumbnail overlay scroll */}
+                                                {product.images.length > 1 && (
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent pt-8 pb-2 px-3">
+                                                        <div className="flex gap-1.5 overflow-x-auto scrollbar-thin justify-center">
+                                                            {product.images.map((img, idx) => (
+                                                                <button key={idx} onClick={() => { setActiveImageIdx(idx); carouselApi.current?.scrollTo(idx); }}
+                                                                    className={`flex-shrink-0 w-10 h-10 overflow-hidden rounded-md border-2 transition-all ${activeImageIdx === idx ? 'border-white shadow-md brightness-100' : 'border-white/50 brightness-75 hover:brightness-90'}`}>
+                                                                    <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         ) : (
                                             <div className="flex aspect-[4/3] flex-col items-center justify-center bg-slate-50">
                                                 <ImagePlus className="mb-2 h-12 w-12 text-slate-300" />
                                                 <p className="text-xs font-bold text-slate-400">Belum ada foto</p>
-                                            </div>
-                                        )}
-                                        {product.images?.length > 1 && (
-                                            <div className="flex gap-2 p-3 border-t border-slate-100 overflow-x-auto">
-                                                {product.images.map((img, idx) => (
-                                                    <button key={idx} onClick={() => { setActiveImageIdx(idx); carouselApi.current?.scrollTo(idx); }}
-                                                        className={`flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg border-2 transition-all ${activeImageIdx === idx ? 'border-primary shadow-sm' : 'border-slate-200 opacity-60 hover:opacity-100'}`}>
-                                                        <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
-                                                    </button>
-                                                ))}
                                             </div>
                                         )}
                                     </div>
