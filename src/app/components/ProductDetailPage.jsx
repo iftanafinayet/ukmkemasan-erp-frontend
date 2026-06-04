@@ -7,7 +7,7 @@ import { ENDPOINTS, storage } from '../config/environment';
 import {
     ArrowLeft, Loader2, Package, Edit3, Trash2,
     ShoppingCart, Layers, Ruler, Box, ImagePlus,
-    RefreshCw, AlertCircle
+    RefreshCw, AlertCircle, MessageSquare
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -508,12 +508,19 @@ export default function ProductDetailPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="rounded-3xl bg-slate-50 p-6 border border-slate-100">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 text-center">Informasi Pengiriman</p>
-                                            <p className="text-[11px] text-slate-500 text-center leading-relaxed">
-                                                Estimasi pengerjaan 3-5 hari kerja setelah pembayaran dikonfirmasi.
-                                            </p>
-                                        </div>
+                                        <button
+                                        onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
+                                        className="w-full h-14 rounded-2xl border-2 border-primary/30 text-primary flex items-center justify-center gap-2 hover:bg-primary/5 transition-all active:scale-95 font-bold text-sm"
+                                    >
+                                        <MessageSquare size={18} />
+                                        Tanyakan Produk Ini
+                                    </button>
+                                    <div className="rounded-3xl bg-slate-50 p-6 border border-slate-100">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 text-center">Informasi Pengiriman</p>
+                                        <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+                                            Estimasi pengerjaan 3-5 hari kerja setelah pembayaran dikonfirmasi.
+                                        </p>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

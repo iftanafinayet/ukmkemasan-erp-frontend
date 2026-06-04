@@ -16,12 +16,13 @@ import {
   ArrowRightLeft,
   Truck,
   Database,
-  Cog
+  Cog,
+  MessageSquare
 } from 'lucide-react';
 import { storage } from '../config/environment';
 import logoUrl from '../../assets/LogoUKM.svg';
 
-export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
+export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState(['inventory', 'sales']); // Default expanded
 
@@ -76,6 +77,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
         { id: 'production-dashboard', label: 'Production Dashboard', icon: ClipboardList },
       ]
     },
+    { id: 'inquiries', label: 'Inquiries', icon: MessageSquare },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
@@ -156,6 +158,11 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
                         <span className={`text-sm ${isParentActive ? 'font-bold text-slate-800' : 'font-medium text-slate-500'}`}>
                           {item.label}
                         </span>
+                        {item.id === 'inquiries' && inquiryBadge > 0 && (
+                          <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                            {inquiryBadge > 99 ? '99+' : inquiryBadge}
+                          </span>
+                        )}
                       </div>
                       {hasChildren && (
                         <ChevronDown 

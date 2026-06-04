@@ -177,7 +177,15 @@ export const ENDPOINTS = {
 
   // Exports (Sales)
   EXPORT_SALES_OVERVIEW: '/sales/overview/export',
-  EXPORT_INVOICES: '/sales/invoices/export'
+  EXPORT_INVOICES: '/sales/invoices/export',
+
+  // Conversations / Inquiries
+  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || 'https://ukmkemasan-erp-backend.onrender.com',
+  INQUIRIES: '/conversations',
+  INQUIRY_BY_ID: (id) => `/conversations/${id}`,
+  INQUIRY_MESSAGES: (id) => `/conversations/${id}/messages`,
+  INQUIRY_READ: (id) => `/conversations/${id}/read`,
+  INQUIRY_STATUS: (id) => `/conversations/${id}/status`,
 };
 
 /**

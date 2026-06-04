@@ -4,7 +4,7 @@ import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
 import logoUrl from '../../../assets/LogoUKM.svg';
 
-export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout }) {
+export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [cartCount, setCartCount] = useState(() => getCartCount());
   const user = storage.getUser();
   const navigate = useNavigate();
@@ -41,6 +41,7 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
     { id: 'catalog', label: 'Katalog Produk' },
     { id: 'cart', label: 'Keranjang', badge: cartCount },
     { id: 'orders', label: 'Pesanan Saya' },
+    { id: 'inquiries', label: 'Inquiries', badge: inquiryBadge },
     { id: 'profile', label: 'Profil Saya' }
   ];
 
