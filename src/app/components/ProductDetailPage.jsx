@@ -297,9 +297,10 @@ export default function ProductDetailPage() {
                     )}
 
                      {!loading && product && (
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1fr_1.2fr_400px]'}`}>
-                                {/* Column 1: Images */}
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-10">
+                            {/* Z-Pattern Top Row: Images (left) → Buy Card (right) */}
+                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1.3fr_1fr]'}`}>
+                                {/* Z Start: Product Images */}
                                 <div className="space-y-4">
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                         {product.images?.length > 0 ? (
@@ -341,43 +342,7 @@ export default function ProductDetailPage() {
                                     </div>
                                 </div>
 
-                                {/* Column 2: Info + Description */}
-                                <div className="space-y-6">
-                                    {/* Spesifikasi */}
-                                    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                                        <h3 className="text-sm font-bold text-slate-800 mb-4">Informasi Produk</h3>
-                                        <table className="w-full text-sm">
-                                            <tbody>
-                                                <tr className="border-b border-slate-100">
-                                                    <td className="py-2.5 text-slate-500 font-medium w-1/3">Kategori</td>
-                                                    <td className="py-2.5 text-slate-800 font-semibold">{product.category}</td>
-                                                </tr>
-                                                <tr className="border-b border-slate-100">
-                                                    <td className="py-2.5 text-slate-500 font-medium">Material</td>
-                                                    <td className="py-2.5 text-slate-800 font-semibold">{product.material || '-'}</td>
-                                                </tr>
-                                                <tr className="border-b border-slate-100">
-                                                    <td className="py-2.5 text-slate-500 font-medium">Varian</td>
-                                                    <td className="py-2.5 text-slate-800 font-semibold">{variants.length} opsi</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-2.5 text-slate-500 font-medium">Min. Order</td>
-                                                    <td className="py-2.5 text-slate-800 font-semibold">{minimumOrder.toLocaleString()} pcs</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    {/* Deskripsi */}
-                                    {product.description && (
-                                        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                                            <h3 className="text-sm font-bold text-slate-800 mb-3">Deskripsi</h3>
-                                            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Column 3: Sticky Buy Card */}
+                                {/* Z Top-Right: Buy Card */}
                                 {!isAdmin && (
                                 <div>
                                     <div className="sticky top-28 space-y-4">
@@ -477,7 +442,7 @@ export default function ProductDetailPage() {
                                 </div>
                                 )}
 
-                                {/* Admin Column */}
+                                {/* Admin: full width instead of buy card */}
                                 {isAdmin && (
                                 <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                     <h3 className="text-xs font-bold text-slate-500 mb-4">Admin Actions</h3>
@@ -487,31 +452,69 @@ export default function ProductDetailPage() {
                                 )}
                              </div>
 
-                             {/* Related Products */}
-                             {!isAdmin && relatedProducts.length > 0 && (
-                               <div className="mt-12">
-                                 <div className="flex items-end justify-between mb-6">
-                                   <div>
-                                     <h2 className="text-lg font-bold text-slate-900">Produk Terkait</h2>
-                                     <p className="text-sm text-slate-500">Kategori {product.category}</p>
-                                   </div>
-                                   <button onClick={() => navigate('/portal?menu=catalog')} className="text-sm font-semibold text-primary hover:underline">Lihat Semua</button>
-                                 </div>
-                                 <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
-                                   {relatedProducts.map((rp) => (
-                                     <button key={rp._id} onClick={() => navigate(`/portal/products/${rp._id}`)} className="flex-shrink-0 w-40 group text-left">
-                                       <div className="aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mb-2">
-                                         {rp.images?.[0] ? <img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                           : <div className="w-full h-full flex items-center justify-center text-slate-300"><ImagePlus size={28} /></div>}
-                                       </div>
-                                       <p className="text-[10px] font-semibold text-primary mb-0.5">{rp.category}</p>
-                                       <p className="text-sm font-semibold text-slate-800 truncate">{rp.name}</p>
-                                       <p className="text-xs font-bold text-primary mt-1">{formatCurrency(rp.priceB2B || rp.priceB2C || 0)}</p>
-                                     </button>
-                                   ))}
-                                 </div>
-                               </div>
-                             )}
+                            {/* Z-Pattern Bottom Row: Specs+Deskripsi (left) → Related Products (right) */}
+                            <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-8">
+                                {/* Z Bottom-Left: Details */}
+                                <div className="space-y-6">
+                                    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                        <h3 className="text-sm font-bold text-slate-800 mb-4">Informasi Produk</h3>
+                                        <table className="w-full text-sm">
+                                            <tbody>
+                                                <tr className="border-b border-slate-100">
+                                                    <td className="py-2.5 text-slate-500 font-medium w-1/3">Kategori</td>
+                                                    <td className="py-2.5 text-slate-800 font-semibold">{product.category}</td>
+                                                </tr>
+                                                <tr className="border-b border-slate-100">
+                                                    <td className="py-2.5 text-slate-500 font-medium">Material</td>
+                                                    <td className="py-2.5 text-slate-800 font-semibold">{product.material || '-'}</td>
+                                                </tr>
+                                                <tr className="border-b border-slate-100">
+                                                    <td className="py-2.5 text-slate-500 font-medium">Varian</td>
+                                                    <td className="py-2.5 text-slate-800 font-semibold">{variants.length} opsi</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className="py-2.5 text-slate-500 font-medium">Min. Order</td>
+                                                    <td className="py-2.5 text-slate-800 font-semibold">{minimumOrder.toLocaleString()} pcs</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {product.description && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                            <h3 className="text-sm font-bold text-slate-800 mb-3">Deskripsi</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Z Bottom-Right: Related Products */}
+                                {!isAdmin && relatedProducts.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-bold text-slate-800 mb-4">Produk Terkait</h3>
+                                    <p className="text-xs text-slate-500 mb-4">Kategori {product.category}</p>
+                                    <div className="space-y-4">
+                                        {relatedProducts.slice(0, 4).map((rp) => (
+                                            <button key={rp._id} onClick={() => navigate(`/portal/products/${rp._id}`)} className="w-full flex items-center gap-3 text-left group p-2 rounded-xl hover:bg-slate-50 transition-all">
+                                                <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
+                                                    {rp.images?.[0] ? <img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover" />
+                                                        : <div className="w-full h-full flex items-center justify-center text-slate-300"><ImagePlus size={20} /></div>}
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-xs font-semibold text-slate-800 truncate group-hover:text-primary transition-colors">{rp.name}</p>
+                                                    <p className="text-xs font-bold text-primary mt-0.5">{formatCurrency(rp.priceB2B || rp.priceB2C || 0)}</p>
+                                                </div>
+                                            </button>
+                                        ))}
+                                        {relatedProducts.length > 4 && (
+                                            <button onClick={() => navigate('/portal?menu=catalog')} className="w-full py-2.5 text-xs font-bold text-primary hover:bg-slate-50 rounded-xl transition-all">
+                                                Lihat Semua ({relatedProducts.length} produk)
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                                )}
+                             </div>
                          </div>
                       )}
                  </div>
