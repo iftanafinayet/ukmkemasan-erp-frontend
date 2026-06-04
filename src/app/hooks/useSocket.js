@@ -4,63 +4,80 @@ import { storage } from '../config/environment';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://ukmkemasan-erp-backend.onrender.com';
 
-export default function useSocket({ onNewMessage, onUnreadCount, onConversationUpdated } = {}) {
-  const socketRef = useRef(null);
+let sharedSocket = null;
+let subscriberCount = 0;
+const eventHandlers = {};
 
-  useEffect(() => {
-    const token = storage.getToken();
-    if (!token) return;
+function ensureSocket() {
+  const token = storage.getToken();
+  if (!token) return null;
 
-    const socket = io(SOCKET_URL, {
+  if (!sharedSocket) {
+    sharedSocket = io(SOCKET_URL, {
       auth: { token },
       transports: ['websocket', 'polling'],
     });
+    sharedSocket.on('disconnect', () => { sharedSocket = null; });
+  }
 
-    socket.on('connect', () => {});
+  return sharedSocket;
+}
 
-    socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error.message);
-    });
+function subscribe(event, handler) {
+  const socket = ensureSocket();
+  if (!socket) return () => {};
 
-    if (onNewMessage) {
-      socket.on('new:message', onNewMessage);
-    }
+  if (!eventHandlers[event]) eventHandlers[event] = new Set();
+  eventHandlers[event].add(handler);
+  socket.on(event, handler);
 
-    if (onUnreadCount) {
-      socket.on('unread:count', onUnreadCount);
-    }
+  return () => {
+    socket.off(event, handler);
+    eventHandlers[event]?.delete(handler);
+  };
+}
 
-    if (onConversationUpdated) {
-      socket.on('conversation:updated', onConversationUpdated);
-    }
+export default function useSocket({ onNewMessage, onUnreadCount, onConversationUpdated } = {}) {
+  const handlersRef = useRef({ onNewMessage, onUnreadCount, onConversationUpdated });
+  handlersRef.current = { onNewMessage, onUnreadCount, onConversationUpdated };
 
-    socketRef.current = socket;
+  useEffect(() => {
+    if (!storage.getToken()) return;
+    ensureSocket();
+    subscriberCount++;
+
+    const unsubNew = subscribe('new:message', (data) => handlersRef.current.onNewMessage?.(data));
+    const unsubUnread = subscribe('unread:count', (data) => handlersRef.current.onUnreadCount?.(data));
+    const unsubUpdated = subscribe('conversation:updated', (data) => handlersRef.current.onConversationUpdated?.(data));
 
     return () => {
-      if (onNewMessage) socket.off('new:message', onNewMessage);
-      if (onUnreadCount) socket.off('unread:count', onUnreadCount);
-      if (onConversationUpdated) socket.off('conversation:updated', onConversationUpdated);
-      socket.disconnect();
-      socketRef.current = null;
+      unsubNew();
+      unsubUnread();
+      unsubUpdated();
+      subscriberCount--;
+      if (subscriberCount <= 0 && sharedSocket) {
+        sharedSocket.disconnect();
+        sharedSocket = null;
+      }
     };
-  }, [onNewMessage, onUnreadCount, onConversationUpdated]);
+  }, []);
 
   const joinConversation = useCallback((conversationId) => {
-    socketRef.current?.emit('join:conversation', conversationId);
+    sharedSocket?.emit('join:conversation', conversationId);
   }, []);
 
   const leaveConversation = useCallback((conversationId) => {
-    socketRef.current?.emit('leave:conversation', conversationId);
+    sharedSocket?.emit('leave:conversation', conversationId);
   }, []);
 
   const sendMessage = useCallback((conversationId, text, callback, _tempId) => {
     const payload = _tempId ? { conversationId, text, _tempId } : { conversationId, text };
-    socketRef.current?.emit('send:message', payload, callback);
+    sharedSocket?.emit('send:message', payload, callback);
   }, []);
 
   const markRead = useCallback((conversationId) => {
-    socketRef.current?.emit('mark:read', { conversationId });
+    sharedSocket?.emit('mark:read', { conversationId });
   }, []);
 
-  return { joinConversation, leaveConversation, sendMessage, markRead, socket: socketRef.current };
+  return { joinConversation, leaveConversation, sendMessage, markRead, socket: sharedSocket };
 }
