@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { MessageSquare } from 'lucide-react';
 import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
-import logoUrl from '../../../assets/LogoUKM.svg';
+import logoUrl from '/UKM.svg';
 
-export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
+export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0, onChatToggle }) {
   const [cartCount, setCartCount] = useState(() => getCartCount());
   const user = storage.getUser();
   const navigate = useNavigate();
@@ -41,16 +42,14 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
     { id: 'catalog', label: 'Katalog Produk' },
     { id: 'cart', label: 'Keranjang', badge: cartCount },
     { id: 'orders', label: 'Pesanan Saya' },
-    { id: 'inquiries', label: 'Inquiries', badge: inquiryBadge },
     { id: 'profile', label: 'Profil Saya' }
   ];
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md transition-all duration-300 ease-in-out font-sans">
       <div className="flex justify-between items-center px-4 sm:px-8 h-20 max-w-full mx-auto">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
-          <div className="hidden sm:block text-xl font-bold tracking-tighter text-teal-800 uppercase">UKM Kemasan</div>
         </div>
         <div className="hidden md:flex items-center space-x-8 font-headline text-sm font-semibold tracking-tight h-full pt-8">
           {navItems.map((item) => {
@@ -78,6 +77,18 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
         <div className="flex items-center space-x-4">
           {storage.getToken() ? (
             <>
+              <button
+                onClick={onChatToggle}
+                className="hidden sm:relative sm:flex items-center justify-center p-2.5 text-slate-500 hover:text-primary hover:bg-primary/5 rounded-full transition-all"
+                title="Pesan"
+              >
+                <MessageSquare size={20} />
+                {inquiryBadge > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center leading-none">
+                    {inquiryBadge > 99 ? '99+' : inquiryBadge}
+                  </span>
+                )}
+              </button>
               <button 
                 onClick={handleLogout} 
                 className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 hover:from-slate-200 hover:to-slate-100 text-slate-700 font-semibold rounded-full border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out active:scale-95 group"

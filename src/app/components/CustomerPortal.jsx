@@ -10,6 +10,7 @@ import CustomerPortalOrdersSection from './customer-portal/CustomerPortalOrdersS
 import CustomerPortalOrderDetailModal from './customer-portal/CustomerPortalOrderDetailModal';
 import CustomerPortalProfileSection from './customer-portal/CustomerPortalProfileSection';
 import CustomerInquiriesSection from './customer-portal/CustomerInquiriesSection';
+import ChatPopup from './customer-portal/ChatPopup';
 import CustomerFooter from './CustomerFooter';
 
 // Mobile Components
@@ -38,6 +39,7 @@ export default function CustomerPortal() {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const prefillProduct = location.state?.prefillProduct || null;
+  const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : false;
   const menuFromQuery = searchParams.get('menu') || 'dashboard';
 
   const [activeMenu, setActiveMenu] = useState(menuFromQuery);
@@ -60,6 +62,7 @@ export default function CustomerPortal() {
   const [landingContent, setLandingContent] = useState(createEmptyLandingContent());
   const [popularProducts, setPopularProducts] = useState([]);
   const [orderFilter, setOrderFilter] = useState('all');
+  const [chatOpen, setChatOpen] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({});
   const unreadHandler = useCallback((data) => {
     setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
@@ -156,14 +159,21 @@ export default function CustomerPortal() {
   }, [fetchData]);
 
   useEffect(() => {
-    setActiveMenu(menuFromQuery);
-  }, [menuFromQuery]);
+    if (isDesktop && menuFromQuery === 'inquiries') {
+      setActiveMenu('dashboard');
+    } else {
+      setActiveMenu(menuFromQuery);
+    }
+  }, [menuFromQuery, isDesktop]);
 
   useEffect(() => {
     if (prefillProduct) {
+      if (isDesktop) {
+        setChatOpen(true);
+      }
       window.history.replaceState({}, '');
     }
-  }, [prefillProduct]);
+  }, [prefillProduct, isDesktop]);
 
   useEffect(() => subscribeCart((items) => setCartItems(items)), []);
 
@@ -317,6 +327,15 @@ export default function CustomerPortal() {
     }
   };
 
+  const handleNavigateToInquiries = () => {
+    const isDesktop = window.innerWidth >= 1024;
+    if (isDesktop) {
+      setChatOpen(true);
+    } else {
+      setActiveMenu('inquiries');
+    }
+  };
+
   const renderDashboard = () => (
     <CustomerPortalHomePage
       getStatusColor={getStatusColor}
@@ -324,7 +343,7 @@ export default function CustomerPortal() {
       landingContent={landingContent}
       onNavigateToCatalog={() => setActiveMenu('catalog')}
       onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
-      onNavigateToInquiries={() => setActiveMenu('inquiries')}
+      onNavigateToInquiries={handleNavigateToInquiries}
       onViewAllOrders={() => setActiveMenu('orders')}
       onViewOrder={handleViewOrder}
       orders={orders}
@@ -547,8 +566,6 @@ export default function CustomerPortal() {
       case 'profile':
       case 'settings':
         return renderProfile();
-      case 'inquiries':
-        return <CustomerInquiriesSection prefillProduct={prefillProduct} />;
       default:
         return <EmptyState text="Halaman sedang dikembangkan." />;
     }
@@ -570,7 +587,7 @@ export default function CustomerPortal() {
             backgroundAttachment: 'fixed'
           }}
         />
-        <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
+        <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} onChatToggle={() => setChatOpen((prev) => !prev)} />
         <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
           {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
             <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
@@ -580,6 +597,8 @@ export default function CustomerPortal() {
           {renderDesktopPage()}
         </main>
         {['dashboard', 'catalog'].includes(activeMenu) && <CustomerFooter />}
+
+        <ChatPopup prefillProduct={prefillProduct} isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       </div>
 
       {/* Mobile View */}
@@ -593,7 +612,7 @@ export default function CustomerPortal() {
         <main className="pt-[52px] pb-[56px] flex-1">
           {renderMobilePage()}
         </main>
-        <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+        <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
       </div>
       {isDetailOpen && selectedOrder && (
         <>
