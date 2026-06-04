@@ -33,6 +33,7 @@ export const PAGE_TITLES = {
   'inventory-adjustment': 'Inventory Adjustment',
   'item-categories': 'Item Categories',
   customers: 'Customers',
+  'production-dashboard': 'Production Dashboard',
   'sales-processing': 'Sales Processing',
   invoice: 'Invoice',
   'payment-received': 'Payment Receive',
