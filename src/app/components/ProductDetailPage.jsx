@@ -247,7 +247,7 @@ export default function ProductDetailPage() {
                     <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
                         <div className="mb-4">
                           <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-3">
-                            <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Home</button>
+                            <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Beranda</button>
                             <ChevronRight size={12} />
                             <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Katalog</button>
                             {product?.category && (

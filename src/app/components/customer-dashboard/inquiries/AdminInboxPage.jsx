@@ -7,7 +7,7 @@ import useSocket from '../../../hooks/useSocket';
 import { formatDateTime } from '../utils';
 
 const STATUS_OPTIONS = ['', 'Open', 'Replied', 'Closed'];
-const STATUS_LABELS = { '': 'Semua Status', Open: 'Open', Replied: 'Replied', Closed: 'Closed' };
+const STATUS_LABELS = { '': 'Semua Status', Open: 'Terbuka', Replied: 'Dibalas', Closed: 'Ditutup' };
 const STATUS_COLORS = {
   Open: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   Replied: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -198,7 +198,7 @@ export default function AdminInboxPage() {
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="font-bold text-sm text-slate-800 truncate">
-                        {conv.customer?.name || 'Unknown'}
+                        {conv.customer?.name || 'Tidak Dikenal'}
                       </span>
                       {unread > 0 && (
                         <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
@@ -236,7 +236,7 @@ export default function AdminInboxPage() {
               <div>
                 <h3 className="font-bold text-slate-800">{selectedConv.subject}</h3>
                 <p className="text-xs text-slate-500">
-                  {selectedConv.customer?.name} &mdash; {selectedConv.product?.name || 'General Inquiry'}
+                  {selectedConv.customer?.name} &mdash; {selectedConv.product?.name || 'Inquiry Umum'}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export default function AdminInboxPage() {
                     onClick={() => handleCloseConversation(selectedConv._id)}
                     className="px-3 py-1.5 rounded-xl bg-red-50 text-red-500 text-xs font-bold hover:bg-red-100 transition-all"
                   >
-                    Close
+                    Tutup
                   </button>
                 )}
                 <button
@@ -275,7 +275,7 @@ export default function AdminInboxPage() {
                         }`}
                       >
                         <p className="text-xs font-bold mb-1 opacity-70">
-                          {msg.sender?.name || 'Unknown'}
+                          {msg.sender?.name || 'Tidak Dikenal'}
                         </p>
                         <p className="text-sm">{msg.text}</p>
                         <div className={`flex items-center gap-1 mt-1 ${isAdmin ? 'justify-end' : 'justify-start'}`}>
