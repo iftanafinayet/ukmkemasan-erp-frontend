@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare } from 'lucide-react';
 import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
 import logoUrl from '../../../assets/LogoUKM.svg';
 
-export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0, onChatToggle }) {
+export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [cartCount, setCartCount] = useState(() => getCartCount());
   const user = storage.getUser();
   const navigate = useNavigate();
@@ -78,18 +77,6 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
         <div className="flex items-center space-x-4">
           {storage.getToken() ? (
             <>
-              <button
-                onClick={onChatToggle}
-                className="hidden sm:relative sm:flex items-center justify-center p-2.5 text-slate-500 hover:text-primary hover:bg-primary/5 rounded-full transition-all"
-                title="Pesan"
-              >
-                <MessageSquare size={20} />
-                {inquiryBadge > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center leading-none">
-                    {inquiryBadge > 99 ? '99+' : inquiryBadge}
-                  </span>
-                )}
-              </button>
               <button 
                 onClick={handleLogout} 
                 className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 hover:from-slate-200 hover:to-slate-100 text-slate-700 font-semibold rounded-full border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out active:scale-95 group"
