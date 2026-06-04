@@ -298,10 +298,9 @@ export default function ProductDetailPage() {
 
                      {!loading && product && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1fr_400px]'}`}>
-                                {/* Left Column: Images + Description */}
-                                <div className="space-y-6">
-                                    {/* Main Image */}
+                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1fr_1.2fr_400px]'}`}>
+                                {/* Column 1: Images */}
+                                <div className="space-y-4">
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                         {product.images?.length > 0 ? (
                                             <div className="relative">
@@ -310,11 +309,7 @@ export default function ProductDetailPage() {
                                                         {product.images.map((img, idx) => (
                                                             <CarouselItem key={idx}>
                                                                 <div className="relative aspect-[4/3] bg-white flex items-center justify-center p-4">
-                                                                    <img
-                                                                        src={img.url}
-                                                                        alt={img.alt || product.name}
-                                                                        className="max-h-full max-w-full object-contain"
-                                                                    />
+                                                                    <img src={img.url} alt={img.alt || product.name} className="max-h-full max-w-full object-contain" />
                                                                 </div>
                                                             </CarouselItem>
                                                         ))}
@@ -333,29 +328,21 @@ export default function ProductDetailPage() {
                                                 <p className="text-xs font-bold text-slate-400">Belum ada foto</p>
                                             </div>
                                         )}
-
-                                        {/* Thumbnails */}
                                         {product.images?.length > 1 && (
                                             <div className="flex gap-2 p-3 border-t border-slate-100 overflow-x-auto">
                                                 {product.images.map((img, idx) => (
-                                                    <button
-                                                        key={idx}
-                                                        onClick={() => {
-                                                            setActiveImageIdx(idx);
-                                                            carouselApi.current?.scrollTo(idx);
-                                                        }}
-                                                        className={`flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg border-2 transition-all ${activeImageIdx === idx
-                                                            ? 'border-primary shadow-sm'
-                                                            : 'border-slate-200 opacity-60 hover:opacity-100'
-                                                            }`}
-                                                    >
+                                                    <button key={idx} onClick={() => { setActiveImageIdx(idx); carouselApi.current?.scrollTo(idx); }}
+                                                        className={`flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg border-2 transition-all ${activeImageIdx === idx ? 'border-primary shadow-sm' : 'border-slate-200 opacity-60 hover:opacity-100'}`}>
                                                         <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
                                                     </button>
                                                 ))}
                                             </div>
                                         )}
                                     </div>
+                                </div>
 
+                                {/* Column 2: Info + Description */}
+                                <div className="space-y-6">
                                     {/* Spesifikasi */}
                                     <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                         <h3 className="text-sm font-bold text-slate-800 mb-4">Informasi Produk</h3>
@@ -390,53 +377,33 @@ export default function ProductDetailPage() {
                                     )}
                                 </div>
 
-                                {/* Right Column: Sticky Buy Card (Tokopedia style) */}
+                                {/* Column 3: Sticky Buy Card */}
                                 {!isAdmin && (
                                 <div>
                                     <div className="sticky top-28 space-y-4">
-                                        {/* Product Header */}
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-md">{product.category}</span>
-                                                {product.isNew && (
-                                                    <span className="text-[10px] font-bold text-white bg-orange-500 px-2 py-0.5 rounded-md">Terbaru</span>
-                                                )}
+                                                {product.isNew && <span className="text-[10px] font-bold text-white bg-orange-500 px-2 py-0.5 rounded-md">Terbaru</span>}
                                             </div>
-                                            <h1 className="text-lg font-bold text-slate-900 leading-tight">{product.name}</h1>
-
-                                            {/* Harga */}
+                                            <h1 className="text-base font-bold text-slate-900 leading-tight">{product.name}</h1>
                                             <div className="mt-4">
                                                 <p className="text-2xl font-black text-primary">{selectedVariant ? formatCurrency(baseVariantPrice) : 'Pilih varian'}</p>
-                                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                                                    {priceTier === 'B2B' ? 'Harga Grosir (≥1000 pcs)' : 'Harga Retail'}
-                                                </p>
+                                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">{priceTier === 'B2B' ? 'Harga Grosir (≥1000 pcs)' : 'Harga Retail'}</p>
                                             </div>
-
-                                            {/* Harga Retail/Grosir per variant */}
                                             {selectedVariant && (
                                                 <div className="flex items-center gap-3 mt-3 text-xs bg-slate-50 rounded-xl p-3">
-                                                    <div>
-                                                        <span className="text-slate-400">Retail</span>
-                                                        <p className="font-bold text-slate-700">{formatCurrency(selectedVariant.priceB2C)}</p>
-                                                    </div>
+                                                    <div><span className="text-slate-400">Retail</span><p className="font-bold text-slate-700">{formatCurrency(selectedVariant.priceB2C)}</p></div>
                                                     <div className="w-px h-8 bg-slate-200" />
-                                                    <div>
-                                                        <span className="text-slate-400">Grosir</span>
-                                                        <p className="font-bold text-primary">{formatCurrency(selectedVariant.priceB2B)}</p>
-                                                    </div>
+                                                    <div><span className="text-slate-400">Grosir</span><p className="font-bold text-primary">{formatCurrency(selectedVariant.priceB2B)}</p></div>
                                                 </div>
                                             )}
-
-                                            {/* Stock */}
                                             <div className="mt-3 flex items-center gap-2 text-xs">
                                                 <span className={`w-2 h-2 rounded-full ${displayedStock > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
-                                                <span className="text-slate-500">
-                                                    {displayedStock <= 0 ? 'Stok habis' : `Stok: ${displayedStock.toLocaleString()} pcs`}
-                                                </span>
+                                                <span className="text-slate-500">{displayedStock <= 0 ? 'Stok habis' : `Stok: ${displayedStock.toLocaleString()} pcs`}</span>
                                             </div>
                                         </div>
 
-                                        {/* Varian Selector */}
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <VariantSelectorSection
                                                 title="Pilih Varian"
@@ -458,90 +425,50 @@ export default function ProductDetailPage() {
                                             />
                                         </div>
 
-                                        {/* Quantity */}
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <p className="text-xs font-bold text-slate-500 mb-3">Jumlah Pesanan</p>
                                             <div className="flex items-center gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setQuantity(Math.max(minimumOrder, safeQuantity - minimumOrder))}
-                                                    disabled={safeQuantity <= minimumOrder}
-                                                    className="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                                                >
-                                                    <Minus size={16} />
-                                                </button>
+                                                <button type="button" onClick={() => setQuantity(Math.max(minimumOrder, safeQuantity - minimumOrder))} disabled={safeQuantity <= minimumOrder}
+                                                    className="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"><Minus size={16} /></button>
                                                 <div className="relative flex-1">
-                                                    <input
-                                                        type="number"
-                                                        min={minimumOrder}
-                                                        step={minimumOrder}
-                                                        max={selectedVariant?.stock || undefined}
-                                                        value={safeQuantity}
+                                                    <input type="number" min={minimumOrder} step={minimumOrder} max={selectedVariant?.stock || undefined} value={safeQuantity}
                                                         onChange={(e) => setQuantity(Number(e.target.value) || minimumOrder)}
-                                                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center text-sm font-bold text-slate-800 outline-none focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                    />
+                                                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center text-sm font-bold text-slate-800 outline-none focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setQuantity(safeQuantity + minimumOrder)}
-                                                    disabled={selectedVariant?.stock ? safeQuantity >= selectedVariant.stock : false}
-                                                    className="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                                                >
-                                                    <Plus size={16} />
-                                                </button>
+                                                <button type="button" onClick={() => setQuantity(safeQuantity + minimumOrder)} disabled={selectedVariant?.stock ? safeQuantity >= selectedVariant.stock : false}
+                                                    className="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"><Plus size={16} /></button>
                                             </div>
                                             <p className="mt-2 text-[10px] text-slate-400">Min. {minimumOrder.toLocaleString()} pcs (kelipatan {minimumOrder.toLocaleString()})</p>
                                         </div>
 
-                                        {/* Valve Add-on */}
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <p className="text-xs font-bold text-slate-500 mb-3">Add-ons: Valve</p>
                                             <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUseValve(true)}
-                                                    disabled={(product.addons?.valvePrice || 0) <= 0}
-                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${useValve ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'} disabled:opacity-40`}
-                                                >
-                                                    Pakai Valve
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUseValve(false)}
-                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${!useValve ? 'border-primary bg-primary text-white' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
-                                                >
-                                                    Tanpa Valve
-                                                </button>
+                                                <button type="button" onClick={() => setUseValve(true)} disabled={(product.addons?.valvePrice || 0) <= 0}
+                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${useValve ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'} disabled:opacity-40`}>Pakai Valve</button>
+                                                <button type="button" onClick={() => setUseValve(false)}
+                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${!useValve ? 'border-primary bg-primary text-white' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}>Tanpa Valve</button>
                                             </div>
-                                            {useValve && product.addons?.valvePrice > 0 && (
-                                                <p className="mt-2 text-[10px] font-bold text-primary">+ {formatCurrency(product.addons.valvePrice)}/pcs</p>
-                                            )}
+                                            {useValve && product.addons?.valvePrice > 0 && <p className="mt-2 text-[10px] font-bold text-primary">+ {formatCurrency(product.addons.valvePrice)}/pcs</p>}
                                         </div>
 
-                                        {/* Total & Buy Button */}
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <div className="flex items-center justify-between mb-4">
                                                 <span className="text-xs text-slate-500">Total</span>
                                                 <span className="text-xl font-black text-slate-900">{formatCurrency(totalPrice)}</span>
                                             </div>
-                                            <button
-                                                onClick={handleAddToCart}
-                                                disabled={!selectedVariant || displayedStock <= 0}
-                                                className="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
-                                            >
+                                            <button onClick={handleAddToCart} disabled={!selectedVariant || displayedStock <= 0}
+                                                className="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
                                                 <ShoppingCart size={18} />
                                                 {!storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}
                                             </button>
-                                            <button
-                                                onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
-                                                className="w-full mt-2 py-2.5 rounded-xl border border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-1.5"
-                                            >
+                                            <button onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
+                                                className="w-full mt-2 py-2.5 rounded-xl border border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-1.5">
                                                 <MessageSquare size={14} />
                                                 Tanyakan Produk Ini
                                             </button>
                                         </div>
 
-                                        {/* Shipping Info */}
                                         <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-center">
                                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Informasi Pengiriman</p>
                                             <p className="text-xs text-slate-500 mt-1">Estimasi 3-5 hari kerja setelah pembayaran dikonfirmasi</p>
@@ -550,18 +477,12 @@ export default function ProductDetailPage() {
                                 </div>
                                 )}
 
-                                {/* Admin Column (full width) */}
+                                {/* Admin Column */}
                                 {isAdmin && (
-                                <div className="space-y-4">
-                                    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                                        <h3 className="text-xs font-bold text-slate-500 mb-4">Admin Actions</h3>
-                                        <button onClick={() => navigate('/admin')} className="w-full py-3 rounded-xl bg-blue-500 text-white text-sm font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2 mb-2">
-                                            <Edit3 size={16} /> Edit di Dashboard
-                                        </button>
-                                        <button onClick={handleDelete} className="w-full py-3 rounded-xl bg-red-50 text-red-500 text-sm font-bold hover:bg-red-100 transition-all flex items-center justify-center gap-2">
-                                            <Trash2 size={16} /> Hapus Produk
-                                        </button>
-                                    </div>
+                                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                    <h3 className="text-xs font-bold text-slate-500 mb-4">Admin Actions</h3>
+                                    <button onClick={() => navigate('/admin')} className="w-full py-3 rounded-xl bg-blue-500 text-white text-sm font-bold hover:bg-blue-600 transition-all flex items-center justify-center gap-2 mb-2"><Edit3 size={16} /> Edit di Dashboard</button>
+                                    <button onClick={handleDelete} className="w-full py-3 rounded-xl bg-red-50 text-red-500 text-sm font-bold hover:bg-red-100 transition-all flex items-center justify-center gap-2"><Trash2 size={16} /> Hapus Produk</button>
                                 </div>
                                 )}
                              </div>
@@ -578,19 +499,10 @@ export default function ProductDetailPage() {
                                  </div>
                                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
                                    {relatedProducts.map((rp) => (
-                                     <button
-                                       key={rp._id}
-                                       onClick={() => navigate(`/portal/products/${rp._id}`)}
-                                       className="flex-shrink-0 w-40 group text-left"
-                                     >
+                                     <button key={rp._id} onClick={() => navigate(`/portal/products/${rp._id}`)} className="flex-shrink-0 w-40 group text-left">
                                        <div className="aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mb-2">
-                                         {rp.images?.[0] ? (
-                                           <img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                         ) : (
-                                           <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                             <ImagePlus size={28} />
-                                           </div>
-                                         )}
+                                         {rp.images?.[0] ? <img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                           : <div className="w-full h-full flex items-center justify-center text-slate-300"><ImagePlus size={28} /></div>}
                                        </div>
                                        <p className="text-[10px] font-semibold text-primary mb-0.5">{rp.category}</p>
                                        <p className="text-sm font-semibold text-slate-800 truncate">{rp.name}</p>
