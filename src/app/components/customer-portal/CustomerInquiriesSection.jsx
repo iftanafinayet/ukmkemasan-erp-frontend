@@ -30,9 +30,17 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
     }
   }, [prefillProduct]);
 
+  const tempIdCounter = useRef(0);
+
   const handleNewMessage = useCallback((message) => {
     if (selectedConv && (message.conversation === selectedConv._id || message.conversation?._id === selectedConv._id)) {
       setMessages((prev) => {
+        const existingIdx = prev.findIndex((m) => m._tempId && m._tempId === message._tempId);
+        if (existingIdx !== -1) {
+          const updated = [...prev];
+          updated[existingIdx] = { ...message, _tempId: undefined };
+          return updated;
+        }
         const exists = prev.some((m) => m._id === message._id);
         if (exists) return prev;
         return [...prev, message];
@@ -115,27 +123,45 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
     }
   };
 
-  const handleSendReply = async () => {
+  const handleSendReply = () => {
     if (!replyText.trim() || !selectedConv) return;
-    setSending(true);
-    try {
-      const res = await api.post(ENDPOINTS.INQUIRY_MESSAGES(selectedConv._id), { text: replyText });
-      const newMsg = res.data.message;
-      setMessages((prev) => [...prev, newMsg]);
-      setReplyText('');
-      markRead(selectedConv._id);
-      setConversations((prev) =>
-        prev.map((c) =>
-          c._id === selectedConv._id
-            ? { ...c, lastMessageAt: new Date().toISOString(), lastMessagePreview: newMsg.text }
-            : c
-        )
-      );
-    } catch {
-      toast.error('Gagal mengirim pesan');
-    } finally {
-      setSending(false);
-    }
+    const text = replyText;
+    setReplyText('');
+
+    const tempId = `temp_${++tempIdCounter.current}`;
+    const tempMsg = {
+      _id: tempId,
+      _tempId: tempId,
+      conversation: selectedConv._id,
+      sender: { _id: user?._id, name: user?.name, role: user?.role },
+      text,
+      readAt: null,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, tempMsg]);
+    setConversations((prev) =>
+      prev.map((c) =>
+        c._id === selectedConv._id
+          ? { ...c, lastMessageAt: new Date().toISOString(), lastMessagePreview: text }
+          : c
+      )
+    );
+
+    sendMessage(selectedConv._id, text, (res) => {
+      if (res?.error) {
+        setMessages((prev) => prev.filter((m) => m._id !== tempId));
+        toast.error(res.error);
+        return;
+      }
+      if (res?.message) {
+        setMessages((prev) =>
+          prev.map((m) => (m._id === tempId ? { ...res.message, _tempId: undefined } : m))
+        );
+      }
+    }, tempId);
+    markRead(selectedConv._id);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleKeyDown = (e) => {
@@ -257,10 +283,15 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
             ) : messages.length === 0 ? (
               <p className="text-center text-sm text-slate-400 py-20">Belum ada pesan</p>
             ) : (
-              messages.map((msg) => {
+              messages.map((msg, idx) => {
                 const isMe = msg.sender?._id === user?._id;
+                const isTemp = msg._tempId;
                 return (
-                  <div key={msg._id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    key={msg._id}
+                    className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-200 ${isTemp ? 'opacity-70' : ''}`}
+                    style={{ animationFillMode: 'backwards', animationDelay: `${Math.min(idx * 20, 200)}ms` }}
+                  >
                     <div
                       className={`max-w-[75%] rounded-2xl px-4 py-3 ${
                         isMe

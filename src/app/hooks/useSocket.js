@@ -53,8 +53,9 @@ export default function useSocket({ onNewMessage, onUnreadCount, onConversationU
     socketRef.current?.emit('leave:conversation', conversationId);
   }, []);
 
-  const sendMessage = useCallback((conversationId, text, callback) => {
-    socketRef.current?.emit('send:message', { conversationId, text }, callback);
+  const sendMessage = useCallback((conversationId, text, callback, _tempId) => {
+    const payload = _tempId ? { conversationId, text, _tempId } : { conversationId, text };
+    socketRef.current?.emit('send:message', payload, callback);
   }, []);
 
   const markRead = useCallback((conversationId) => {
