@@ -500,6 +500,7 @@ export default function CustomerDashboard() {
           />
         );
 
+      case 'production-dashboard':
       case 'sales-processing':
       case 'invoice':
       case 'payment-received':

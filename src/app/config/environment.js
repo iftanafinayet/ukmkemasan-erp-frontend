@@ -170,6 +170,11 @@ export const ENDPOINTS = {
   ADJUSTMENTS: '/inventory/adjustments',
   STOCK_CARDS: (productId) => `/inventory/stock-cards/${productId}`,
 
+  // Production Tasks
+  PRODUCTION_TASKS: '/production-tasks',
+  PRODUCTION_TASKS_STATS: '/production-tasks/stats',
+  PRODUCTION_TASK_BY_ID: (id) => `/production-tasks/${id}`,
+
   // Exports (Sales)
   EXPORT_SALES_OVERVIEW: '/sales/overview/export',
   EXPORT_INVOICES: '/sales/invoices/export'
