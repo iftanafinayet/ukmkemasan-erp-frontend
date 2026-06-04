@@ -410,7 +410,7 @@ export default function CustomerPortal() {
       cartQuantity={cartQuantity}
       checkingOutCart={checkingOutCart}
       formatCurrency={formatCurrency}
-      onAddItem={() => navigate('/portal/orders/create')}
+      onAddItem={() => setActiveMenu('catalog')}
       onClearCart={handleClearCart}
       onCheckout={handleCheckoutCart}
       onRemoveItem={handleRemoveCartItem}
