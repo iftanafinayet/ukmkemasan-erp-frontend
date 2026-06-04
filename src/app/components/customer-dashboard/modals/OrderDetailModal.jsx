@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, Clock } from 'lucide-react';
 import { InfoBlock, ModalWrapper } from '../shared';
 import { normalizePaymentHistory, printInvoicePdf } from '../phase2-utils';
-import api from '../../utils/api';
+import api from '../../../utils/api';
 
 export default function OrderDetailModal({
   formatCurrency,
