@@ -93,6 +93,7 @@ export default function CustomerPortalHomePage({
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
   const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
+  const aboutSection = landingContent?.aboutSection || {};
 
   const banners = Array.isArray(landingContent?.banners)
     ? landingContent.banners
@@ -153,6 +154,34 @@ export default function CustomerPortalHomePage({
           </div>
         </Carousel>
       </section>
+
+      {/* About Section */}
+      {aboutSection.isVisible !== false && (
+        <section className="px-4 md:px-0 pt-12">
+          <div className="bg-surface-container-lowest/95 backdrop-blur-sm rounded-3xl overflow-hidden border border-outline-variant/15 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+              <div className="p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
+                <span className="text-xs font-bold text-primary uppercase tracking-widest font-label mb-3">Company Profile</span>
+                <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 leading-tight mb-4">
+                  {aboutSection.title || 'Tentang UKM Kemasan'}
+                </h2>
+                <p className="text-slate-600 font-body leading-relaxed text-sm md:text-base">
+                  {aboutSection.description || ''}
+                </p>
+              </div>
+              {aboutSection.imageUrl && (
+                <div className="relative h-64 md:h-auto order-1 md:order-2 overflow-hidden">
+                  <img
+                    src={aboutSection.imageUrl}
+                    alt={aboutSection.title || 'About'}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Quick Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 -mt-2 pt-4">

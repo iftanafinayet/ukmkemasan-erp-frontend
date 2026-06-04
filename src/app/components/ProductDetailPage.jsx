@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import Sidebar from './Sidebar';
@@ -7,7 +7,7 @@ import { ENDPOINTS, storage } from '../config/environment';
 import {
     ArrowLeft, Loader2, Package, Edit3, Trash2,
     ShoppingCart, Layers, Ruler, Box, ImagePlus,
-    RefreshCw, AlertCircle, MessageSquare
+    RefreshCw, AlertCircle, MessageSquare, Minus, Plus, ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -32,6 +32,8 @@ export default function ProductDetailPage() {
     const [selectedColor, setSelectedColor] = useState('');
     const [quantity, setQuantity] = useState(100);
     const [useValve, setUseValve] = useState(false);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const carouselApi = useRef(null);
 
     const fetchProduct = useCallback(async () => {
         setLoading(true);
@@ -50,11 +52,21 @@ export default function ProductDetailPage() {
     }, [id]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchProduct();
     }, [fetchProduct]);
 
     useEffect(() => {
         if (!product) return;
+
+        if (product.category) {
+          api.get(ENDPOINTS.PRODUCTS).then((res) => {
+            const sameCategory = (res.data || []).filter(
+              (p) => p.category === product.category && p._id !== product._id
+            ).slice(0, 8);
+            setRelatedProducts(sameCategory);
+          }).catch(() => {});
+        }
 
         const firstAvailableVariant = product.variants?.find((variant) => variant.stock > 0)
             || product.variants?.[0]
@@ -233,22 +245,41 @@ export default function ProductDetailPage() {
                 )}
                 <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
                     <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
-                        <div className="mb-8 flex items-center justify-between gap-4">
-                                    <button
-                                        onClick={goBack}
-                                        data-testid="product-detail-back-btn"
-                                        className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
-                                    >
+                        <div className="mb-4">
+                          <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-3">
+                            <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Home</button>
+                            <ChevronRight size={12} />
+                            <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Katalog</button>
+                            {product?.category && (
+                              <>
+                                <ChevronRight size={12} />
+                                <span className="text-slate-600 font-semibold">{product.category}</span>
+                              </>
+                            )}
+                            {product?.name && (
+                              <>
+                                <ChevronRight size={12} />
+                                <span className="text-slate-800 font-bold truncate max-w-[200px]">{product.name}</span>
+                              </>
+                            )}
+                          </nav>
+                          <div className="flex items-center justify-between gap-4">
+                            <button
+                                onClick={goBack}
+                                data-testid="product-detail-back-btn"
+                                className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
+                            >
                                 <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
                                 Kembali
                             </button>
-                                <button
+                            <button
                                     onClick={fetchProduct}
                                     data-testid="product-detail-refresh-btn"
                                     className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100"
                                 >
                             <RefreshCw size={20} className={loading ? 'animate-spin text-primary' : ''} />
                         </button>
+                    </div>
                     </div>
 
                     {loading && (
@@ -267,13 +298,13 @@ export default function ProductDetailPage() {
 
                     {!loading && product && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr_0.8fr]">
+                            <div className={`grid grid-cols-1 gap-12 ${isAdmin ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1fr_1.2fr_0.8fr]'}`}>
                                 {/* Column 1: Media & Secondary Info */}
                                 <div className="space-y-8">
                                     <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
                                         {product.images?.length > 0 ? (
                                             <div className="relative">
-                                                <Carousel className="w-full" opts={{ loop: true, startIndex: activeImageIdx }}>
+                                                <Carousel className="w-full" opts={{ loop: true, startIndex: activeImageIdx }} setApi={(api) => { carouselApi.current = api; }}>
                                                     <CarouselContent>
                                                         {product.images.map((img, idx) => (
                                                             <CarouselItem key={idx}>
@@ -312,7 +343,10 @@ export default function ProductDetailPage() {
                                                 {product.images.map((img, idx) => (
                                                     <button
                                                         key={idx}
-                                                        onClick={() => setActiveImageIdx(idx)}
+                                                        onClick={() => {
+                                                            setActiveImageIdx(idx);
+                                                            carouselApi.current?.scrollTo(idx);
+                                                        }}
                                                         className={`aspect-square overflow-hidden rounded-xl border-2 transition-all ${activeImageIdx === idx
                                                             ? 'scale-105 border-primary shadow-lg shadow-primary/20'
                                                             : 'border-slate-200 opacity-60 hover:opacity-100'
@@ -387,18 +421,36 @@ export default function ProductDetailPage() {
                                                 <div className="space-y-8">
                                                     <div>
                                                         <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Jumlah Pesanan</p>
-                                                        <div className="relative">
-                                  <input
-                                      type="number"
-                                      min={minimumOrder}
-                                      step={minimumOrder}
-                                      max={selectedVariant?.stock || undefined}
-                                      value={safeQuantity}
-                                      onChange={(e) => setQuantity(Number(e.target.value) || minimumOrder)}
-                                      data-testid="product-detail-quantity-input"
-                                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 pr-16 text-2xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
-                                  />
-                                                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">pcs</span>
+                                                        <div className="flex items-center gap-3">
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => setQuantity(Math.max(minimumOrder, safeQuantity - minimumOrder))}
+                                                            disabled={safeQuantity <= minimumOrder}
+                                                            className="w-14 h-14 rounded-2xl border-2 border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+                                                          >
+                                                            <Minus size={20} />
+                                                          </button>
+                                                          <div className="flex-1 relative">
+                                                            <input
+                                                              type="number"
+                                                              min={minimumOrder}
+                                                              step={minimumOrder}
+                                                              max={selectedVariant?.stock || undefined}
+                                                              value={safeQuantity}
+                                                              onChange={(e) => setQuantity(Number(e.target.value) || minimumOrder)}
+                                                              data-testid="product-detail-quantity-input"
+                                                              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-center text-2xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                            />
+                                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">pcs</span>
+                                                          </div>
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => setQuantity(safeQuantity + minimumOrder)}
+                                                            disabled={selectedVariant?.stock ? safeQuantity >= selectedVariant.stock : false}
+                                                            className="w-14 h-14 rounded-2xl border-2 border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+                                                          >
+                                                            <Plus size={20} />
+                                                          </button>
                                                         </div>
                                                         <p className="mt-2 text-[10px] font-bold text-slate-400">
                                                             Minimal order {minimumOrder.toLocaleString()} pcs. (Kelipatan {minimumOrder.toLocaleString()})
@@ -522,13 +574,47 @@ export default function ProductDetailPage() {
                                         </p>
                                     </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-                </main>
-                </div>
+                                 </div>
+                             </div>
+
+                             {!isAdmin && relatedProducts.length > 0 && (
+                               <div className="mt-16">
+                                 <div className="flex items-end justify-between mb-8">
+                                   <div>
+                                     <span className="text-xs font-bold text-primary uppercase tracking-widest">Produk Terkait</span>
+                                     <h2 className="text-2xl font-black text-slate-900 mt-1">Produk Lain di Kategori {product.category}</h2>
+                                   </div>
+                                   <button onClick={() => navigate('/portal?menu=catalog')} className="text-sm font-bold text-primary hover:underline">Lihat Semua</button>
+                                 </div>
+                                 <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-thin">
+                                   {relatedProducts.map((rp) => (
+                                     <button
+                                       key={rp._id}
+                                       onClick={() => navigate(`/portal/products/${rp._id}`)}
+                                       className="flex-shrink-0 w-48 group"
+                                     >
+                                       <div className="aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 mb-3">
+                                         {rp.images?.[0] ? (
+                                           <img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                         ) : (
+                                           <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                             <ImagePlus size={32} />
+                                           </div>
+                                         )}
+                                       </div>
+                                       <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-0.5">{rp.category}</p>
+                                       <p className="text-sm font-bold text-slate-800 truncate group-hover:text-primary transition-colors">{rp.name}</p>
+                                       <p className="text-xs font-black text-primary mt-1">{formatCurrency(rp.priceB2B || rp.priceB2C || 0)}</p>
+                                     </button>
+                                   ))}
+                                 </div>
+                               </div>
+                             )}
+                         </div>
+                     )}
+                 </div>
+                 </main>
+                 </div>
 
                 {/* Mobile View */}
                 {!isAdmin && (

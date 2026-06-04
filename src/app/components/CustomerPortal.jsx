@@ -177,6 +177,8 @@ export default function CustomerPortal() {
 
   useEffect(() => subscribeCart((items) => setCartItems(items)), []);
 
+  useEffect(() => { window.scrollTo(0, 0); }, [activeMenu]);
+
   useEffect(() => {
     if (menuFromQuery === activeMenu) return;
 
