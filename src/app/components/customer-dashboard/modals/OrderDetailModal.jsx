@@ -1,7 +1,8 @@
-import React from 'react';
-import { Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, Clock } from 'lucide-react';
 import { InfoBlock, ModalWrapper } from '../shared';
 import { normalizePaymentHistory, printInvoicePdf } from '../phase2-utils';
+import api from '../../../utils/api';
 
 export default function OrderDetailModal({
   formatCurrency,
@@ -16,6 +17,18 @@ export default function OrderDetailModal({
   selectedOrder,
   updatingStatus,
 }) {
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen || !selectedOrder?._id) return;
+    setLogsLoading(true);
+    api.get(`/orders/${selectedOrder._id}/logs`)
+      .then((res) => setLogs(res.data))
+      .catch(() => {})
+      .finally(() => setLogsLoading(false));
+  }, [isOpen, selectedOrder?._id]);
+
   if (!isOpen || !selectedOrder) return null;
 
   const payments = normalizePaymentHistory(selectedOrder);
@@ -96,6 +109,44 @@ export default function OrderDetailModal({
           </div>
         ) : (
           <p className="text-sm font-medium text-slate-400">Belum ada riwayat pembayaran pada order ini.</p>
+        )}
+      </div>
+
+      <div className="mb-8 rounded-3xl border border-slate-100 bg-white p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Activity Log</p>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+            {logs.length} events
+          </span>
+        </div>
+        {logsLoading ? (
+          <p className="text-sm font-medium text-slate-400">Loading...</p>
+        ) : logs.length > 0 ? (
+          <div className="space-y-2">
+            {logs.map((log) => (
+              <div key={log._id} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                <div className="mt-0.5 w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4 h-4 text-slate-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800">
+                    {log.action}
+                    {log.oldValue && log.newValue && (
+                      <span className="text-xs font-medium text-slate-500">
+                        {' '}{log.oldValue} → {log.newValue}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                    {log.changedBy?.name || 'System'} &middot; {formatDateTime(log.createdAt)}
+                  </p>
+                  {log.note && <p className="text-xs text-slate-500 mt-1">{log.note}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm font-medium text-slate-400">Belum ada aktivitas tercatat.</p>
         )}
       </div>
 
