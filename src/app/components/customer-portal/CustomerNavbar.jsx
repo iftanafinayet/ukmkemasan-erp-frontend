@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { MessageSquare } from 'lucide-react';
 import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
-import logoUrl from '../../../assets/LogoUKM.svg';
+import logoUrl from '/UKM.svg';
 
 export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0, onChatToggle }) {
   const [cartCount, setCartCount] = useState(() => getCartCount());
@@ -48,9 +48,8 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md transition-all duration-300 ease-in-out font-sans">
       <div className="flex justify-between items-center px-4 sm:px-8 h-20 max-w-full mx-auto">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
-          <div className="hidden sm:block text-xl font-bold tracking-tighter text-teal-800 uppercase">UKM Kemasan</div>
         </div>
         <div className="hidden md:flex items-center space-x-8 font-headline text-sm font-semibold tracking-tight h-full pt-8">
           {navItems.map((item) => {
