@@ -141,25 +141,25 @@ export default function LoginPage() {
           <div className="w-full max-w-[400px] z-10 px-4 md:px-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
             <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-6 md:p-8 border border-slate-100/50 backdrop-blur-sm">
               <div className="text-center mb-6">
-                <div className="mb-5 inline-flex items-center justify-center rounded-[1.25rem] border border-slate-200 bg-slate-50/80 px-5 py-4 shadow-sm lg:hidden">
-                  <img src={logoUrl} alt="Logo UKM Kemasan" className="h-14 w-auto object-contain" />
+                <div className="mb-3 inline-flex items-center justify-center rounded-[1.25rem] border border-slate-200 bg-slate-50/80 px-4 py-3 shadow-sm lg:hidden">
+                  <img src={logoUrl} alt="Logo UKM Kemasan" className="h-10 w-auto object-contain" />
                 </div>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tight">Sign In</h3>
-                <div className="mt-2 text-slate-400 font-medium text-sm">Welcome back to UKM Kemasan ERP</div>
+                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Sign In</h3>
+                <div className="mt-1 text-slate-400 font-medium text-xs">Welcome back to UKM Kemasan ERP</div>
               </div>
 
               {/* Error Message */}
               {error && (
-                <div className="mb-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 error-message" role="alert">
-                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
-                  <p className="text-red-700 text-sm font-semibold leading-relaxed">{error}</p>
+                <div className="mb-4 p-3 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-4 error-message" role="alert">
+                  <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                  <p className="text-red-700 text-xs font-semibold leading-relaxed">{error}</p>
                 </div>
               )}
 
               <form onSubmit={handleLogin} className="space-y-5">
                 {/* Input Group: Email */}
-                <div className="space-y-2 group">
-                  <label className="block text-sm font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                <div className="space-y-1.5 group">
+                  <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
                     Email / Username
                   </label>
                   <input
@@ -168,20 +168,20 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     data-testid="login-email"
-                    className="w-full text-slate-800 p-3 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                    className="w-full text-slate-800 p-2.5 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm text-sm"
                     required
                   />
                 </div>
 
                 {/* Input Group: Password */}
-                <div className="space-y-2 group relative">
+                <div className="space-y-1.5 group relative">
                   <div className="flex justify-between items-center ml-1">
-                    <label className="block text-sm font-bold text-slate-700 group-focus-within:text-primary transition-colors">
+                    <label className="block text-xs font-bold text-slate-700 group-focus-within:text-primary transition-colors">
                       Password
                     </label>
                     <Link
                       to="/forgot-password"
-                      className="text-xs font-bold text-slate-400 hover:text-primary transition-colors"
+                      className="text-[10px] font-bold text-slate-400 hover:text-primary transition-colors"
                     >
                       Forgot password?
                     </Link>
@@ -193,27 +193,27 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       data-testid="login-password"
-                      className="w-full text-slate-800 p-4 pr-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                      className="w-full text-slate-800 p-2.5 pr-10 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm text-sm"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-300 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-300 hover:text-slate-600 transition-colors"
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
 
                 {/* Action Button */}
-                <div className="pt-6">
+                <div className="pt-4">
                   <button
                     type="submit"
                     disabled={loading}
                     data-testid="login-submit"
-                    className="w-full bg-primary hover:opacity-90 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-primary hover:opacity-90 text-white py-3 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
