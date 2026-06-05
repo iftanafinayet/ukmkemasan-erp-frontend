@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agree, setAgree] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -226,10 +227,28 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={agree}
+                    onChange={(e) => setAgree(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/30 cursor-pointer"
+                  />
+                  <span className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">
+                    Saya menyetujui{' '}
+                    <span className="text-primary font-semibold hover:underline">Syarat & Ketentuan</span>
+                    {' '}dan{' '}
+                    <span className="text-primary font-semibold hover:underline">Kebijakan Privasi</span>
+                    {' '}yang berlaku.
+                  </span>
+                </label>
+              </div>
+
+              <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !agree}
                   data-testid="register-submit"
                   className="w-full bg-primary hover:opacity-90 text-white py-3 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                 >
