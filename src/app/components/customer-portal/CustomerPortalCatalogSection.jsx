@@ -93,20 +93,6 @@ export default function CustomerPortalCatalogSection({
             <div className="p-4">
               <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-label">{catalog.category}</span>
               <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug line-clamp-2">{catalog.name}</h3>
-              
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 rounded-md text-[9px] font-semibold text-slate-600">
-                  <span className="material-symbols-outlined !text-[12px] opacity-50">straighten</span>
-                  {catalog.availableSizes?.length > 1 
-                    ? `${catalog.availableSizes[0]} - ${catalog.availableSizes[catalog.availableSizes.length - 1]}`
-                    : catalog.availableSizes?.[0] || '-'}
-                </div>
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 rounded-md text-[9px] font-semibold text-slate-600">
-                  <span className="material-symbols-outlined !text-[12px] opacity-50">layers</span>
-                  {catalog.materialLabel}
-                </div>
-              </div>
-
               <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
                 <div>
                   <span className="text-base font-black text-primary">{formatCurrency(catalog.priceB2B)}</span>
