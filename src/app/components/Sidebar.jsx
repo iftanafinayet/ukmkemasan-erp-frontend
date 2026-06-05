@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ConfirmDialog from './ui/ConfirmDialog';
 import {
   LayoutDashboard,
   Package,
@@ -24,6 +25,7 @@ import logoUrl from '../../assets/LogoUKM.svg';
 
 export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState(['inventory', 'sales']); // Default expanded
 
   const menuItems = [
@@ -101,7 +103,10 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
     setIsOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = () => setShowLogoutConfirm(true);
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     if (onLogout) {
       onLogout();
     } else {
@@ -209,6 +214,16 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
           </div>
         </div>
       </aside>
+
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Keluar Sistem"
+        message="Yakin ingin keluar dari sistem?"
+        confirmLabel="Keluar"
+        variant="danger"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </>
   );
 }

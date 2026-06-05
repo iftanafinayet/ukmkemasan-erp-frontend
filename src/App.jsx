@@ -52,6 +52,12 @@ const authPageTransition = {
   },
 };
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 function AppRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -99,7 +105,9 @@ function AppRoutes() {
   }, [isAuthRoute, location.pathname, navigate]);
 
   const routes = (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white">
+    <>
+      <ScrollToTop />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Loading Page...</p>
@@ -178,6 +186,7 @@ function AppRoutes() {
         <Route path="*" element={<Navigate to="/portal" replace />} />
       </Routes>
     </Suspense>
+    </>
   );
 
   if (!isAuthRoute) {

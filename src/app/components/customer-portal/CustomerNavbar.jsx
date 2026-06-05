@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ConfirmDialog from '../ui/ConfirmDialog';
 import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
 import logoUrl from '../../../assets/LogoUKM.svg';
 
 export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [cartCount, setCartCount] = useState(() => getCartCount());
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const user = storage.getUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,7 +29,10 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = () => setShowLogoutConfirm(true);
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     if (onLogout) {
       onLogout();
     } else {
@@ -45,6 +50,7 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
   ];
 
   return (
+    <>
     <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md transition-all duration-300 ease-in-out font-sans">
       <div className="flex justify-between items-center px-4 sm:px-8 h-20 max-w-full mx-auto">
         <div className="flex items-center gap-3">
@@ -119,5 +125,15 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
       </div>
       <div className="bg-slate-100 h-[1px] w-full absolute bottom-0"></div>
     </nav>
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Keluar Sistem"
+        message="Yakin ingin keluar dari sistem?"
+        confirmLabel="Keluar"
+        variant="danger"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
+    </>
   );
 }

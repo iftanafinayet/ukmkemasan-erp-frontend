@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ConfirmDialog from '../../ui/ConfirmDialog';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -39,7 +40,12 @@ export default function MobileProfilePage({
     );
   }
 
-  const handleLogout = () => {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = () => setShowLogoutConfirm(true);
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     storage.clear();
     window.location.href = '/login';
   };
@@ -235,6 +241,15 @@ export default function MobileProfilePage({
           </div>
         </div>
       </main>
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Keluar Sistem"
+        message="Yakin ingin keluar dari sistem?"
+        confirmLabel="Keluar"
+        variant="danger"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </div>
   );
 }

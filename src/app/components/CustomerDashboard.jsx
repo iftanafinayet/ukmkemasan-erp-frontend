@@ -390,6 +390,7 @@ export default function CustomerDashboard() {
   ]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setSearchTerm('');
     setStatusFilter('all');
     setOrderSort('newest');

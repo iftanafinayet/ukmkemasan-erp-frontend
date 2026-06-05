@@ -19,6 +19,7 @@ function TextAreaField({ label, onChange, placeholder = '', rows = 4, value }) {
 
 export default function LandingContentSettingsSection({
   landingContent,
+  setLandingContent,
   onActivityChange,
   onActivityImageChange,
   onActivityRemoveImage,
@@ -41,6 +42,7 @@ export default function LandingContentSettingsSection({
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
   const activities = Array.isArray(landingContent?.activities) ? landingContent.activities : [];
   const portfolios = Array.isArray(landingContent?.portfolios) ? landingContent.portfolios : [];
+  const aboutSection = landingContent?.aboutSection || { isVisible: true, title: '', description: '', imageUrl: '', imagePublicId: '' };
   const articleSectionConfig = landingContent?.articleSectionConfig || { pillText: '', title: '', subtitle: '' };
   const gallerySectionConfig = landingContent?.gallerySectionConfig || { pillText: '', title: '', subtitle: '' };
   const portfolioSectionConfig = landingContent?.portfolioSectionConfig || { pillText: '', title: '', subtitle: '' };
@@ -67,6 +69,89 @@ export default function LandingContentSettingsSection({
             <Save className="h-4 w-4" />
             {saving ? 'Menyimpan...' : 'Simpan Konten'}
           </button>
+        </div>
+      </div>
+
+      {/* About Section */}
+      <div className="space-y-5 rounded-3xl border border-slate-100 bg-white p-8">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Company Profile</p>
+          <h4 className="mt-2 text-xl font-black text-slate-900">Tentang UKM Kemasan</h4>
+          <p className="mt-1 text-sm text-slate-500">Informasi perusahaan yang tampil di halaman utama portal customer.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="relative inline-flex cursor-pointer items-center">
+            <input
+              type="checkbox"
+              checked={aboutSection.isVisible}
+              onChange={(e) => onSectionConfigChange('aboutSection', 'isVisible', e.target.checked)}
+              className="peer sr-only"
+            />
+            <div className="h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full" />
+          </label>
+          <span className="text-sm font-medium text-slate-600">Tampilkan section ini</span>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormInput label="Judul" value={aboutSection.title} onChange={(value) => onSectionConfigChange('aboutSection', 'title', value)} placeholder="Contoh: Tentang UKM Kemasan" />
+        </div>
+        <TextAreaField label="Deskripsi" value={aboutSection.description} onChange={(value) => onSectionConfigChange('aboutSection', 'description', value)} rows={4} />
+        <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Camera className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-black text-slate-900">Gambar perusahaan</p>
+                <p className="mt-1 text-sm leading-6 text-slate-500">Upload foto atau ilustrasi perusahaan.</p>
+              </div>
+            </div>
+            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-700 transition-all hover:border-primary/30 hover:text-primary">
+              <ImagePlus className="h-4 w-4" />
+              Pilih Gambar
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0] || null;
+                  setLandingContent((prev) => ({
+                    ...prev,
+                    aboutSection: { ...prev.aboutSection, imageFile: file, imageRemoved: false },
+                  }));
+                  event.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          {(aboutSection.imageFile || aboutSection.imageUrl) && (
+            <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-center">
+              <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 lg:h-40 lg:w-64">
+                <img
+                  src={aboutSection.imageFile ? URL.createObjectURL(aboutSection.imageFile) : aboutSection.imageUrl}
+                  alt="About preview"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex-1 space-y-1 text-sm text-slate-500">
+                {aboutSection.imageFile ? (
+                  <p className="font-bold text-primary">File baru terpilih: {aboutSection.imageFile.name}</p>
+                ) : aboutSection.imageUrl ? (
+                  <p className="font-bold text-slate-700">Gambar saat ini tersimpan di server.</p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => setLandingContent((prev) => ({
+                  ...prev,
+                  aboutSection: { ...prev.aboutSection, imageFile: null, imageUrl: '', imagePublicId: '', imageRemoved: true },
+                }))}
+                className="rounded-2xl border border-red-100 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-500 transition-colors hover:bg-red-50"
+              >
+                Hapus Gambar
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

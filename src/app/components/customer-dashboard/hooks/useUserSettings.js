@@ -267,6 +267,10 @@ export function useUserSettings() {
         }
       });
 
+      if (landingContent.aboutSection?.imageFile) {
+        formData.append('aboutImage', landingContent.aboutSection.imageFile);
+      }
+
       const response = await api.put(ENDPOINTS.LANDING_CONTENT, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });

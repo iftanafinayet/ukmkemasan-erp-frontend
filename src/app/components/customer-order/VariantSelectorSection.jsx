@@ -54,10 +54,10 @@ export default function VariantSelectorSection({
                                          type="button"
                                          onClick={() => onSelectVariant?.(variant)}
                                          aria-pressed={isSelected}
-                                         className={`rounded-2xl border p-4 text-left transition-all ${isSelected
-                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                             : 'border-slate-200 bg-white hover:border-primary/30'
-                                             } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                          className={`rounded-2xl border p-4 text-left transition-all ${isSelected
+                                              ? 'border-primary/30 bg-primary/5'
+                                              : 'border-slate-200 bg-white hover:border-primary/30'
+                                              } ${isOutOfStock ? 'opacity-60' : ''}`}
                                      >
                                         <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
                                         <p className="mt-1 text-[11px] font-bold text-slate-400">{getVariantSku(variant)}</p>
@@ -113,7 +113,7 @@ const SelectionChip = ({ label, selected, disabled, onClick }) => (
         aria-pressed={selected}
         className={`rounded-2xl border-2 px-4 py-3 text-sm font-black transition-all ${
             selected
-                ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'
+                ? 'border-primary/40 bg-primary/5 text-primary'
                 : 'border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary'
         } disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300 disabled:shadow-none`}
     >

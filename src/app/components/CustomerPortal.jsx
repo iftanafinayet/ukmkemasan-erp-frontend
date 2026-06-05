@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { ChevronRight, ImagePlus, Plus, RefreshCw, Filter } from 'lucide-react';
 import { toast } from 'sonner';
+import ConfirmDialog from './ui/ConfirmDialog';
 import CustomerNavbar from './customer-portal/CustomerNavbar';
 import CustomerCartSection from './customer-portal/CustomerCartSection';
 import CustomerPortalHomePage from './customer-portal/CustomerPortalHomePage';
@@ -63,6 +64,7 @@ export default function CustomerPortal() {
   const [popularProducts, setPopularProducts] = useState([]);
   const [orderFilter, setOrderFilter] = useState('all');
   const [chatOpen, setChatOpen] = useState(false);
+  const [confirm, setConfirm] = useState({ isOpen: false, type: '', item: null });
   const [unreadCounts, setUnreadCounts] = useState({});
   const unreadHandler = useCallback((data) => {
     setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
@@ -124,6 +126,7 @@ export default function CustomerPortal() {
         }
         case 'cart':
           setCartItems(getCartItems());
+          api.get(ENDPOINTS.PRODUCTS).then((res) => setProducts(res.data || [])).catch(() => {});
           break;
         case 'profile':
         case 'settings': {
@@ -176,6 +179,8 @@ export default function CustomerPortal() {
   }, [prefillProduct, isDesktop]);
 
   useEffect(() => subscribeCart((items) => setCartItems(items)), []);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [activeMenu]);
 
   useEffect(() => {
     if (menuFromQuery === activeMenu) return;
@@ -256,16 +261,27 @@ export default function CustomerPortal() {
   };
 
   const handleClearCart = () => {
+    setConfirm({ isOpen: true, type: 'clearCart', item: null });
+  };
+
+  const confirmClearCart = () => {
     clearCart();
+    setConfirm({ isOpen: false, type: '', item: null });
     toast.success('Keranjang dikosongkan.');
   };
 
   const handleRemoveCartItem = (item) => {
+    setConfirm({ isOpen: true, type: 'removeItem', item });
+  };
+
+  const confirmRemoveItem = () => {
+    const item = confirm.item;
     removeCartItem((cartItem) => (
       cartItem.productId === item.productId
       && cartItem.variantId === item.variantId
       && cartItem.useValve === item.useValve
     ));
+    setConfirm({ isOpen: false, type: '', item: null });
     toast.success('Item dihapus dari keranjang.');
   };
 
@@ -408,7 +424,8 @@ export default function CustomerPortal() {
       cartQuantity={cartQuantity}
       checkingOutCart={checkingOutCart}
       formatCurrency={formatCurrency}
-      onAddItem={() => navigate('/portal/orders/create')}
+      products={products}
+      onAddItem={() => setActiveMenu('catalog')}
       onClearCart={handleClearCart}
       onCheckout={handleCheckoutCart}
       onRemoveItem={handleRemoveCartItem}
@@ -642,6 +659,16 @@ export default function CustomerPortal() {
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        isOpen={confirm.isOpen}
+        title={confirm.type === 'clearCart' ? 'Kosongkan Keranjang' : 'Hapus Item'}
+        message={confirm.type === 'clearCart' ? 'Yakin ingin menghapus semua item dari keranjang?' : 'Yakin ingin menghapus item ini dari keranjang?'}
+        confirmLabel="Hapus"
+        variant="danger"
+        onConfirm={confirm.type === 'clearCart' ? confirmClearCart : confirmRemoveItem}
+        onCancel={() => setConfirm({ isOpen: false, type: '', item: null })}
+      />
     </div>
   );
 }

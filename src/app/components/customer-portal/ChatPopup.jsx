@@ -209,7 +209,7 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
                   </button>
                   <div className="min-w-0">
                     <p className="font-bold text-sm truncate">{selectedConv.subject}</p>
-                    <p className="text-[10px] text-white/70 truncate">{selectedConv.product?.name || 'General Inquiry'}</p>
+                    <p className="text-[10px] text-white/70 truncate">{selectedConv.product?.name || 'Inquiry Umum'}</p>
                   </div>
                 </div>
               ) : (
@@ -300,7 +300,7 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
                           style={{ animationFillMode: 'backwards', animationDelay: `${Math.min(idx * 20, 200)}ms` }}
                         >
                           <div className={`max-w-[80%] rounded-2xl px-3 py-2 ${isMe ? 'bg-primary text-white rounded-br-md' : 'bg-white border border-slate-200 rounded-bl-md shadow-sm'}`}>
-                            <p className="text-[11px] font-bold mb-0.5 opacity-70">{msg.sender?.name || 'Unknown'}</p>
+                            <p className="text-[11px] font-bold mb-0.5 opacity-70">{msg.sender?.name || 'Tidak Dikenal'}</p>
                             <p className="text-xs">{msg.text}</p>
                             <div className={`flex items-center gap-1 mt-0.5 ${isMe ? 'justify-end' : 'justify-start'}`}>
                               {msg.readAt ? <CheckCheck size={10} className="opacity-50" /> : <Clock size={10} className="opacity-30" />}

@@ -34,7 +34,7 @@ export default function CustomerPortalOrdersSection({
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-6 lg:sticky lg:top-28 lg:self-start">
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
             <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
             <div className="space-y-3">
@@ -73,7 +73,7 @@ export default function CustomerPortalOrdersSection({
           </div>
         </div>
 
-        <div className="lg:col-span-9 space-y-8">
+        <div className="lg:col-span-9 space-y-8 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
           {orders
             .filter(order => {
               if (orderFilter === 'all') return true;
@@ -104,7 +104,7 @@ export default function CustomerPortalOrdersSection({
                 <div className="p-6 md:p-8">
                   <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
                     <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-sm border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
-                      {order.product?.images?.[0] ? (
+                      {order.product?.images?.[0]?.url ? (
                         <img src={order.product.images[0].url} alt={order.product.name} className="w-full h-full object-cover" />
                       ) : (
                          <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined">image</span></div>
@@ -132,7 +132,7 @@ export default function CustomerPortalOrdersSection({
                        ) : isCompleted ? (
                          <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
                        ) : (
-                         <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-colors group-hover:bg-primary group-hover:text-white">Detail Progress</button>
+                         <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:scale-[1.02] hover:shadow-lg active:scale-95 transition-all">Detail Progress</button>
                        )}
                     </div>
                   </div>

@@ -267,7 +267,7 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
               </button>
               <div>
                 <h3 className="font-bold text-slate-800 text-sm">{selectedConv.subject}</h3>
-                <p className="text-xs text-slate-400">{selectedConv.product?.name || 'General Inquiry'}</p>
+                <p className="text-xs text-slate-400">{selectedConv.product?.name || 'Inquiry Umum'}</p>
               </div>
             </div>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getStatusColor(selectedConv.status)}`}>
@@ -300,7 +300,7 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
                       }`}
                     >
                       <p className="text-xs font-bold mb-1 opacity-70">
-                        {msg.sender?.name || 'Unknown'}
+                        {msg.sender?.name || 'Tidak Dikenal'}
                       </p>
                       <p className="text-sm">{msg.text}</p>
                       <div className={`flex items-center gap-1 mt-1 ${isMe ? 'justify-end' : 'justify-start'}`}>

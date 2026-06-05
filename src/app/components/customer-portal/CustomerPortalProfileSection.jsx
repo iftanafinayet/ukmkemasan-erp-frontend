@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function CustomerPortalProfileSection({
@@ -12,6 +12,11 @@ export default function CustomerPortalProfileSection({
   setProfile,
   user,
 }) {
+  const scrollTo = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Profile Header Editorial */}
@@ -42,24 +47,24 @@ export default function CustomerPortalProfileSection({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-16 md:mt-16">
         {/* Left Side: Profile Sidebar */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28 lg:self-start">
           <div className="bg-surface-container-low rounded-xl p-6 md:p-8">
             <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-secondary-container mb-6">Navigasi Profil</h2>
             <nav className="space-y-2">
-              <a href="#edit-profil" className="flex items-center gap-3 p-3 rounded-lg bg-primary-container text-on-primary-container font-semibold transition-all">
+              <button onClick={() => scrollTo('edit-profil')} className="w-full flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all shadow-md">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                 Edit Profil
-              </a>
-              <a href="#ganti-password" className="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/50 transition-all">
+              </button>
+              <button onClick={() => scrollTo('ganti-password')} className="w-full flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all">
                 <span className="material-symbols-outlined">lock</span>
                 Ganti Password
-              </a>
-              <div className="flex items-center justify-between p-3 rounded-lg text-on-surface-variant cursor-not-allowed opacity-50">
+              </button>
+              <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 text-slate-400 cursor-not-allowed">
                  <div className="flex items-center gap-3">
-                   <span className="material-symbols-outlined">notifications</span>
-                   Notifikasi
+                    <span className="material-symbols-outlined">notifications</span>
+                    <span className="font-semibold">Notifikasi</span>
                  </div>
-                 <span className="text-[10px] font-bold bg-surface-container px-2 py-0.5 rounded-md">SOON</span>
+                 <span className="text-[10px] font-bold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-md">SOON</span>
               </div>
             </nav>
           </div>
@@ -72,7 +77,7 @@ export default function CustomerPortalProfileSection({
         </div>
 
         {/* Right Side: Content Area */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-8 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
           {/* Edit Profil Section */}
           <section id="edit-profil" className="bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_12px_32px_-4px_rgba(0,106,98,0.05)] border border-outline-variant/10">
              <div className="flex justify-between items-center mb-8">

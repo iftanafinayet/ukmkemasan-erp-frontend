@@ -123,6 +123,7 @@ export default function SettingsPage({
       {isAdmin && (
         <LandingContentSettingsSection
           landingContent={landingContent}
+          setLandingContent={setLandingContent}
           onActivityChange={onActivityChange}
           onActivityImageChange={onActivityImageChange}
           onActivityRemoveImage={onActivityRemoveImage}
