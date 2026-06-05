@@ -472,9 +472,9 @@ export default function ProductDetailPage() {
                                             <p className="text-xs font-bold text-slate-500 mb-3">Add-ons: Valve</p>
                                             <div className="flex gap-2">
                                                 <button type="button" onClick={() => setUseValve(true)} disabled={(product.addons?.valvePrice || 0) <= 0}
-                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${useValve ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'} disabled:opacity-40`}>Pakai Valve</button>
+                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${useValve ? 'border-primary/40 bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-primary/30 hover:text-primary'} disabled:opacity-40`}>Pakai Valve</button>
                                                 <button type="button" onClick={() => setUseValve(false)}
-                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${!useValve ? 'border-primary bg-primary text-white' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}>Tanpa Valve</button>
+                                                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${!useValve ? 'border-primary/40 bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-primary/30 hover:text-primary'}`}>Tanpa Valve</button>
                                             </div>
                                             {useValve && product.addons?.valvePrice > 0 && <p className="mt-2 text-[10px] font-bold text-primary">+ {formatCurrency(product.addons.valvePrice)}/pcs</p>}
                                         </div>
