@@ -326,7 +326,7 @@ export default function ProductDetailPage() {
                                                 {/* Thumbnail overlay scroll */}
                                                 {product.images.length > 1 && (
                                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent pt-8 pb-2 px-3">
-                                                        <div className="flex gap-1.5 justify-center">
+                                                        <div className="flex gap-1.5 overflow-x-auto justify-start flex-nowrap scrollbar-thin">
                                                             {product.images.map((img, idx) => (
                                                                 <button key={idx} onClick={() => { setActiveImageIdx(idx); carouselApi.current?.scrollTo(idx); }}
                                                                     className={`flex-shrink-0 w-10 h-10 overflow-hidden rounded-md border-2 transition-all ${activeImageIdx === idx ? 'border-white shadow-md brightness-100' : 'border-white/50 brightness-75 hover:brightness-90'}`}>
