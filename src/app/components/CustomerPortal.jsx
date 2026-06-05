@@ -126,6 +126,7 @@ export default function CustomerPortal() {
         }
         case 'cart':
           setCartItems(getCartItems());
+          api.get(ENDPOINTS.PRODUCTS).then((res) => setProducts(res.data || [])).catch(() => {});
           break;
         case 'profile':
         case 'settings': {
