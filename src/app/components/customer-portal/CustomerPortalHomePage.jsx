@@ -246,7 +246,7 @@ export default function CustomerPortalHomePage({
               </div>
               <div className="p-4">
                 <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-label">{product.category}</span>
-                <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug line-clamp-2">{product.name}</h3>
+                <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug">{product.name}</h3>
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
                   <div>
                     <span className="text-base font-black text-primary">{formatCurrency(product.priceB2B)}</span>
