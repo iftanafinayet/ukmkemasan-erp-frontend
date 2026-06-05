@@ -39,6 +39,15 @@ export const clearCart = () => {
   setCartItems([]);
 };
 
+export const updateCartItem = (matcher, updates) => {
+  const items = getCartItems();
+  const idx = items.findIndex(matcher);
+  if (idx === -1) return items;
+  items[idx] = { ...items[idx], ...updates };
+  setCartItems(items);
+  return items;
+};
+
 export const upsertCartItem = (cartItem) => {
   const existingCart = getCartItems();
   const existingItemIndex = existingCart.findIndex((item) =>
