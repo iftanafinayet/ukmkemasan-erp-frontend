@@ -311,7 +311,7 @@ export default function ProductDetailPage() {
                                                         {product.images.map((img, idx) => (
                                                             <CarouselItem key={idx}>
                                                                 <div className="relative aspect-[4/3] bg-white flex items-center justify-center p-4">
-                                                                    <img src={img.url} alt={img.alt || product.name} className="max-h-full max-w-full object-contain" />
+                                                                    <img src={img.url} alt={img.alt || product.name} className="w-full h-full object-cover" />
                                                                 </div>
                                                             </CarouselItem>
                                                         ))}
