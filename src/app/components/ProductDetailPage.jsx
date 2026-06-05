@@ -306,7 +306,7 @@ export default function ProductDetailPage() {
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                         {product.images?.length > 0 ? (
                                             <div className="relative">
-                                                <Carousel className="w-full" opts={{ loop: true, startIndex: activeImageIdx }} setApi={(api) => { carouselApi.current = api; }}>
+                                                <Carousel className="w-full" opts={{ loop: true, startIndex: activeImageIdx }} setApi={(api) => { carouselApi.current = api; api.on('select', () => setActiveImageIdx(api.selectedScrollSnap())); }}>
                                                     <CarouselContent>
                                                         {product.images.map((img, idx) => (
                                                             <CarouselItem key={idx}>
