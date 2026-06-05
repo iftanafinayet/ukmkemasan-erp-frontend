@@ -66,6 +66,7 @@ const createCatalogGroup = (product = {}, variant = {}, familyName = '') => {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, ''),
     name: familyName,
+    displayName: product.name || familyName,
     category: product.category || 'Lain Lain',
     representativeProductId: product._id,
     productId: product._id,
