@@ -276,8 +276,8 @@ export default function CustomerPortalHomePage({
                   </div>
                 </div>
 
-                <button className="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl text-xs hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10 group/btn">
-                  <span className="material-symbols-outlined !text-sm transition-transform group-hover/btn:translate-x-0.5">shopping_cart</span>
+                <button className="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl text-xs active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
+                  <span className="material-symbols-outlined !text-sm">shopping_cart</span>
                   Pesan Sekarang
                 </button>
               </div>
