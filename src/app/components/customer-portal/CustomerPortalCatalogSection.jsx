@@ -90,10 +90,10 @@ export default function CustomerPortalCatalogSection({
                  </div>
               )}
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-label">{catalog.category}</span>
-              <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug">{catalog.displayName || catalog.name}</h3>
-              <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+              <h3 className="text-sm font-bold text-slate-800 mt-1 leading-tight line-clamp-2">{catalog.displayName || catalog.name}</h3>
+              <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
                 <div>
                   <span className="text-base font-black text-primary">{formatCurrency(catalog.priceB2B)}</span>
                   <span className="text-[9px] font-bold text-slate-400 ml-0.5">/pcs</span>

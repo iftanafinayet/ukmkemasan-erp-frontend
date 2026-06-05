@@ -170,7 +170,7 @@ export default function CustomerPortalHomePage({
                 </p>
               </div>
               {aboutSection.imageUrl && (
-                <div className="relative h-64 md:h-auto order-1 md:order-2 overflow-hidden">
+                <div className="relative h-48 md:h-64 order-1 md:order-2 overflow-hidden">
                   <img
                     src={aboutSection.imageUrl}
                     alt={aboutSection.title || 'About'}
