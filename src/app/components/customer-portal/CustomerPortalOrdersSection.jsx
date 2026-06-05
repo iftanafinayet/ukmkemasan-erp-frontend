@@ -34,7 +34,7 @@ export default function CustomerPortalOrdersSection({
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-6 lg:sticky lg:top-28 lg:self-start">
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
             <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
             <div className="space-y-3">
@@ -73,7 +73,7 @@ export default function CustomerPortalOrdersSection({
           </div>
         </div>
 
-        <div className="lg:col-span-9 space-y-8">
+        <div className="lg:col-span-9 space-y-8 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
           {orders
             .filter(order => {
               if (orderFilter === 'all') return true;
