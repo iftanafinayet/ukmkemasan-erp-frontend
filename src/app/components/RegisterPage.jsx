@@ -93,9 +93,9 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="w-full max-w-[560px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-6 sm:p-8 md:p-12 border border-slate-100/50 backdrop-blur-sm">
-            <div className="text-center mb-10">
+        <div className="w-full max-w-[480px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-6 md:p-8 border border-slate-100/50 backdrop-blur-sm">
+            <div className="text-center mb-6">
               <div className="mb-5 inline-flex items-center justify-center rounded-[1.25rem] border border-slate-200 bg-slate-50/80 px-5 py-4 shadow-sm lg:hidden">
                 <img src={logoUrl} alt="Logo UKM Kemasan" className="h-14 w-auto object-contain" />
               </div>
@@ -112,7 +112,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-6">
+            <form onSubmit={handleRegister} className="space-y-5">
               <div className="space-y-2 group">
                 <label className="block text-sm font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
                   Full Name / Business Name
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                       onChange={handleChange}
                       placeholder="Your name or business name"
                       data-testid="register-name"
-                      className="w-full text-slate-800 p-4 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                      className="w-full text-slate-800 p-3 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
                       required
                     />
                 </div>
@@ -145,7 +145,7 @@ export default function RegisterPage() {
                       onChange={handleChange}
                       placeholder="Enter your business email"
                       data-testid="register-email"
-                      className="w-full text-slate-800 p-4 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                      className="w-full text-slate-800 p-3 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
                       required
                     />
                 </div>
@@ -221,7 +221,7 @@ export default function RegisterPage() {
                         onChange={handleChange}
                         placeholder="Enter your phone number"
                         data-testid="register-phone"
-                        className="w-full text-slate-800 p-4 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
+                        className="w-full text-slate-800 p-3 pl-12 bg-slate-50 border-b-2 border-transparent rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium placeholder:text-slate-300 shadow-sm"
                       />
                 </div>
               </div>
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                     type="submit"
                     disabled={loading}
                     data-testid="register-submit"
-                    className="w-full bg-primary hover:opacity-90 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-primary hover:opacity-90 text-white py-3.5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                   >
                   {loading ? (
                     <>
