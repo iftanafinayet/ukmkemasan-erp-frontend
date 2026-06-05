@@ -203,7 +203,7 @@ export default function CustomerCartSection({
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <button onClick={onClearCart} disabled={cartItems.length === 0} className="flex-1 md:flex-none px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-outline text-secondary font-bold hover:bg-surface-container transition-all active:scale-95 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">Hapus Semua</button>
-                        <button onClick={onCheckout} disabled={cartItems.length === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
+                        <button onClick={onCheckout} disabled={cartItems.length === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
                             {checkingOutCart ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-4 animate-spin" /> : 'Checkout Keranjang'}
                             {!checkingOutCart && <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>}
                         </button>
