@@ -345,7 +345,15 @@ export default function ProductDetailPage() {
                                         )}
                                     </div>
 
-                                    {/* Informasi Produk (directly below images) */}
+                                    {/* Deskripsi */}
+                                    {product.description && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                            <h3 className="text-sm font-bold text-slate-800 mb-3">Deskripsi</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
+                                        </div>
+                                    )}
+
+                                    {/* Informasi Produk */}
                                     <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                         <h3 className="text-sm font-bold text-slate-800 mb-4">Informasi Produk</h3>
                                         <table className="w-full text-sm">
@@ -369,14 +377,6 @@ export default function ProductDetailPage() {
                                             </tbody>
                                         </table>
                                     </div>
-
-                                    {/* Deskripsi */}
-                                    {product.description && (
-                                        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                                            <h3 className="text-sm font-bold text-slate-800 mb-3">Deskripsi</h3>
-                                            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
-                                        </div>
-                                    )}
 
                                     {/* Related Products (inline in left column, below deskripsi) */}
                                     {!isAdmin && relatedProducts.length > 0 && (
