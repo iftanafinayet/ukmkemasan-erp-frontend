@@ -146,7 +146,7 @@ export default function CustomerCartSection({
                                     </div>
                                     <div>
                                         <label className="text-xs font-medium text-slate-500 mb-1 block">Jumlah (pcs)</label>
-                                        <input type="number" value={editQty} onChange={(e) => setEditQty(Number(e.target.value) || 0)} min={editingProduct?.minOrder || 1}
+                                        <input type="number" value={editQty} onChange={(e) => setEditQty(Number(e.target.value) || 0)} min={editingProduct?.minOrder || 1} step={editingProduct?.minOrder || 1}
                                             className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary" />
                                     </div>
                                     {matchedVariant && (
