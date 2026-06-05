@@ -234,7 +234,7 @@ export default function CustomerPortalHomePage({
                   <img
                     alt={product.name}
                     loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                     src={product.images[0].url}
                   />
                 ) : (
