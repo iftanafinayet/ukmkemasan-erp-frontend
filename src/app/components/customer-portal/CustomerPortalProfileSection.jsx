@@ -42,7 +42,7 @@ export default function CustomerPortalProfileSection({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-16 md:mt-16">
         {/* Left Side: Profile Sidebar */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28 lg:self-start">
           <div className="bg-surface-container-low rounded-xl p-6 md:p-8">
             <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-secondary-container mb-6">Navigasi Profil</h2>
             <nav className="space-y-2">
@@ -72,7 +72,7 @@ export default function CustomerPortalProfileSection({
         </div>
 
         {/* Right Side: Content Area */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-8 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
           {/* Edit Profil Section */}
           <section id="edit-profil" className="bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_12px_32px_-4px_rgba(0,106,98,0.05)] border border-outline-variant/10">
              <div className="flex justify-between items-center mb-8">
