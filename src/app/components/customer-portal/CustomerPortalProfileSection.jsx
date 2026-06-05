@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function CustomerPortalProfileSection({
@@ -12,6 +12,11 @@ export default function CustomerPortalProfileSection({
   setProfile,
   user,
 }) {
+  const scrollTo = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Profile Header Editorial */}
@@ -46,14 +51,14 @@ export default function CustomerPortalProfileSection({
           <div className="bg-surface-container-low rounded-xl p-6 md:p-8">
             <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-secondary-container mb-6">Navigasi Profil</h2>
             <nav className="space-y-2">
-              <a href="#edit-profil" className="flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all shadow-md">
+              <button onClick={() => scrollTo('edit-profil')} className="w-full flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all shadow-md">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                 Edit Profil
-              </a>
-              <a href="#ganti-password" className="flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all">
+              </button>
+              <button onClick={() => scrollTo('ganti-password')} className="w-full flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all">
                 <span className="material-symbols-outlined">lock</span>
                 Ganti Password
-              </a>
+              </button>
               <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 text-slate-400 cursor-not-allowed">
                  <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined">notifications</span>
