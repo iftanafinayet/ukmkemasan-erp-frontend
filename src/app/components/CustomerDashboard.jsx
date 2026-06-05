@@ -586,6 +586,7 @@ export default function CustomerDashboard() {
           <SettingsPage
             isAdmin={isAdmin}
             landingContent={landingContent}
+            setLandingContent={setLandingContent}
             onActivityChange={updateActivityField}
             onActivityImageChange={handleLandingActivityImageChange}
             onActivityRemoveImage={handleLandingActivityRemoveImage}
