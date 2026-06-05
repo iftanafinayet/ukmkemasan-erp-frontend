@@ -50,6 +50,7 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
   ];
 
   return (
+    <>
     <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md transition-all duration-300 ease-in-out font-sans">
       <div className="flex justify-between items-center px-4 sm:px-8 h-20 max-w-full mx-auto">
         <div className="flex items-center gap-3">
@@ -133,5 +134,6 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
         onConfirm={confirmLogout}
         onCancel={() => setShowLogoutConfirm(false)}
       />
+    </>
   );
 }
