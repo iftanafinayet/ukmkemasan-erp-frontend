@@ -14,6 +14,7 @@ import LandingContentSettingsSection from '../LandingContentSettingsSection';
 export default function SettingsPage({
   isAdmin,
   landingContent,
+  setLandingContent,
   onActivityChange,
   onActivityImageChange,
   onActivityRemoveImage,
