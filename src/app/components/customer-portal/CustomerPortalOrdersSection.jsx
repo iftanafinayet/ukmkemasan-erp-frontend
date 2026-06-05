@@ -104,7 +104,7 @@ export default function CustomerPortalOrdersSection({
                 <div className="p-6 md:p-8">
                   <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
                     <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-sm border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
-                      {order.product?.images?.[0] ? (
+                      {order.product?.images?.[0]?.url ? (
                         <img src={order.product.images[0].url} alt={order.product.name} className="w-full h-full object-cover" />
                       ) : (
                          <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined">image</span></div>
