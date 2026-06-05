@@ -46,20 +46,20 @@ export default function CustomerPortalProfileSection({
           <div className="bg-surface-container-low rounded-xl p-6 md:p-8">
             <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-secondary-container mb-6">Navigasi Profil</h2>
             <nav className="space-y-2">
-              <a href="#edit-profil" className="flex items-center gap-3 p-3 rounded-lg bg-primary-container text-on-primary-container font-semibold transition-all">
+              <a href="#edit-profil" className="flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all shadow-md">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                 Edit Profil
               </a>
-              <a href="#ganti-password" className="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/50 transition-all">
+              <a href="#ganti-password" className="flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all">
                 <span className="material-symbols-outlined">lock</span>
                 Ganti Password
               </a>
-              <div className="flex items-center justify-between p-3 rounded-lg text-on-surface-variant cursor-not-allowed opacity-50">
+              <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 text-slate-400 cursor-not-allowed">
                  <div className="flex items-center gap-3">
-                   <span className="material-symbols-outlined">notifications</span>
-                   Notifikasi
+                    <span className="material-symbols-outlined">notifications</span>
+                    <span className="font-semibold">Notifikasi</span>
                  </div>
-                 <span className="text-[10px] font-bold bg-surface-container px-2 py-0.5 rounded-md">SOON</span>
+                 <span className="text-[10px] font-bold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-md">SOON</span>
               </div>
             </nav>
           </div>
