@@ -157,7 +157,7 @@ export default function CustomerPortalHomePage({
 
       {/* About Section */}
       {aboutSection.isVisible !== false && (
-        <section className="px-4 md:px-0 pt-12">
+        <section className="px-4 md:px-0 pt-4">
           <div className="bg-surface-container-lowest/95 backdrop-blur-sm rounded-3xl overflow-hidden border border-outline-variant/15 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               <div className="p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
@@ -184,7 +184,7 @@ export default function CustomerPortalHomePage({
       )}
 
       {/* Quick Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 -mt-2 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0 mt-4 pt-4">
         <div className="bg-surface-container-lowest/95 backdrop-blur-sm p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
             <span className="material-symbols-outlined">inventory</span>
@@ -228,58 +228,41 @@ export default function CustomerPortalHomePage({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
           {popularProducts.length > 0 ? popularProducts.map((product, index) => (
-            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group flex flex-col bg-surface-container-lowest/95 backdrop-blur-sm rounded-2xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] hover:translate-y-[-4px] transition-all duration-500 cursor-pointer border border-outline-variant/10">
-              <div className="relative aspect-[4/3] overflow-hidden bg-surface-container/90">
+            <div key={product._id} onClick={() => onViewProduct(product._id)} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-slate-200/60">
+              <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                 {product.images?.[0] ? (
-                  <img
-                    alt={product.name}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                    src={product.images[0].url}
-                  />
+                  <img alt={product.name} loading="lazy" className="w-full h-full object-cover" src={product.images[0].url} />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-on-secondary-container opacity-50">
+                  <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
                     <span className="material-symbols-outlined !text-3xl mb-1">image</span>
                     <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
                   </div>
                 )}
                 {index === 0 && (
                   <div className="absolute top-3 left-3">
-                    <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-on-primary text-[9px] font-bold uppercase tracking-widest rounded-full">Hot</span>
+                    <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest rounded-full">Hot</span>
                   </div>
                 )}
               </div>
-              <div className="p-5 flex flex-col flex-grow">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1 min-w-0 mr-2">
-                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{product.category}</span>
-                    <h3 className="text-xl font-black text-on-surface tracking-tight font-headline line-clamp-1 group-hover:text-primary transition-colors">{product.name}</h3>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-base font-black text-primary block leading-none">
-                      {formatCurrency(product.priceB2B)}
-                    </span>
-                    <span className="text-[9px] font-bold text-on-surface/40 uppercase">/ pcs</span>
+              <div className="p-4">
+                <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-label">{product.category}</span>
+                <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug line-clamp-2">{product.name}</h3>
+                <div className="flex items-center gap-1 mt-3 mb-0">
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 rounded-md text-[9px] font-semibold text-slate-600">
+                    <span className="material-symbols-outlined !text-[12px] opacity-50">layers</span>
+                    {product.material || 'Premium'}
                   </div>
                 </div>
-
-                <div className="space-y-2 mb-5 flex-grow">
-                  <div className="flex flex-wrap gap-1.5">
-                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high/90 rounded-lg text-[10px] font-bold text-on-surface/70">
-                      <span className="material-symbols-outlined !text-xs opacity-50">layers</span>
-                      {product.material || 'Premium Material'}
-                    </div>
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                  <div>
+                    <span className="text-base font-black text-primary">{formatCurrency(product.priceB2B)}</span>
+                    <span className="text-[9px] font-bold text-slate-400 ml-0.5">/pcs</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] text-on-surface/40 font-bold uppercase tracking-tight ml-0.5">
-                    <span className="material-symbols-outlined !text-xs opacity-50">trending_up</span>
+                  <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                    <span className="material-symbols-outlined !text-[14px]">shopping_bag</span>
                     {product.totalSold?.toLocaleString() || 0} terjual
                   </div>
                 </div>
-
-                <button className="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl text-xs active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
-                  <span className="material-symbols-outlined !text-sm">shopping_cart</span>
-                  Pesan Sekarang
-                </button>
               </div>
             </div>
           )) : (
@@ -454,7 +437,7 @@ export default function CustomerPortalHomePage({
               {landingContent?.gallerySectionConfig?.subtitle || 'Koleksi momen kolaborasi dan kegiatan kami dalam mendukung kemajuan UKM di seluruh Indonesia.'}
             </p>
           </div>
-          <button 
+          <button
             onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
             className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-[0.18em] rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/10"
           >
