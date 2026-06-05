@@ -159,9 +159,9 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="space-y-5">
                 {/* Input Group: Email */}
                 <div className="space-y-1.5 group">
-                  <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
-                    Email / Username
-                  </label>
+                    <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
+                      Email / Username
+                    </label>
                   <input
                     type="email"
                     value={email}
@@ -176,7 +176,7 @@ export default function LoginPage() {
                 {/* Input Group: Password */}
                 <div className="space-y-1.5 group relative">
                   <div className="flex justify-between items-center ml-1">
-                    <label className="block text-xs font-bold text-slate-700 group-focus-within:text-primary transition-colors">
+                    <label className="block text-xs text-slate-600 group-focus-within:text-primary transition-colors">
                       Password
                     </label>
                     <Link

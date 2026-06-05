@@ -115,7 +115,7 @@ export default function RegisterPage() {
 
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-1.5 group">
-                <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                   Full Name / Business Name
                 </label>
                 <div className="relative">
@@ -134,7 +134,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-1.5 group">
-                <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                   Email Address
                 </label>
                 <div className="relative">
@@ -154,7 +154,7 @@ export default function RegisterPage() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-1.5 group">
-                  <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                  <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                     Password
                   </label>
                   <div className="relative">
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-1.5 group">
-                  <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                  <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -209,7 +209,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-1.5 group">
-                <label className="block text-xs font-bold text-slate-700 ml-1 group-focus-within:text-primary transition-colors">
+                <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                   Phone Number
                   <span className="ml-2 text-[10px] font-semibold text-slate-400">(Optional)</span>
                 </label>
