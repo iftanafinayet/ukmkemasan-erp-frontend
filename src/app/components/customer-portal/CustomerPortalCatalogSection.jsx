@@ -48,10 +48,10 @@ export default function CustomerPortalCatalogSection({
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all border-2 ${
                 selectedCategory === category
-                  ? 'bg-primary text-on-primary shadow-lg shadow-primary/30 scale-105'
-                  : 'bg-surface-container-low text-on-surface/60 hover:bg-surface-container hover:text-on-surface border border-outline-variant/10'
+                  ? 'border-primary/40 bg-primary/5 text-primary'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-primary/40 hover:text-primary'
               }`}
             >
               {category}
