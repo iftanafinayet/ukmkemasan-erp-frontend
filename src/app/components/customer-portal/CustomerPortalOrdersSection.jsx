@@ -132,7 +132,7 @@ export default function CustomerPortalOrdersSection({
                        ) : isCompleted ? (
                          <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
                        ) : (
-                         <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-colors group-hover:bg-primary group-hover:text-white">Detail Progress</button>
+                         <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold ">Detail Progress</button>
                        )}
                     </div>
                   </div>
