@@ -243,8 +243,8 @@ export default function ProductDetailPage() {
                 ) : (
                     <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
                 )}
-                <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1620px] mx-auto space-y-12"}>
-                    <div className={isAdmin ? "mx-auto max-w-5xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8" : "w-full"}>
+                <main className={isAdmin ? "flex-1 overflow-y-auto overflow-x-hidden" : "flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10"}>
+                    <div className="mx-auto max-w-[1620px] pt-20 pb-8">
                         <div className="mb-4">
                           <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-3">
                             <button onClick={() => navigate(isAdmin ? '/admin' : '/portal?menu=catalog')} className="hover:text-primary transition-colors">Beranda</button>
@@ -298,9 +298,8 @@ export default function ProductDetailPage() {
 
                      {!loading && product && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {/* Z-Pattern: Images + Specs (left column) | Buy Card (right column, sticky) */}
-                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1.3fr_1fr]' : 'lg:grid-cols-[1.3fr_1fr]'}`}>
-                                {/* Left Column: Images → Specs → Deskripsi (stacked, no space gap) */}
+                            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr]">
+                                {/* Left Column: scrollable */}
                                 <div className="space-y-6">
                                     {/* Images */}
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -407,7 +406,7 @@ export default function ProductDetailPage() {
                                 {/* Right Column: Sticky Buy Card */}
                                 {!isAdmin && (
                                 <div>
-                                    <div className="sticky top-28 space-y-4">
+                                    <div className="space-y-4">
                                         <div className="rounded-2xl border border-slate-200 bg-white p-5">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-md">{product.category}</span>
