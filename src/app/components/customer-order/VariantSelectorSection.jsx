@@ -31,10 +31,6 @@ export default function VariantSelectorSection({
                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">{title}</h3>
                     <p className="mt-2 text-sm font-medium text-slate-500">{description}</p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 px-4 py-3 text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Aktif</p>
-                    <p className="mt-1 text-sm font-black text-slate-800">{activeVariantLabel}</p>
-                </div>
             </div>
 
             <div className="space-y-6">
