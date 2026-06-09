@@ -298,10 +298,9 @@ export default function ProductDetailPage() {
 
                      {!loading && product && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {/* Z-Pattern: Images + Specs (left column) | Buy Card (right column, sticky) */}
-                            <div className={`grid grid-cols-1 gap-8 ${isAdmin ? 'lg:grid-cols-[1.3fr_1fr]' : 'lg:grid-cols-[1.3fr_1fr]'}`}>
-                                {/* Left Column: Images → Specs → Deskripsi (stacked, no space gap) */}
-                                <div className="space-y-6">
+                            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr]">
+                                {/* Left Column: scrollable */}
+                                <div className="lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-4 space-y-6 scrollbar-thin">
                                     {/* Images */}
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                         {product.images?.length > 0 ? (
