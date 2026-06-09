@@ -300,7 +300,7 @@ export default function ProductDetailPage() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr]">
                                 {/* Left Column: scrollable */}
-                                <div className="lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-4 space-y-6 scrollbar-thin">
+                                <div className="lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-4 space-y-6 scrollbar-thin">
                                     {/* Images */}
                                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                         {product.images?.length > 0 ? (
