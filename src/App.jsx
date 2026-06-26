@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import AuthWrapper from './app/components/AuthWrapper';
 import SplashScreen from './app/components/SplashScreen';
 import { storage } from './app/config/environment';
+import { Toaster, toast } from 'sonner';
 
 const LoginPage = lazy(() => import('./app/components/LoginPage'));
 const RegisterPage = lazy(() => import('./app/components/RegisterPage'));
