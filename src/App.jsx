@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import AuthWrapper from './app/components/AuthWrapper';
 import SplashScreen from './app/components/SplashScreen';
 import { storage } from './app/config/environment';
-import { Toaster, toast } from 'sonner';
 
 const LoginPage = lazy(() => import('./app/components/LoginPage'));
 const RegisterPage = lazy(() => import('./app/components/RegisterPage'));
@@ -68,7 +67,7 @@ function AppRoutes() {
   if (location.pathname !== prevPath) {
     const isAuth = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, location.pathname);
     const wasAuth = Object.prototype.hasOwnProperty.call(AUTH_ROUTE_ORDER, prevPath);
-    
+
     if (isAuth) {
       const currentAuthIndex = AUTH_ROUTE_ORDER[location.pathname];
       const previousAuthIndexValue = wasAuth ? AUTH_ROUTE_ORDER[prevPath] : 0;
@@ -108,84 +107,84 @@ function AppRoutes() {
     <>
       <ScrollToTop />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Loading Page...</p>
-      </div>
-    </div>}>
-      <Routes location={location}>
-        {/* Rute publik */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Loading Page...</p>
+        </div>
+      </div>}>
+        <Routes location={location}>
+          {/* Rute publik */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        {/* Admin Dashboard — khusus admin */}
-        <Route
-          path="/admin"
-          element={
-            <AuthWrapper adminOnly>
-              <CustomerDashboard />
-            </AuthWrapper>
-          }
-        />
+          {/* Admin Dashboard — khusus admin */}
+          <Route
+            path="/admin"
+            element={
+              <AuthWrapper adminOnly>
+                <CustomerDashboard />
+              </AuthWrapper>
+            }
+          />
 
-        {/* Admin Product Detail */}
-        <Route
-          path="/admin/products/:id"
-          element={
-            <AuthWrapper adminOnly>
-              <ProductDetailPage />
-            </AuthWrapper>
-          }
-        />
+          {/* Admin Product Detail */}
+          <Route
+            path="/admin/products/:id"
+            element={
+              <AuthWrapper adminOnly>
+                <ProductDetailPage />
+              </AuthWrapper>
+            }
+          />
 
-        {/* Customer Create Order */}
-        <Route
-          path="/portal/orders/create"
-          element={
-            <AuthWrapper>
-              <CreateOrderPage />
-            </AuthWrapper>
-          }
-        />
+          {/* Customer Create Order */}
+          <Route
+            path="/portal/orders/create"
+            element={
+              <AuthWrapper>
+                <CreateOrderPage />
+              </AuthWrapper>
+            }
+          />
 
-        <Route
-          path="/portal/orders/:id/payment"
-          element={
-            <AuthWrapper>
-              <CustomerPaymentPage />
-            </AuthWrapper>
-          }
-        />
+          <Route
+            path="/portal/orders/:id/payment"
+            element={
+              <AuthWrapper>
+                <CustomerPaymentPage />
+              </AuthWrapper>
+            }
+          />
 
-        {/* Customer Portal — khusus customer */}
-        <Route
-          path="/portal"
-          element={<CustomerPortal />}
-        />
+          {/* Customer Portal — khusus customer */}
+          <Route
+            path="/portal"
+            element={<CustomerPortal />}
+          />
 
-        {/* Customer Product Detail */}
-         <Route
-           path="/portal/products/:id"
-           element={<ProductDetailPage />}
-         />
+          {/* Customer Product Detail */}
+          <Route
+            path="/portal/products/:id"
+            element={<ProductDetailPage />}
+          />
 
-         {/* Customer Article Detail */}
-         <Route
-           path="/portal/articles/:id"
-           element={<CustomerPortalArticleDetail />}
-         />
+          {/* Customer Article Detail */}
+          <Route
+            path="/portal/articles/:id"
+            element={<CustomerPortalArticleDetail />}
+          />
 
-         {/* Legacy /dashboard redirect berdasarkan role */}
-        <Route
-          path="/dashboard"
-          element={<RoleRedirect />}
-        />
+          {/* Legacy /dashboard redirect berdasarkan role */}
+          <Route
+            path="/dashboard"
+            element={<RoleRedirect />}
+          />
 
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/portal" replace />} />
-        <Route path="*" element={<Navigate to="/portal" replace />} />
-      </Routes>
-    </Suspense>
+          {/* Default redirect */}
+          <Route path="/" element={<Navigate to="/portal" replace />} />
+          <Route path="*" element={<Navigate to="/portal" replace />} />
+        </Routes>
+      </Suspense>
     </>
   );
 
