@@ -94,26 +94,26 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="w-full max-w-[480px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="bg-white rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-6 md:p-8 border border-slate-100/50 backdrop-blur-sm">
-            <div className="text-center mb-4">
-              <div className="mb-3 inline-flex items-center justify-center rounded-[1.25rem] border border-slate-200 bg-slate-50/80 px-4 py-3 shadow-sm lg:hidden">
-                <img src={logoUrl} alt="Logo UKM Kemasan" className="h-10 w-auto object-contain" />
+        <div className="w-full max-w-[440px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-white rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] p-5 md:p-8 border border-slate-100/50 backdrop-blur-sm">
+            <div className="text-center mb-3">
+              <div className="mb-2 inline-flex items-center justify-center rounded-[1.125rem] border border-slate-200 bg-slate-50/80 px-4 py-2.5 shadow-sm lg:hidden">
+                <img src={logoUrl} alt="Logo UKM Kemasan" className="h-9 w-auto object-contain" />
               </div>
-              <h3 className="text-2xl font-black text-slate-800 tracking-tight">Create Account</h3>
+              <h3 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Create Account</h3>
               <div className="mt-1 text-slate-500 font-medium text-xs">
                 Start your UKM Kemasan ERP customer access
               </div>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-4">
+              <div className="mb-3 p-3 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-4">
                 <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
                 <p className="text-red-700 text-xs font-semibold leading-relaxed">{error}</p>
               </div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3.5">
               <div className="space-y-1.5 group">
                 <label className="block text-xs text-slate-600 ml-1 group-focus-within:text-primary transition-colors">
                   Full Name / Business Name
@@ -245,7 +245,7 @@ export default function RegisterPage() {
                 </label>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   type="submit"
                   disabled={loading || !agree}
@@ -264,33 +264,33 @@ export default function RegisterPage() {
               </div>
             </form>
 
-            <div className="mt-10 text-center">
-              <p className="text-center mt-8 text-slate-500 text-sm font-bold">
+            <div className="mt-6 text-center">
+              <p className="text-slate-500 text-xs font-bold">
                 Sudah punya akun?{' '}
                 <Link to="/login" className="text-[#4dbace] hover:text-[#3da0b5] transition-colors">
                   Sign In
                 </Link>
               </p>
 
-              <div className="relative flex items-center gap-4 py-6 lg:hidden">
+              <div className="relative flex items-center gap-3 py-4 lg:hidden">
                 <div className="flex-1 h-px bg-slate-200"></div>
-                <span className="text-[10px] font-black text-slate-400 uppercase">ATAU</span>
+                <span className="text-[9px] font-black text-slate-400 uppercase">ATAU</span>
                 <div className="flex-1 h-px bg-slate-200"></div>
               </div>
 
               <button
                 onClick={() => navigate('/portal')}
-                className="w-full lg:hidden bg-slate-50 border-2 border-slate-100 text-slate-600 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-all"
+                className="w-full lg:hidden bg-slate-50 border border-slate-100 text-slate-600 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-all"
               >
                 Masuk Sebagai Tamu
               </button>
             </div>
           </div>
 
-          <div className="mt-12 text-center space-y-3">
+          <div className="mt-8 text-center space-y-2">
             <div className="flex items-center justify-center gap-1.5 opacity-30">
               <div className="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-              <div className="w-8 h-1 bg-slate-200 rounded-full"></div>
+              <div className="w-6 h-0.5 bg-slate-200 rounded-full"></div>
               <div className="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
             </div>
           </div>
