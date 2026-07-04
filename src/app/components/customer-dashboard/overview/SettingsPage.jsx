@@ -9,7 +9,7 @@ import {
   Save,
 } from 'lucide-react';
 import { InputField } from '../shared';
-import LandingContentSettingsSection from '../LandingContentSettingsSection';
+import LandingContentSettingsSection from './LandingContentSettingsSection';
 
 export default function SettingsPage({
   isAdmin,
