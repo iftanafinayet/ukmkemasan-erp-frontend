@@ -1,11 +1,7 @@
 import { formatCurrency, formatDate, formatDateTime } from '../../utils/formatters';
+import { toNumber } from '../../utils/helpers';
 
-export { formatCurrency, formatDate, formatDateTime };
-
-export const toNumber = (value) => {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : 0;
-};
+export { formatCurrency, formatDate, formatDateTime, toNumber };
 
 const getOrderTimestamp = (order) => {
   const orderDate = order?.createdAt || order?.orderDate || order?.updatedAt;
