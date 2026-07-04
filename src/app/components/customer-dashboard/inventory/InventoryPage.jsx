@@ -13,11 +13,11 @@ import { getInventoryPagination } from '../utils';
 import { EmptyState, SearchBar } from '../shared';
 import { exportToFile } from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
-import { Skeleton, SkeletonCircle } from '../../ui/skeleton';
+import { Skeleton, SkeletonCircle } from '../../ui/Skeleton';
 import {
   downloadProductImportTemplate,
   exportProductsToCsv,
-} from '../phase2-utils';
+} from '../../../utils/phase2';
 
 export default function InventoryPage({
   filteredProducts,

@@ -1,6 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { storage } from '../../../config/environment';
 
 export default function MobileBottomNav({ activeMenu, onMenuChange, inquiryBadge = 0 }) {
+  const navigate = useNavigate();
+
+  const handleClick = (id) => {
+    if (id === 'inquiries' && !storage.getToken()) {
+      navigate('/login?redirect=/portal?menu=inquiries');
+      return;
+    }
+    onMenuChange(id);
+  };
   const items = [
     { id: 'dashboard', label: 'Beranda', icon: 'home' },
     { id: 'catalog', label: 'Katalog', icon: 'grid_view' },
@@ -14,7 +25,7 @@ export default function MobileBottomNav({ activeMenu, onMenuChange, inquiryBadge
       {items.map((item) => (
         <button
           key={item.id}
-          onClick={() => onMenuChange(item.id)}
+          onClick={() => handleClick(item.id)}
           className={`flex flex-col items-center justify-center flex-1 relative ${activeMenu === item.id ? 'text-[#4dbace]' : 'text-[#3c4947]'
             }`}
         >

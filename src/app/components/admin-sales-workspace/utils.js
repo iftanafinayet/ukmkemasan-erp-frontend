@@ -9,11 +9,6 @@ export const SALES_ORDER_STATUSES = [
   'Completed',
 ];
 
-export const toNumber = (value) => {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : 0;
-};
-
 export const getTodayInput = () => new Date().toISOString().slice(0, 10);
 
 export const getFutureDateInput = (days) => {

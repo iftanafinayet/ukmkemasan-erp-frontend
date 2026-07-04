@@ -24,7 +24,7 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Base styling agar background abu-abu terang muncul */
+/* Base styling & focus-visible */
 @layer base {
   html {
     min-height: 100%;
@@ -36,6 +36,26 @@
 
   body {
     @apply min-h-screen bg-gray-50 text-slate-900 antialiased overflow-x-hidden;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

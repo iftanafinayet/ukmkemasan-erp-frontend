@@ -145,7 +145,7 @@ export default function LoginPage() {
                   <img src={logoUrl} alt="Logo UKM Kemasan" className="h-10 w-auto object-contain" />
                 </div>
                 <h3 className="text-2xl font-black text-slate-800 tracking-tight">Sign In</h3>
-                <div className="mt-1 text-slate-400 font-medium text-xs">Welcome back to UKM Kemasan ERP</div>
+                <div className="mt-1 text-slate-500 font-medium text-xs">Welcome back to UKM Kemasan ERP</div>
               </div>
 
               {/* Error Message */}

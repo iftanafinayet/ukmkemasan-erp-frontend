@@ -67,7 +67,7 @@ export default function CustomerCartSection({
         <div className="space-y-12 animate-in fade-in duration-500 pb-32">
             <header className="mb-12">
                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2 font-headline">Keranjang Belanja</h1>
-                <p className="text-on-secondary-container font-medium opacity-80 font-body">Review pesanan Anda sebelum memproses ke pembayaran.</p>
+                <p className="text-on-secondary-container font-medium font-body">Review pesanan Anda sebelum memproses ke pembayaran.</p>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -121,7 +121,7 @@ export default function CustomerCartSection({
                                     </div>
                                     {editingProduct && (
                                         <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
-                                            {editingProduct.images?.[0] && <img src={editingProduct.images[0].url} alt="" className="w-12 h-12 rounded-lg object-cover" />}
+                                            {editingProduct.images?.[0] && <img src={editingProduct.images[0].url} alt={editingProduct.name} className="w-12 h-12 rounded-lg object-cover" />}
                                             <div>
                                                 <p className="text-sm font-bold text-slate-800">{editingProduct.name}</p>
                                                 <p className="text-xs text-slate-400">{editingProduct.category}</p>

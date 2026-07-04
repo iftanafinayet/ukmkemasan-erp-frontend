@@ -1,5 +1,5 @@
 import { AlertCircle, ChevronDown, Loader2, Search, X } from 'lucide-react';
-import { Skeleton, SkeletonCircle } from '../ui/skeleton';
+import { Skeleton, SkeletonCircle } from '../ui/Skeleton';
 
 const STAT_CARD_STYLES = {
   blue: {

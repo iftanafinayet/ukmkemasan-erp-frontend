@@ -10,7 +10,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { toNumber } from '../utils';
-import { filterStockCardRows } from '../phase2-utils';
+import { filterStockCardRows } from '../../../utils/phase2';
 
 export default function StockCardPage({
   formatDate,
@@ -184,7 +184,7 @@ export default function StockCardPage({
                 <tbody className="divide-y divide-slate-100">
                   {!stockCardProductId && (
                     <tr>
-                      <td className="px-6 py-20 text-center italic uppercase text-[10px] font-black tracking-[0.22em] text-slate-300" colSpan={7}>
+                      <td className="px-6 py-20 text-center italic uppercase text-[10px] font-black tracking-[0.22em] text-slate-500" colSpan={7}>
                         Silakan pilih produk untuk melihat histori mutasi stok.
                       </td>
                     </tr>

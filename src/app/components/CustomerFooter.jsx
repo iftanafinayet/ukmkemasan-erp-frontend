@@ -77,7 +77,7 @@ export default function CustomerFooter() {
     <footer className="border-t border-outline-variant/15 bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-8 md:px-8">
         <div className="overflow-hidden rounded-[2rem] border border-outline-variant/10 bg-surface-container-lowest shadow-[0_20px_60px_-40px_rgba(0,106,98,0.35)]">
-          <div className="border-b border-outline-variant/10 bg-gradient-to-r from-primary/[0.08] via-transparent to-primary/[0.03] px-6 py-8 md:px-10">
+          <div className="border-b border-outline-variant/10 bg-gradient-to-r from-primary/[0.08] via-transparent to-primary/[0.03] px-6 pt-8 pb-14 md:px-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl space-y-4">
                 <span className="inline-flex items-center rounded-full border border-primary/10 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-primary">
@@ -129,11 +129,11 @@ export default function CustomerFooter() {
           <div className="grid gap-12 px-6 py-12 md:grid-cols-[1.2fr_0.9fr_0.9fr] md:px-10">
             <div className="space-y-5">
               <div className="space-y-2">
-                <p className="text-xs font-black uppercase tracking-[0.22em] text-on-surface/40">
+                <p className="text-xs font-black tracking-[0.22em] text-on-surface/40">
                   Tentang Layanan
                 </p>
                 <p className="max-w-xl text-sm leading-relaxed text-on-surface-variant">
-                  Solusi pembuatan kemasan praktis dan berkualitas untuk membantu produk lokal tampil lebih profesional dan siap bersaing.
+                  Dari konsultasi hingga produksi, kami siap mendukung kebutuhan kemasan bisnis Anda.
                 </p>
               </div>
 
@@ -156,7 +156,7 @@ export default function CustomerFooter() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-headline text-sm font-black uppercase tracking-[0.2em] text-on-surface">
+              <h4 className="font-headline text-sm font-black tracking-[0.2em] text-on-surface">
                 Produk
               </h4>
               <div className="space-y-3">
@@ -169,7 +169,7 @@ export default function CustomerFooter() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-headline text-sm font-black uppercase tracking-[0.2em] text-on-surface">
+              <h4 className="font-headline text-sm font-black tracking-[0.2em] text-on-surface">
                 Perusahaan
               </h4>
               <div className="space-y-3">
@@ -187,7 +187,7 @@ export default function CustomerFooter() {
               © {currentYear} UKM Kemasan. Semua hak dilindungi.
             </p>
 
-            <div className="flex flex-wrap items-center gap-5 text-on-surface-variant">
+            <div className="flex flex-wrap items-center gap-5 text-on-surface-variant md:pr-4">
               <Link to="/portal" className="transition-colors hover:text-primary">Privasi</Link>
               <Link to="/portal" className="transition-colors hover:text-primary">Syarat</Link>
               <Link to="/portal" className="transition-colors hover:text-primary">Sitemap</Link>

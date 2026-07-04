@@ -1,6 +1,6 @@
 import { CalendarDays, Camera, ImagePlus, Newspaper, Plus, Save, Trash2 } from 'lucide-react';
-import { FormInput } from './shared';
-import { ACTIVITY_ACCENT_OPTIONS } from '../../utils/landingContent';
+import { FormInput } from '../shared';
+import { ACTIVITY_ACCENT_OPTIONS } from '../../../utils/landingContent';
 
 function TextAreaField({ label, onChange, placeholder = '', rows = 4, value }) {
   return (
