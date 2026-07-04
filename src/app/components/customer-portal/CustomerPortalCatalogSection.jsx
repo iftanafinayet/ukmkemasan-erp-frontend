@@ -96,9 +96,9 @@ export default function CustomerPortalCatalogSection({
               <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
                 <div>
                   <span className="text-base font-black text-primary">{formatCurrency(catalog.priceB2B)}</span>
-                  <span className="text-[9px] font-bold text-slate-400 ml-0.5">/pcs</span>
+                  <span className="text-[9px] font-bold text-slate-500 ml-0.5">/pcs</span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
                   <span className="material-symbols-outlined !text-[14px]">inventory_2</span>
                   {catalog.stockPolos?.toLocaleString() || 0} stok
                 </div>
