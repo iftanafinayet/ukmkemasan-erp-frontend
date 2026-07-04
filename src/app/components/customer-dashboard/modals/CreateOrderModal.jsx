@@ -3,7 +3,7 @@ import { Loader2, ShieldCheck } from 'lucide-react';
 import { FormInput, ModalWrapper } from '../shared';
 import SimplePricingSummary from '../../SimplePricingSummary';
 import { buildCatalogGroups } from '../../../utils/catalog';
-import { buildOrderPreview } from '../phase2-utils';
+import { buildOrderPreview } from '../../../utils/phase2';
 
 const VariantChip = ({ disabled, label, onClick, selected }) => (
   <button

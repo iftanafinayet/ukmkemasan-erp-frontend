@@ -1,7 +1,7 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 import { ModalWrapper, InfoBlock } from '../customer-dashboard/shared';
-import { normalizePaymentHistory, printInvoicePdf } from '../customer-dashboard/phase2-utils';
+import { normalizePaymentHistory, printInvoicePdf } from '../../utils/phase2';
  
 const ORDER_STEPS = ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping', 'Completed'];
 

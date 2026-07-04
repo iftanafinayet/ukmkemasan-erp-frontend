@@ -20,7 +20,7 @@ import {
   YAxis,
 } from 'recharts';
 import { StatCard, EmptyState } from '../shared';
-import { buildDashboardNotifications } from '../phase2-utils';
+import { buildDashboardNotifications } from '../../../utils/phase2';
 import { toNumber } from '../utils';
 
 function ReportTooltip({ active, payload, label, formatCurrency }) {

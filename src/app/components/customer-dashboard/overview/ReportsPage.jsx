@@ -23,7 +23,7 @@ import {
 import { REPORT_CHART_COLORS } from '../constants';
 import { EmptyState } from '../shared';
 import ReportTooltip from './ReportTooltip';
-import { buildReportCharts } from '../phase2-utils';
+import { buildReportCharts } from '../../../utils/phase2';
 import { toNumber } from '../utils';
 
 export default function ReportsPage({

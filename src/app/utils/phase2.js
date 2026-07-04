@@ -1,4 +1,4 @@
-import { toNumber } from './utils';
+import { toNumber } from './helpers';
 
 const PRODUCT_IMPORT_HEADERS = [
   'name',

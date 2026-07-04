@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ClipboardCheck, PackageSearch, Save, Search } from 'lucide-react';
-import { getStockOpnameVariance } from '../phase2-utils';
+import { getStockOpnameVariance } from '../../../utils/phase2';
 
 export default function StockOpnamePage({
   formatDateTime,
