@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../../../utils/formatters';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
-import { Carousel, CarouselContent, CarouselItem } from '../../ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from '../../ui/Carousel';
 
 export default function MobileHomePage({
   stats,
@@ -166,7 +166,7 @@ export default function MobileHomePage({
               <div
                 key={product._id}
                 onClick={() => onViewProduct(product._id)}
-                className="min-w-[140px] max-w-[140px] bg-white rounded-lg border border-[#bbc9c7]/30 overflow-hidden shadow-sm"
+                className="min-w-[140px] max-w-[140px] bg-white rounded-lg border border-[#bbc9c7]/30 overflow-hidden shadow-sm cursor-pointer"
               >
                 <img
                   className="w-full aspect-square object-cover"
@@ -227,7 +227,7 @@ export default function MobileHomePage({
                   <CarouselItem className="pl-0 basis-full">
                     <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#4dbace] flex flex-col items-center justify-center text-white/40 space-y-3 border border-[#bbc9c7]/20">
                       <span className="material-symbols-outlined text-5xl">gallery_thumbnail</span>
-                      <p className="font-bold text-[9px] text-white/30 uppercase tracking-widest">Belum ada foto galeri</p>
+                      <p className="font-bold text-[9px] text-white/60 uppercase tracking-widest">Belum ada foto galeri</p>
                     </div>
                   </CarouselItem>
                 )}

@@ -101,7 +101,7 @@ export default function RegisterPage() {
                 <img src={logoUrl} alt="Logo UKM Kemasan" className="h-10 w-auto object-contain" />
               </div>
               <h3 className="text-2xl font-black text-slate-800 tracking-tight">Create Account</h3>
-              <div className="mt-1 text-slate-400 font-medium text-xs">
+              <div className="mt-1 text-slate-500 font-medium text-xs">
                 Start your UKM Kemasan ERP customer access
               </div>
             </div>

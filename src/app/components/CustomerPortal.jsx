@@ -25,7 +25,7 @@ import MobileProfilePage from './customer-portal/mobile/MobileProfilePage';
 import MobileCartPage from './customer-portal/mobile/MobileCartPage';
 import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/Carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters';
@@ -626,7 +626,7 @@ export default function CustomerPortal() {
           onToggleFilter={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
           hasActiveFilters={hasActiveFilters}
         />
-        <main className="pt-[52px] pb-[56px] flex-1">
+        <main className="pt-[56px] pb-[56px] flex-1">
           {renderMobilePage()}
         </main>
         <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
