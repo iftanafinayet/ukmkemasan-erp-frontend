@@ -25,7 +25,7 @@ import MobileProfilePage from './customer-portal/mobile/MobileProfilePage';
 import MobileCartPage from './customer-portal/mobile/MobileCartPage';
 import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/Carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters';
@@ -344,6 +344,10 @@ export default function CustomerPortal() {
   };
 
   const handleNavigateToInquiries = () => {
+    if (!storage.getToken()) {
+      navigate('/login?redirect=/portal?menu=inquiries');
+      return;
+    }
     const isDesktop = window.innerWidth >= 1024;
     if (isDesktop) {
       setChatOpen(true);
@@ -416,6 +420,28 @@ export default function CustomerPortal() {
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
   const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+
+  const renderInquiries = () => {
+    if (!storage.getToken()) {
+      return (
+        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
+            <MessageSquare size={40} />
+          </div>
+          <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
+          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengirim pesan ke admin.</p>
+          <button
+            onClick={() => navigate('/login?redirect=/portal?menu=inquiries')}
+            data-testid="portal-inquiries-login-btn"
+            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            Masuk Sekarang
+          </button>
+        </div>
+      );
+    }
+    return <CustomerInquiriesSection />;
+  };
 
   const renderCart = () => (
     <CustomerCartSection
@@ -580,6 +606,8 @@ export default function CustomerPortal() {
         return renderOrders();
       case 'cart':
         return renderCart();
+      case 'inquiries':
+        return renderInquiries();
       case 'profile':
       case 'settings':
         return renderProfile();
@@ -606,7 +634,7 @@ export default function CustomerPortal() {
         />
         <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
         <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
-          {!['dashboard', 'catalog', 'orders'].includes(activeMenu) && (
+          {!['dashboard', 'catalog', 'orders', 'inquiries'].includes(activeMenu) && (
             <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
             </header>
           )}
@@ -626,7 +654,7 @@ export default function CustomerPortal() {
           onToggleFilter={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
           hasActiveFilters={hasActiveFilters}
         />
-        <main className="pt-[52px] pb-[56px] flex-1">
+        <main className="pt-[56px] pb-[56px] flex-1">
           {renderMobilePage()}
         </main>
         <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />

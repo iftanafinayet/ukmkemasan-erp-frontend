@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import api from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
 import { normalizeStockCardRows } from '../utils';
-import { getStockOpnameVariance } from '../phase2-utils';
+import { getStockOpnameVariance } from '../../../utils/phase2';
 
 const EMPTY_WAREHOUSE_FORM = {
   name: '',

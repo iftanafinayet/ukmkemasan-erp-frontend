@@ -8,7 +8,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "../ui/carousel";
+} from "../ui/Carousel";
 
 import { formatCurrency } from '../../utils/formatters';
 
@@ -250,9 +250,9 @@ export default function CustomerPortalHomePage({
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
                   <div>
                     <span className="text-base font-black text-primary">{formatCurrency(product.priceB2B)}</span>
-                    <span className="text-[9px] font-bold text-slate-400 ml-0.5">/pcs</span>
+                    <span className="text-[9px] font-bold text-slate-500 ml-0.5">/pcs</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
                     <span className="material-symbols-outlined !text-[14px]">shopping_bag</span>
                     {product.totalSold?.toLocaleString() || 0} terjual
                   </div>
@@ -377,7 +377,7 @@ export default function CustomerPortalHomePage({
             <div
               key={idx}
               onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
-              className="group space-y-6 cursor-pointer text-center transition-all duration-300 hover:scale-105"
+              className="group space-y-6 cursor-pointer text-center transition-all duration-300"
             >
               <div className="aspect-square overflow-hidden rounded-[2rem] bg-surface-container/90 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
                 <img

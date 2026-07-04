@@ -54,7 +54,7 @@ export default function MobileCartPage({
                 {cartItems.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <div className="w-24 h-24 bg-[#eaedff] rounded-full flex items-center justify-center mb-6">
-                          <span className="material-symbols-outlined text-[#bbc9c7] text-5xl">shopping_cart</span>
+                          <span className="material-symbols-outlined text-[#6c7a77] text-5xl">shopping_cart</span>
                         </div>
                         <p className="text-[#131b2e] font-bold text-lg mb-2">Keranjang Anda Kosong</p>
                         <p className="text-[#6c7a77] text-sm mb-8">Yuk, cari produk kemasan terbaik untuk bisnis Anda!</p>
@@ -74,7 +74,7 @@ export default function MobileCartPage({
                                         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center">
-                                            <span className="material-symbols-outlined text-[#bbc9c7]">image</span>
+                                            <span className="material-symbols-outlined text-[#6c7a77]">image</span>
                                         </div>
                                     )}
                                 </div>

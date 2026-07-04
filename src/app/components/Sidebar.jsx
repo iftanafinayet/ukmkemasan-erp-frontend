@@ -150,7 +150,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
                     <button
                       onClick={() => handleMenuClick(item)}
                       data-testid={`menu-item-${item.id}`}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
                         isParentActive && !hasChildren
                           ? 'bg-slate-100 text-primary font-bold'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
@@ -184,7 +184,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
                             <button
                               onClick={(e) => handleSubMenuClick(e, sub.id)}
                               data-testid={`menu-item-${sub.id}`}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${
+                              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
                                 activeMenu === sub.id
                                   ? 'text-primary font-black bg-primary/5'
                                   : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 font-medium'
@@ -206,7 +206,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
              <button
                onClick={handleLogout}
                data-testid="logout-btn"
-               className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-sm"
+               className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
              >
               <LogOut className="w-5 h-5" />
               <span>Keluar Sistem</span>

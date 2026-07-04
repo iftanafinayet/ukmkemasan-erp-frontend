@@ -1,5 +1,6 @@
 import { Field, ModalWrapper, SubmitButton, SummaryLine } from './shared';
-import { getInvoiceOutstanding, PAYMENT_METHODS, toNumber } from './utils';
+import { getInvoiceOutstanding, PAYMENT_METHODS } from './utils';
+import { toNumber } from '../customer-dashboard/utils';
 
 export function InvoiceModal({
   eligibleOrdersForInvoice,

@@ -18,8 +18,8 @@ import {
   getFutureDateInput,
   getInvoiceOutstanding,
   getTodayInput,
-  toNumber,
 } from './admin-sales-workspace/utils';
+import { toNumber } from './customer-dashboard/utils';
 
 export default function AdminSalesWorkspace({
   activeMenu,

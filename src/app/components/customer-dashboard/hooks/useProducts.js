@@ -5,7 +5,7 @@ import { ENDPOINTS } from '../../../config/environment';
 import {
   parseProductImportCsv,
   validateImportedProducts,
-} from '../phase2-utils';
+} from '../../../utils/phase2';
 
 const EMPTY_PRODUCT_FORM = {
   name: '',

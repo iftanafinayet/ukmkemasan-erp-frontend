@@ -93,7 +93,7 @@ export default function MobileCatalogPage({
                 
                 <div className="space-y-1 mb-2.5 flex-grow">
                   <div className="text-[14px] font-black text-[#4dbace] flex items-baseline gap-0.5">
-                    {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-[#3c4947]/40 uppercase tracking-tighter">/ pcs</span>
+                    {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-[#3c4947]/70 uppercase tracking-tighter">/ pcs</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">

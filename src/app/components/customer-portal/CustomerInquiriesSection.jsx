@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MessageSquare, Send, Plus, X, Loader2, CheckCheck, Clock, ChevronRight } from 'lucide-react';
+import { MessageSquare, Send, Plus, X, Loader2, CheckCheck, Clock, ChevronRight, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { ENDPOINTS, storage } from '../../config/environment';
 import useSocket from '../../hooks/useSocket';
@@ -8,6 +9,7 @@ import { formatDateTime } from '../../utils/formatters';
 
 export default function CustomerInquiriesSection({ prefillProduct }) {
   const user = storage.getUser();
+  const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConv, setSelectedConv] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -176,6 +178,24 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
     Replied: 'bg-blue-100 text-blue-700 border-blue-200',
     Closed: 'bg-slate-100 text-slate-500 border-slate-200',
   }[status] || 'bg-slate-100 text-slate-500');
+
+  if (!storage.getToken()) {
+    return (
+      <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+        <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
+          <LogIn size={40} />
+        </div>
+        <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
+        <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengirim pesan ke admin.</p>
+        <button
+          onClick={() => navigate('/login?redirect=/portal?menu=inquiries')}
+          className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+        >
+          Masuk Sekarang
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

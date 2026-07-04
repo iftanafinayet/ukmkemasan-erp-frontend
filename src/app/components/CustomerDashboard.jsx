@@ -12,35 +12,27 @@ import {
   PRODUCT_CATEGORIES,
 } from './customer-dashboard/constants';
 import AdminInboxPage from './customer-dashboard/inquiries/AdminInboxPage';
-import {
-  InventoryAdjustmentPage,
-  InventoryPage,
-  ItemCategoriesPage,
-  StockOpnamePage,
-  WarehousePage,
-} from './customer-dashboard/inventory-sections';
-import {
-  ProductModal,
-  WarehouseModal,
-} from './customer-dashboard/inventory-modals';
-import {
-  CreateOrderModal,
-  OrderDetailModal,
-} from './customer-dashboard/order-modals';
-import {
-  CustomersPage,
-  DashboardPage,
-  OrdersPage,
-  ReportsPage,
-  SettingsPage,
-} from './customer-dashboard/overview-sections';
+import InventoryAdjustmentPage from './customer-dashboard/inventory/InventoryAdjustmentPage';
+import InventoryPage from './customer-dashboard/inventory/InventoryPage';
+import ItemCategoriesPage from './customer-dashboard/inventory/ItemCategoriesPage';
+import StockOpnamePage from './customer-dashboard/inventory/StockOpnamePage';
+import WarehousePage from './customer-dashboard/inventory/WarehousePage';
+import ProductModal from './customer-dashboard/modals/ProductModal';
+import WarehouseModal from './customer-dashboard/modals/WarehouseModal';
+import CreateOrderModal from './customer-dashboard/modals/CreateOrderModal';
+import OrderDetailModal from './customer-dashboard/modals/OrderDetailModal';
+import CustomersPage from './customer-dashboard/overview/CustomersPage';
+import DashboardPage from './customer-dashboard/overview/DashboardPage';
+import OrdersPage from './customer-dashboard/overview/OrdersPage';
+import ReportsPage from './customer-dashboard/overview/ReportsPage';
+import SettingsPage from './customer-dashboard/overview/SettingsPage';
+import StockCardPage from './customer-dashboard/inventory/StockCardPage';
 import {
   DashboardSkeleton,
   EmptyState,
   LoadingState,
   TableSkeleton,
 } from './customer-dashboard/shared';
-import { StockCardPage } from './customer-dashboard/stock-sections';
 import {
   formatCurrency,
   formatDate,
@@ -641,7 +633,7 @@ export default function CustomerDashboard() {
             <button
               type="button"
               onClick={fetchData}
-              className="self-end rounded-2xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto"
+              className="self-end rounded-2xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
             >
               <RefreshCw size={24} className={loading ? 'animate-spin text-primary' : ''} />
             </button>

@@ -23,8 +23,8 @@ import {
   getInvoiceOutstanding,
   getInvoiceStatusClasses,
   SALES_ORDER_STATUSES,
-  toNumber,
 } from './utils';
+import { toNumber } from '../customer-dashboard/utils';
 
 export function SalesProcessingSection({
   eligibleOrdersForInvoice,
