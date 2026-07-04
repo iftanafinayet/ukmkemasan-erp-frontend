@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MessageSquare, Send, Loader2, CheckCheck, Clock, ChevronRight } from 'lucide-react';
+import { MessageSquare, Send, Loader2, CheckCheck, Clock, ChevronRight, LogIn, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { ENDPOINTS, storage } from '../../config/environment';
 import useSocket from '../../hooks/useSocket';
@@ -8,6 +9,7 @@ import { formatDateTime } from '../../utils/formatters';
 
 export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
   const user = storage.getUser();
+  const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConv, setSelectedConv] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -193,6 +195,38 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
   }[status] || 'bg-slate-100 text-slate-500');
 
   if (!isOpen) return null;
+
+  if (!storage.getToken()) {
+    return (
+      <>
+        <div className="fixed inset-0 z-40 bg-black/20" onClick={onClose} />
+        <div className="fixed bottom-24 right-6 z-50 w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-primary text-white">
+            <div className="flex items-center gap-2">
+              <MessageSquare size={18} />
+              <span className="font-bold text-sm">Pesan</span>
+            </div>
+            <button onClick={onClose} className="p-1 rounded-lg hover:bg-white/20 transition-all">
+              <X size={18} />
+            </button>
+          </div>
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
+              <LogIn size={32} />
+            </div>
+            <h3 className="text-lg font-black text-slate-800 mb-2">Login Required</h3>
+            <p className="text-sm text-slate-500 mb-6 max-w-xs">Silahkan login untuk mengirim pesan ke admin.</p>
+            <button
+              onClick={() => navigate('/login?redirect=/portal')}
+              className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              Masuk Sekarang
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
