@@ -19,19 +19,21 @@ export default function MobileCatalogPage({
   const [searchParams] = useSearchParams();
   const urlSearchTerm = searchParams.get('search') || '';
 
+  const [searchText, setSearchText] = useState(urlSearchTerm);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const categories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))];
 
-  // Extract unique sizes and colors for the filter
   const sizeOptions = [...new Set(products.flatMap(p => p.variants?.map(v => v.size) || []))].filter(Boolean);
   const colorOptions = [...new Set(products.flatMap(p => p.variants?.map(v => v.color) || []))].filter(Boolean);
 
+  const searchTerm = searchText || urlSearchTerm;
+
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      const term = urlSearchTerm.toLowerCase();
-      const matchSearch = !urlSearchTerm ||
+      const term = searchTerm.toLowerCase();
+      const matchSearch = !searchTerm ||
         p.name.toLowerCase().includes(term) ||
         p.category?.toLowerCase().includes(term) ||
         p.material?.toLowerCase().includes(term);
@@ -41,7 +43,7 @@ export default function MobileCatalogPage({
       const matchColor = !selectedColor || p.variants?.some(v => v.color === selectedColor);
       return matchSearch && matchCat && matchSize && matchColor;
     });
-  }, [products, urlSearchTerm, selectedCategory, selectedSize, selectedColor]);
+  }, [products, searchTerm, selectedCategory, selectedSize, selectedColor]);
 
   const {
     totalPages,
@@ -63,6 +65,34 @@ export default function MobileCatalogPage({
     <div className="lg:hidden bg-background min-h-screen">
 
       <main className="px-4 pt-4 pb-4">
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => { setSearchText(e.target.value); setCurrentPage(1); }}
+            placeholder="Cari kemasan..."
+            className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl py-2.5 pl-10 pr-4 text-sm text-on-surface placeholder:text-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200"
+          />
+        </div>
+
+        {/* Category Filter Chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
+              className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 cursor-pointer ${selectedCategory === cat
+                  ? 'bg-primary text-on-primary shadow-card'
+                  : 'bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant'
+                }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
         {/* Result Stats */}
         <div className="flex items-center justify-between mb-4 px-1">
           <p className="text-[11px] font-bold text-muted uppercase tracking-wider">
@@ -90,7 +120,7 @@ export default function MobileCatalogPage({
               <div className="p-2.5 flex flex-col flex-grow">
                 <span className="text-[8px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
                 <h3 className="text-[12px] font-bold text-on-surface tracking-tight font-headline line-clamp-1 leading-tight mb-1.5">{catalog.name}</h3>
-                
+
                 <div className="space-y-1 mb-2.5 flex-grow">
                   <div className="text-[14px] font-black text-primary flex items-baseline gap-0.5">
                     {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-on-surface-variant/70 uppercase tracking-tighter">/ pcs</span>
@@ -101,11 +131,6 @@ export default function MobileCatalogPage({
                     </div>
                   </div>
                 </div>
-
-                <button className="w-full bg-primary text-on-primary font-bold py-2 rounded-lg text-[10px] hover:bg-primary/80 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-card shadow-primary/10 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-                  <span className="material-symbols-outlined text-[13px]">shopping_cart</span>
-                  Pesan
-                </button>
               </div>
             </div>
           ))}
@@ -220,13 +245,3 @@ export default function MobileCatalogPage({
   );
 }
 
-function FilterChip({ label, onClear }) {
-  return (
-    <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-2.5 py-1.5 rounded-lg border border-primary/20 whitespace-nowrap">
-      <span className="text-[11px] font-bold">{label}</span>
-      <button onClick={onClear} className="flex items-center justify-center hover:opacity-70 transition-all duration-200">
-        <span className="material-symbols-outlined text-sm font-bold">close</span>
-      </button>
-    </div>
-  );
-}

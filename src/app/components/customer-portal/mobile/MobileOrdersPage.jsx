@@ -12,6 +12,7 @@ export default function MobileOrdersPage({
 }) {
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
+  const user = storage.getUser();
 
   if (!isLoggedIn) {
     return (
@@ -33,94 +34,128 @@ export default function MobileOrdersPage({
     );
   }
 
-  const activeOrders = orders.filter(o => ['Quotation', 'Payment', 'Production', 'Quality Control', 'Shipping'].includes(o.status));
-  const historyOrders = orders.filter(o => o.status === 'Completed');
+  const displayedOrders = orders.filter(order => {
+    if (orderFilter === 'all') return true;
+    if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
+    if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
+    if (orderFilter === 'completed') return order.status === 'Completed';
+    if (orderFilter === 'cancelled') return order.status === 'Cancelled';
+    return true;
+  });
 
-  const displayedOrders = orderFilter === 'all' ? activeOrders : historyOrders;
+  const getFilterCount = (filterId) => {
+    return orders.filter(order => {
+      if (filterId === 'all') return true;
+      if (filterId === 'payment') return ['Quotation', 'Payment'].includes(order.status);
+      if (filterId === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
+      if (filterId === 'completed') return order.status === 'Completed';
+      if (filterId === 'cancelled') return order.status === 'Cancelled';
+      return true;
+    }).length;
+  };
+
+  const tabs = [
+    { id: 'all', label: 'Semua Pesanan' },
+    { id: 'payment', label: 'Payment' },
+    { id: 'production', label: 'Production' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'cancelled', label: 'Dibatalkan' }
+  ];
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '1 Jan 2026';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const getStatusColor = (status) => {
+    if (['Quotation', 'Payment'].includes(status)) return 'text-orange-500 bg-orange-50';
+    if (['Production', 'Quality Control'].includes(status)) return 'text-blue-500 bg-blue-50';
+    if (status === 'Shipping') return 'text-primary bg-primary/10';
+    if (status === 'Completed') return 'text-green-500 bg-green-50';
+    if (status === 'Cancelled') return 'text-red-500 bg-red-50';
+    return 'text-gray-500 bg-gray-50';
+  };
+
+  const getStatusDotColor = (status) => {
+    if (['Quotation', 'Payment'].includes(status)) return 'bg-orange-500';
+    if (['Production', 'Quality Control'].includes(status)) return 'bg-blue-500';
+    if (status === 'Shipping') return 'bg-primary';
+    if (status === 'Completed') return 'bg-green-500';
+    if (status === 'Cancelled') return 'bg-red-500';
+    return 'bg-gray-500';
+  };
 
   return (
-    <div className="lg:hidden bg-background min-h-screen">
-      <main className="px-4 py-6 pb-24">
-        {/* Page Header & Tabs */}
+    <div className="lg:hidden bg-gradient-to-b from-primary/5 to-background min-h-screen">
+      <main className="px-5 py-6 pb-24">
+        {/* Page Header */}
         <div className="mb-6">
-          <h2 className="text-[24px] font-bold text-on-surface mb-4 font-headline">Pesanan Saya</h2>
-          <div className="flex space-x-1 bg-surface-container-low p-1 rounded-xl w-full">
+          <h2 className="text-[28px] font-extrabold text-on-surface mb-1 font-headline">My Orders</h2>
+          <p className="text-on-surface-variant text-sm">{orders.length} order total</p>
+        </div>
+        
+        {/* Scrollable Tabs */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2 -mx-5 px-5">
+          {tabs.map((tab) => (
             <button
-              onClick={() => setOrderFilter('all')}
-              className={`flex-1 py-2.5 rounded-lg font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer ${orderFilter === 'all'
-                  ? 'bg-surface-container-lowest text-primary shadow-card'
-                  : 'text-on-surface-variant'
-                }`}
+              key={tab.id}
+              onClick={() => setOrderFilter(tab.id)}
+              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
+                orderFilter === tab.id
+                  ? 'bg-primary text-white shadow-md shadow-primary/20'
+                  : 'bg-surface-container-low text-on-surface-variant'
+              }`}
             >
-              Aktif
+              {tab.label}
+              <span className={`px-2 py-0.5 rounded-full text-[10px] ${orderFilter === tab.id ? 'bg-white/20' : 'bg-on-surface-variant/10'}`}>
+                {getFilterCount(tab.id)}
+              </span>
             </button>
-            <button
-              onClick={() => setOrderFilter('completed')}
-              className={`flex-1 py-2.5 rounded-lg font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer ${orderFilter === 'completed'
-                  ? 'bg-surface-container-lowest text-primary shadow-card'
-                  : 'text-on-surface-variant'
-                }`}
-            >
-              Riwayat
-            </button>
-          </div>
+          ))}
         </div>
 
         {/* Orders List */}
-        <div className="space-y-6">
-          <h3 className="text-[12px] text-muted uppercase tracking-wider font-bold">
-            {orderFilter === 'all' ? 'Pesanan Sedang Diproses' : 'Riwayat Pesanan'}
-          </h3>
-
+        <div className="space-y-4">
           {displayedOrders.length > 0 ? displayedOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden border border-outline-variant/30"
+              onClick={() => onViewOrder(order._id)}
+              className="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100 cursor-pointer active:scale-[0.98] transition-transform"
             >
-              <div className="p-4">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0">
-                    <img
-                      alt="Produk"
-                      src={order.product?.images?.[0]?.url || "https://via.placeholder.com/100"}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-on-surface text-[16px] line-clamp-1 font-headline">{order.product?.name || 'Custom Packaging'}</p>
-                    <p className="text-on-surface-variant text-[12px]">ID: #{order._id.slice(-6).toUpperCase()}</p>
-                    <p className="text-primary font-bold text-[14px] mt-1">{getStatusLabel(order.status)}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-on-surface-variant text-[10px]">Total</p>
-                    <p className="font-bold text-primary text-[14px]">{formatCurrency(order.totalPrice)}</p>
-                  </div>
+              <div className="flex justify-between items-center mb-4">
+                <div className={`text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-2 ${getStatusColor(order.status)}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(order.status)}`}></span>
+                  {getStatusLabel(order.status)}
                 </div>
-
-                {orderFilter === 'all' && (
-                  <div className="bg-primary/10 p-3 rounded-lg flex items-start gap-2 border border-primary/20 mb-4">
-                    <span className="material-symbols-outlined text-primary text-[20px]">info</span>
-                    <p className="text-[11px] text-on-primary-container">
-                      {order.status === 'Production'
-                        ? 'Pesanan Anda sedang dalam tahap produksi masal.'
-                        : 'Menunggu konfirmasi atau tahap selanjutnya.'}
-                    </p>
-                  </div>
-                )}
+                <div className="text-primary font-bold text-[15px]">
+                  {formatCurrency(order.totalPrice)}
+                </div>
               </div>
-              <div className="bg-surface-container-low px-4 py-2 flex justify-between items-center">
-                <button
-                  onClick={() => onViewOrder(order._id)}
-                  className="text-primary font-bold text-[12px] cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                >
-                  Lihat Detail
-                </button>
+              
+              <div className="mb-4">
+                <h3 className="text-[16px] font-bold text-gray-900 mb-1 leading-tight line-clamp-1">
+                  {order.product?.name || 'Custom Packaging'}
+                </h3>
+                <p className="text-gray-500 text-[13px]">
+                  {order.shipping?.recipient?.name || user?.name || 'UKM Kemasan'}
+                </p>
+              </div>
+              
+              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                <div className="text-gray-400 text-[12px] font-medium">
+                  {formatDate(order.createdAt)}
+                </div>
+                <div className="text-gray-400 text-[12px] font-semibold flex items-center gap-1">
+                  {order.quantity || order.items?.length || 1} Items • #{order._id.slice(-6).toUpperCase()} 
+                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+                </div>
               </div>
             </div>
           )) : (
-            <div className="text-center py-10">
-              <span className="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-              <p className="text-on-surface-variant mt-2">Tidak ada pesanan.</p>
+            <div className="text-center py-12 bg-white rounded-[24px] border border-gray-100">
+              <span className="material-symbols-outlined text-5xl text-gray-300 mb-3 block">inventory_2</span>
+              <p className="text-gray-500 font-medium">Tidak ada pesanan.</p>
             </div>
           )}
         </div>

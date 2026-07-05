@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../../utils/formatters';
-import { ArrowLeft, ShoppingCart, Layers, Ruler, Box, Package, ImagePlus, MessageSquare } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, MessageSquare } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { getCartItems } from '../../../utils/cart';
@@ -42,7 +42,7 @@ export default function MobileProductDetailPage({
   };
 
   return (
-    <div className="lg:hidden bg-background min-h-screen pb-32">
+    <div className="lg:hidden bg-background min-h-screen pb-20">
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/20 px-4 h-14 flex items-center justify-between">
         <button onClick={() => navigate('/portal?menu=catalog')} className="p-2 -ml-2">
@@ -101,23 +101,13 @@ export default function MobileProductDetailPage({
 
         {/* Product Info */}
         <section className="bg-surface-container-lowest px-4 py-6 border-b border-outline-variant/20">
+          <h1 className="text-[18px] font-bold text-on-surface leading-tight mb-3 font-headline">{product.name}</h1>
           <div className="flex items-center justify-between mb-2">
             <span className="text-primary text-[22px] font-bold font-headline">{formatCurrency(unitPrice)}</span>
             <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {quantity >= 1000 ? 'Grosir' : 'Retail'}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-4 border-b border-outline-variant/20 pb-4 mb-4">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Retail</p>
-              <p className="text-xs font-bold text-on-surface">{formatCurrency(selectedVariant?.priceB2C || 0)}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Grosir</p>
-              <p className="text-xs font-bold text-primary">{formatCurrency(selectedVariant?.priceB2B || 0)}</p>
-            </div>
-          </div>
-          <h1 className="text-[18px] font-bold text-on-surface leading-tight mb-3 font-headline">{product.name}</h1>
           <div className="flex items-center gap-4 text-on-surface-variant text-[12px]">
             <div>Terjual {product.totalSold || 0}+</div>
             <div className="w-px h-3 bg-outline-variant/30"></div>
@@ -136,8 +126,8 @@ export default function MobileProductDetailPage({
                   disabled={isSizeDisabled(size)}
                   onClick={() => onSelectSize(size)}
                   className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedSize === size
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
                 >
                   {size}
@@ -155,8 +145,8 @@ export default function MobileProductDetailPage({
                   disabled={isColorDisabled(color)}
                   onClick={() => onSelectColor(color)}
                   className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedColor === color
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
                 >
                   {color}
@@ -168,32 +158,32 @@ export default function MobileProductDetailPage({
           <div className="mb-6">
             <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Add-ons: Valve</h3>
             <div className="grid grid-cols-2 gap-3">
-                <button
-                    type="button"
-                    onClick={() => setUseValve(true)}
-                    disabled={(product.addons?.valvePrice || 0) <= 0}
-                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${useValve
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
-                        } disabled:cursor-not-allowed disabled:opacity-40`}
-                >
-                    Pakai Valve
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setUseValve(false)}
-                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!useValve
-                        ? 'border-primary bg-primary text-on-primary'
-                        : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
-                        }`}
-                >
-                    Tanpa Valve
-                </button>
+              <button
+                type="button"
+                onClick={() => setUseValve(true)}
+                disabled={(product.addons?.valvePrice || 0) <= 0}
+                className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${useValve
+                  ? 'border-primary bg-primary/5 text-primary'
+                  : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
+                  } disabled:cursor-not-allowed disabled:opacity-40`}
+              >
+                Pakai Valve
+              </button>
+              <button
+                type="button"
+                onClick={() => setUseValve(false)}
+                className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!useValve
+                  ? 'border-primary bg-primary text-on-primary'
+                  : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
+                  }`}
+              >
+                Tanpa Valve
+              </button>
             </div>
             {useValve && product.addons?.valvePrice > 0 && (
-                <p className="mt-2 text-[10px] font-bold text-primary">
-                    + {formatCurrency(product.addons.valvePrice)}/pcs
-                </p>
+              <p className="mt-2 text-[10px] font-bold text-primary">
+                + {formatCurrency(product.addons.valvePrice)}/pcs
+              </p>
             )}
           </div>
 
@@ -201,52 +191,53 @@ export default function MobileProductDetailPage({
             <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Jumlah Pesanan</h3>
             <div className="flex items-center gap-4 bg-surface-container-low rounded-xl p-1">
               <button
-                onClick={() => setQuantity(Math.max(product.minOrder, quantity - 100))}
+                onClick={() => setQuantity(Math.max(product.minOrder, (Number(quantity) || product.minOrder) - 100))}
                 className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined">remove</span>
               </button>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(product.minOrder, Number(e.target.value)))}
-                className="flex-1 text-center font-bold text-on-surface border-none bg-transparent text-lg"
+                onFocus={(e) => e.target.select()}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, '');
+                  setQuantity(val === '' ? '' : Number(val));
+                }}
+                onBlur={() => {
+                  if (quantity === '' || quantity < product.minOrder) {
+                    setQuantity(product.minOrder);
+                  }
+                }}
+                className="flex-1 text-center font-bold text-on-surface border-none bg-transparent text-lg outline-none"
               />
               <button
-                onClick={() => setQuantity(quantity + 100)}
+                onClick={() => setQuantity((Number(quantity) || product.minOrder) + 100)}
                 className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined">add</span>
               </button>
             </div>
-            <p className="text-[11px] text-muted mt-3 italic">* Minimal order {product.minOrder} pcs (kelipatan 100)</p>
+            <p className="text-[11px] text-muted mt-3 italic">* Minimal order {product.minOrder} pcs</p>
           </div>
         </section>
 
         {/* Specifications */}
-        <section className="bg-surface-container-lowest px-4 py-6 mt-2 border-y border-outline-variant/20">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-4">Informasi Produk</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
-              <Layers size={16} className="text-primary mb-1.5" />
-              <p className="text-[9px] font-bold text-muted uppercase">Kategori</p>
-              <p className="text-[12px] font-bold text-on-surface truncate">{product.category}</p>
-            </div>
-            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
-              <Ruler size={16} className="text-primary mb-1.5" />
-              <p className="text-[9px] font-bold text-muted uppercase">Material</p>
-              <p className="text-[12px] font-bold text-on-surface truncate">{product.material || '-'}</p>
-            </div>
-            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
-              <Package size={16} className="text-primary mb-1.5" />
-              <p className="text-[9px] font-bold text-muted uppercase">Varian</p>
-              <p className="text-[12px] font-bold text-on-surface">{product.variants?.length || 0} Opsi</p>
-            </div>
-            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
-              <Box size={16} className="text-primary mb-1.5" />
-              <p className="text-[9px] font-bold text-muted uppercase">Min. Order</p>
-              <p className="text-[12px] font-bold text-on-surface">{product.minOrder?.toLocaleString()} pcs</p>
-            </div>
+        <section className="bg-surface-container-lowest px-4 py-5 mt-2 border-y border-outline-variant/20">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px]">
+            <span className="text-on-surface font-semibold">{product.category}</span>
+            {product.material && (
+              <>
+                <span className="text-outline-variant">·</span>
+                <span className="text-on-surface-variant">{product.material}</span>
+              </>
+            )}
+            <span className="text-outline-variant">·</span>
+            <span className="text-on-surface-variant">{product.variants?.length || 0} varian</span>
+            <span className="text-outline-variant">·</span>
+            <span className="text-on-surface-variant">Min. {product.minOrder?.toLocaleString()} pcs</span>
           </div>
         </section>
 
@@ -260,28 +251,24 @@ export default function MobileProductDetailPage({
       </main>
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-3 flex items-center gap-3">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest border-t border-outline-variant/10 px-4 py-3 flex items-center gap-3">
         <button
           onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
-          className="p-3.5 rounded-xl border-2 border-primary/30 text-primary active:scale-95 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="shrink-0 p-2 rounded-xl border border-outline-variant/30 text-on-surface-variant cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
-          <MessageSquare size={18} />
+          <MessageSquare size={20} />
         </button>
-        <div className="flex-1">
-          <p className="text-[10px] text-muted font-bold uppercase tracking-wider">Total Harga</p>
-          <p className="text-[18px] font-bold text-primary font-headline">{formatCurrency(totalPrice)}</p>
-        </div>
         <button
           onClick={handleAddToCartClick}
-          className="bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-[13px] flex items-center gap-2 active:scale-95 transition-all duration-200 shadow-card-hover shadow-primary/20 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="flex-1 bg-primary text-on-primary px-5 py-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 shadow-card cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
-          <ShoppingCart size={18} />
-          Beli Sekarang
+          <ShoppingCart size={16} />
+          Beli
         </button>
         <button
           onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
           disabled={!selectedVariant || selectedVariant?.stock <= 0}
-          className="px-4 py-3.5 rounded-xl border-2 border-primary/40 text-primary font-bold text-[12px] active:scale-95 transition-all duration-200 disabled:opacity-40 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="shrink-0 px-4 py-3 rounded-xl border border-primary/30 text-primary font-bold text-[12px] disabled:opacity-40 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           Sample
         </button>
