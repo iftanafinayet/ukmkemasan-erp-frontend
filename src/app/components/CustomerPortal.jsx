@@ -632,7 +632,7 @@ export default function CustomerPortal() {
           }}
         />
         <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
-        <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
+        <main className="pt-20 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
           {!['dashboard', 'catalog', 'orders', 'inquiries'].includes(activeMenu) && (
             <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
             </header>
