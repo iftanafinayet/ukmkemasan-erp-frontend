@@ -30,7 +30,7 @@ import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import { XCircle } from 'lucide-react';
 import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters';
-import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart, toggleCartSelection, selectAllCartItems, getSelectedCartItems, getSelectedCount, getSelectedTotal, getSelectedQuantity, isAllSelected } from '../utils/cart';
+import { clearCart, getCartItems, removeCartItem, subscribeCart, toggleCartSelection, selectAllCartItems, getSelectedCartItems, getSelectedCount, getSelectedTotal, getSelectedQuantity, isAllSelected } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
 import { EmptyState, LoadingState } from './customer-dashboard/shared';
 import useSocket from '../hooks/useSocket';
@@ -49,7 +49,7 @@ export default function CustomerPortal() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [checkingOutCart, setCheckingOutCart] = useState(false);
+  const [checkingOutCart] = useState(false);
   const [stats, setStats] = useState({ total: 0, production: 0, completed: 0 });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedSize, setSelectedSize] = useState('');
@@ -200,7 +200,7 @@ export default function CustomerPortal() {
     'Quality Control': 'bg-indigo-100 text-indigo-700 border-indigo-200',
     Shipping: 'bg-purple-100 text-purple-700 border-purple-200',
     Completed: 'bg-primary/10 text-primary/90 border-primary/20',
-  }[status] || 'bg-slate-100 text-slate-600 border-slate-200');
+  }[status] || 'bg-surface-container-high text-on-surface-variant border-outline-variant');
 
   const getStatusLabel = (status) => ({
     Quotation: 'Penawaran',
@@ -225,10 +225,13 @@ export default function CustomerPortal() {
     navigate(`/portal/orders/${orderId}/payment`);
   };
 
-  const handleCancelOrder = async (orderId) => {
-    const confirmed = window.confirm('Yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');
-    if (!confirmed) return;
+  const handleCancelOrder = (orderId) => {
+    setConfirm({ isOpen: true, type: 'cancelOrder', item: orderId });
+  };
 
+  const confirmCancelOrder = async () => {
+    const orderId = confirm.item;
+    setConfirm({ isOpen: false, type: '', item: null });
     try {
       await api.put(ENDPOINTS.CANCEL_ORDER(orderId));
       toast.success('Pesanan berhasil dibatalkan.');
@@ -325,31 +328,7 @@ export default function CustomerPortal() {
       return;
     }
 
-    setCheckingOutCart(true);
-
-    try {
-      const orderPayload = {
-        items: selectedItems.map((item) => ({
-          productId: item.productId,
-          variantId: item.variantId || undefined,
-          quantity: Number(item.quantity) || 0,
-          useValve: Boolean(item.useValve),
-        }))
-      };
-
-      const response = await api.post(ENDPOINTS.ORDERS, orderPayload);
-
-      const remainingItems = getCartItems().filter((item) => item.selected === false);
-      persistCartItems(remainingItems);
-      setCartItems(remainingItems);
-      setActiveMenu('orders');
-      toast.success(`Checkout berhasil! ${selectedItems.length} item dalam 1 pesanan.`);
-      await fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Checkout gagal. Silakan coba lagi.');
-    } finally {
-      setCheckingOutCart(false);
-    }
+    navigate('/portal/checkout');
   };
 
   const handleNavigateToInquiries = () => {
@@ -396,16 +375,16 @@ export default function CustomerPortal() {
   const renderOrders = () => {
     if (!storage.getToken()) {
       return (
-        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+        <div className="bg-surface-container-lowest rounded-3xl border border-dashed border-outline-variant px-6 py-20 text-center">
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
             <RefreshCw size={40} />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
-          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
+          <h3 className="text-xl font-black text-on-surface mb-2">Login Required</h3>
+          <p className="text-on-surface-variant max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
           <button
             onClick={() => navigate('/login?redirect=/portal?menu=orders')}
             data-testid="portal-orders-login-btn"
-            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-card-hover shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             Masuk Sekarang
           </button>
@@ -428,22 +407,19 @@ export default function CustomerPortal() {
     );
   };
 
-  const cartTotal = cartItems.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
-  const cartQuantity = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
-
   const renderInquiries = () => {
     if (!storage.getToken()) {
       return (
-        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+        <div className="bg-surface-container-lowest rounded-3xl border border-dashed border-outline-variant px-6 py-20 text-center">
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
             <MessageSquare size={40} />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mb-2">Login Required</h3>
-          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengirim pesan ke admin.</p>
+          <h3 className="text-xl font-black text-on-surface mb-2">Login Required</h3>
+          <p className="text-on-surface-variant max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengirim pesan ke admin.</p>
           <button
             onClick={() => navigate('/login?redirect=/portal?menu=inquiries')}
             data-testid="portal-inquiries-login-btn"
-            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-card-hover shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             Masuk Sekarang
           </button>
@@ -480,24 +456,24 @@ export default function CustomerPortal() {
   const renderProfile = () => {
     if (!storage.getToken()) {
       return (
-        <div className="bg-white rounded-3xl border border-dashed border-slate-200 px-6 py-20 text-center">
+        <div className="bg-surface-container-lowest rounded-3xl border border-dashed border-outline-variant px-6 py-20 text-center">
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
             <Plus size={40} />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mb-2">Akses Terbatas</h3>
-          <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengelola profil dan pengaturan akun Anda.</p>
+          <h3 className="text-xl font-black text-on-surface mb-2">Akses Terbatas</h3>
+          <p className="text-on-surface-variant max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk mengelola profil dan pengaturan akun Anda.</p>
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={() => navigate('/login?redirect=/portal?menu=profile')}
               data-testid="portal-profile-login-btn"
-              className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+              className="px-8 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-card-hover shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Masuk
             </button>
             <button
               onClick={() => navigate('/register')}
               data-testid="portal-profile-register-btn"
-              className="px-8 py-3 bg-slate-100 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
+              className="px-8 py-3 bg-surface-container-high text-on-surface rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Daftar
             </button>
@@ -714,11 +690,23 @@ export default function CustomerPortal() {
 
       <ConfirmDialog
         isOpen={confirm.isOpen}
-        title={confirm.type === 'clearCart' ? 'Kosongkan Keranjang' : 'Hapus Item'}
-        message={confirm.type === 'clearCart' ? 'Yakin ingin menghapus semua item dari keranjang?' : 'Yakin ingin menghapus item ini dari keranjang?'}
-        confirmLabel="Hapus"
+        title={
+          confirm.type === 'clearCart' ? 'Kosongkan Keranjang'
+            : confirm.type === 'cancelOrder' ? 'Batalkan Pesanan'
+              : 'Hapus Item'
+        }
+        message={
+          confirm.type === 'clearCart' ? 'Yakin ingin menghapus semua item dari keranjang?'
+            : confirm.type === 'cancelOrder' ? 'Yakin ingin membatalkan pesanan ini? Stok akan dikembalikan dan proses tidak bisa diurungkan.'
+              : 'Yakin ingin menghapus item ini dari keranjang?'
+        }
+        confirmLabel={confirm.type === 'cancelOrder' ? 'Ya, Batalkan' : 'Hapus'}
         variant="danger"
-        onConfirm={confirm.type === 'clearCart' ? confirmClearCart : confirmRemoveItem}
+        onConfirm={
+          confirm.type === 'clearCart' ? confirmClearCart
+            : confirm.type === 'cancelOrder' ? confirmCancelOrder
+              : confirmRemoveItem
+        }
         onCancel={() => setConfirm({ isOpen: false, type: '', item: null })}
       />
     </div>

@@ -79,7 +79,7 @@ export default function CustomerCartSection({
             <div className="flex items-center justify-between mb-6">
                 <button
                     onClick={onSelectAll}
-                    className="flex items-center gap-2 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-colors"
+                    className="flex items-center gap-2 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-all duration-200"
                 >
                     {allSelected ? <CheckSquare size={16} /> : <Square size={16} />}
                     {allSelected ? 'Semua Terpilih' : 'Pilih Semua'}
@@ -121,57 +121,57 @@ export default function CustomerCartSection({
                     <div className="rounded-3xl border border-dashed border-outline-variant/30 bg-surface-container-lowest px-8 py-16 text-center">
                         <span className="material-symbols-outlined mx-auto mb-4 !text-5xl text-outline-variant/50">shopping_cart</span>
                         <p className="text-sm font-bold uppercase tracking-widest text-on-secondary-container">Keranjang masih kosong.</p>
-                        <button onClick={onAddItem} className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-md transition-all hover:scale-105 active:scale-95">Mulai Belanja</button>
+                        <button onClick={onAddItem} className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-card transition-all duration-200 hover:scale-105 active:scale-95">Mulai Belanja</button>
                     </div>
                 )}
 
                 {cartItems.map((item, index) => {
                     const isEditing = editingId === index;
                     return (
-                        <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className={`bg-surface-container-lowest p-6 rounded-xl shadow-sm border transition-shadow ${item.selected !== false ? 'border-outline-variant/10 hover:shadow-md' : 'border-error/20 opacity-60'}`}>
+                        <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className={`bg-surface-container-lowest p-6 rounded-xl shadow-card border transition-all duration-200 ${item.selected !== false ? 'border-outline-variant/10 hover:shadow-card-hover' : 'border-error/20 opacity-60'}`}>
                             {isEditing ? (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-bold text-slate-800">Edit Item</h4>
+                                        <h4 className="font-bold text-on-surface">Edit Item</h4>
                                         <div className="flex gap-2">
-                                            <button onClick={cancelEdit} className="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all">Batal</button>
-                                            <button onClick={saveEdit} disabled={!matchedVariant} className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary/90 transition-all disabled:opacity-50">Simpan</button>
+                                            <button onClick={cancelEdit} className="px-4 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">Batal</button>
+                                            <button onClick={saveEdit} disabled={!matchedVariant} className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary/90 transition-all duration-200 disabled:opacity-50">Simpan</button>
                                         </div>
                                     </div>
                                     {editingProduct && (
-                                        <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                                        <div className="flex items-center gap-4 p-3 bg-surface-container-low rounded-xl">
                                             {editingProduct.images?.[0] && <img src={editingProduct.images[0].url} alt={editingProduct.name} className="w-12 h-12 rounded-lg object-cover" />}
                                             <div>
-                                                <p className="text-sm font-bold text-slate-800">{editingProduct.name}</p>
-                                                <p className="text-xs text-slate-400">{editingProduct.category}</p>
+                                                <p className="text-sm font-bold text-on-surface">{editingProduct.name}</p>
+                                                <p className="text-xs text-muted">{editingProduct.category}</p>
                                             </div>
                                         </div>
                                     )}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="text-xs font-medium text-slate-500 mb-1 block">Ukuran</label>
-                                            <select value={editSize} onChange={(e) => setEditSize(e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary">
+                                            <label className="text-xs font-medium text-on-surface-variant mb-1 block">Ukuran</label>
+                                            <select value={editSize} onChange={(e) => setEditSize(e.target.value)} className="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm outline-none focus:border-primary">
                                                 <option value="">Pilih ukuran</option>
                                                 {editSizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-medium text-slate-500 mb-1 block">Warna</label>
-                                            <select value={editColor} onChange={(e) => setEditColor(e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary">
+                                            <label className="text-xs font-medium text-on-surface-variant mb-1 block">Warna</label>
+                                            <select value={editColor} onChange={(e) => setEditColor(e.target.value)} className="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm outline-none focus:border-primary">
                                                 <option value="">Pilih warna</option>
                                                 {editColorOptions.filter((c) => !editSize || editVariants.some((v) => v.size === editSize && v.color === c)).map((c) => <option key={c} value={c}>{c}</option>)}
                                             </select>
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-xs font-medium text-slate-500 mb-1 block">Jumlah (pcs)</label>
+                                        <label className="text-xs font-medium text-on-surface-variant mb-1 block">Jumlah (pcs)</label>
                                         <input type="number" value={editQty} onChange={(e) => setEditQty(Number(e.target.value) || 0)} min={editingProduct?.minOrder || 1} step={editingProduct?.minOrder || 1}
-                                            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary" />
+                                            className="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm outline-none focus:border-primary" />
                                     </div>
                                     {matchedVariant && (
-                                        <div className="flex items-center justify-between text-sm bg-green-50 rounded-xl p-3">
-                                            <span className="text-green-700 font-medium">{matchedVariant.size} • {matchedVariant.color}</span>
-                                            <span className="text-green-700 font-bold">{formatCurrency(editQty >= 1000 ? matchedVariant.priceB2B : matchedVariant.priceB2C)}/pcs</span>
+                                        <div className="flex items-center justify-between text-sm bg-success-container rounded-xl p-3">
+                                            <span className="text-success font-medium">{matchedVariant.size} • {matchedVariant.color}</span>
+                                            <span className="text-success font-bold">{formatCurrency(editQty >= 1000 ? matchedVariant.priceB2B : matchedVariant.priceB2C)}/pcs</span>
                                         </div>
                                     )}
                                 </div>
@@ -179,7 +179,7 @@ export default function CustomerCartSection({
                                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                                     <button
                                         onClick={() => onToggleSelect?.(index)}
-                                        className="shrink-0 p-1 text-outline-variant hover:text-primary transition-colors"
+                                        className="shrink-0 p-1 text-outline-variant hover:text-primary transition-all duration-200"
                                         title={item.selected !== false ? 'Batalkan pilihan' : 'Pilih item'}
                                     >
                                         {item.selected !== false
@@ -202,10 +202,10 @@ export default function CustomerCartSection({
                                             <p className="text-lg font-bold text-primary font-headline shrink-0">{formatCurrency(item.totalPrice)}</p>
                                         </div>
                                         <div className="flex items-center justify-between mt-4 md:mt-6">
-                                            <button onClick={() => startEdit(index, item)} className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-colors">
+                                            <button onClick={() => startEdit(index, item)} className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-all duration-200">
                                                 <Pencil size={14} /> Edit
                                             </button>
-                                            <button onClick={() => onRemoveItem?.(item)} className="flex items-center gap-2 text-error font-semibold text-sm hover:bg-error-container/20 px-4 py-2 rounded-full transition-colors font-body">
+                                            <button onClick={() => onRemoveItem?.(item)} className="flex items-center gap-2 text-error font-semibold text-sm hover:bg-error-container/20 px-4 py-2 rounded-full transition-all duration-200 font-body">
                                                 <span className="material-symbols-outlined text-sm">delete</span> Hapus
                                             </button>
                                         </div>
@@ -217,7 +217,7 @@ export default function CustomerCartSection({
                 })}
             </div>
 
-            <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-100 z-40">
+            <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest/80 backdrop-blur-xl border-t border-outline-variant z-40">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
                     <div className="flex items-center gap-4 sm:gap-8 w-full md:w-auto overflow-hidden">
                         <div>
@@ -230,8 +230,8 @@ export default function CustomerCartSection({
                         </div>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button onClick={onClearCart} disabled={cartItems.length === 0} className="flex-1 md:flex-none px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-outline text-secondary font-bold hover:bg-surface-container transition-all active:scale-95 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">Hapus Semua</button>
-                        <button onClick={onCheckout} disabled={selectedCount === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] hover:shadow-[0_12px_32px_-4px_rgba(0,106,98,0.4)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
+                        <button onClick={onClearCart} disabled={cartItems.length === 0} className="flex-1 md:flex-none px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-outline text-secondary font-bold hover:bg-surface-container transition-all duration-200 active:scale-95 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">Hapus Semua</button>
+                        <button onClick={onCheckout} disabled={selectedCount === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] hover:shadow-[0_12px_32px_-4px_rgba(0,106,98,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
                             {checkingOutCart ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-4 animate-spin" /> : `Checkout ${selectedCount} Item`}
                             {!checkingOutCart && <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>}
                         </button>

@@ -15,17 +15,17 @@ export default function MobileOrdersPage({
 
   if (!isLoggedIn) {
     return (
-      <div className="lg:hidden bg-[#faf8ff] min-h-[calc(100vh-112px)] flex flex-col items-center justify-center px-6 text-center">
-        <div className="w-20 h-20 bg-[#4dbace]/10 rounded-full flex items-center justify-center mb-6">
-          <span className="material-symbols-outlined text-[#4dbace] text-4xl">lock</span>
+      <div className="lg:hidden bg-background min-h-[calc(100vh-112px)] flex flex-col items-center justify-center px-6 text-center">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+          <span className="material-symbols-outlined text-primary text-4xl">lock</span>
         </div>
-        <h2 className="text-xl font-bold text-[#131b2e] mb-2 font-headline">Login Diperlukan</h2>
-        <p className="text-[#3c4947] text-sm mb-8 leading-relaxed">
+        <h2 className="text-xl font-bold text-on-surface mb-2 font-headline">Login Diperlukan</h2>
+        <p className="text-on-surface-variant text-sm mb-8 leading-relaxed">
           Silakan login terlebih dahulu untuk melihat daftar pesanan dan riwayat transaksi Anda.
         </p>
         <button
           onClick={() => navigate('/login?redirect=/portal')}
-          className="w-full bg-[#4dbace] text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-[#4dbace]/20 active:scale-95 transition-transform"
+          className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold text-sm shadow-card-hover shadow-primary/20 active:scale-95 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           Masuk Sekarang
         </button>
@@ -39,26 +39,26 @@ export default function MobileOrdersPage({
   const displayedOrders = orderFilter === 'all' ? activeOrders : historyOrders;
 
   return (
-    <div className="lg:hidden bg-[#faf8ff] min-h-screen">
+    <div className="lg:hidden bg-background min-h-screen">
       <main className="px-4 py-6 pb-24">
         {/* Page Header & Tabs */}
         <div className="mb-6">
-          <h2 className="text-[24px] font-bold text-[#131b2e] mb-4 font-headline">Pesanan Saya</h2>
-          <div className="flex space-x-1 bg-[#eaedff] p-1 rounded-xl w-full">
+          <h2 className="text-[24px] font-bold text-on-surface mb-4 font-headline">Pesanan Saya</h2>
+          <div className="flex space-x-1 bg-surface-container-low p-1 rounded-xl w-full">
             <button
               onClick={() => setOrderFilter('all')}
-              className={`flex-1 py-2.5 rounded-lg font-bold transition-all ${orderFilter === 'all'
-                  ? 'bg-white text-[#4dbace] shadow-sm'
-                  : 'text-[#3c4947]'
+              className={`flex-1 py-2.5 rounded-lg font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer ${orderFilter === 'all'
+                  ? 'bg-surface-container-lowest text-primary shadow-card'
+                  : 'text-on-surface-variant'
                 }`}
             >
               Aktif
             </button>
             <button
               onClick={() => setOrderFilter('completed')}
-              className={`flex-1 py-2.5 rounded-lg font-bold transition-all ${orderFilter === 'completed'
-                  ? 'bg-white text-[#4dbace] shadow-sm'
-                  : 'text-[#3c4947]'
+              className={`flex-1 py-2.5 rounded-lg font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer ${orderFilter === 'completed'
+                  ? 'bg-surface-container-lowest text-primary shadow-card'
+                  : 'text-on-surface-variant'
                 }`}
             >
               Riwayat
@@ -68,18 +68,18 @@ export default function MobileOrdersPage({
 
         {/* Orders List */}
         <div className="space-y-6">
-          <h3 className="text-[12px] text-[#6c7a77] uppercase tracking-wider font-bold">
+          <h3 className="text-[12px] text-muted uppercase tracking-wider font-bold">
             {orderFilter === 'all' ? 'Pesanan Sedang Diproses' : 'Riwayat Pesanan'}
           </h3>
 
           {displayedOrders.length > 0 ? displayedOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white rounded-xl shadow-sm overflow-hidden border border-[#bbc9c7]/30"
+              className="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden border border-outline-variant/30"
             >
               <div className="p-4">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#f2f3ff] flex-shrink-0">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0">
                     <img
                       alt="Produk"
                       src={order.product?.images?.[0]?.url || "https://via.placeholder.com/100"}
@@ -87,20 +87,20 @@ export default function MobileOrdersPage({
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-[#131b2e] text-[16px] line-clamp-1 font-headline">{order.product?.name || 'Custom Packaging'}</p>
-                    <p className="text-[#3c4947] text-[12px]">ID: #{order._id.slice(-6).toUpperCase()}</p>
-                    <p className="text-[#4dbace] font-bold text-[14px] mt-1">{getStatusLabel(order.status)}</p>
+                    <p className="font-bold text-on-surface text-[16px] line-clamp-1 font-headline">{order.product?.name || 'Custom Packaging'}</p>
+                    <p className="text-on-surface-variant text-[12px]">ID: #{order._id.slice(-6).toUpperCase()}</p>
+                    <p className="text-primary font-bold text-[14px] mt-1">{getStatusLabel(order.status)}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-[#3c4947] text-[10px]">Total</p>
-                    <p className="font-bold text-[#4dbace] text-[14px]">{formatCurrency(order.totalPrice)}</p>
+                    <p className="text-on-surface-variant text-[10px]">Total</p>
+                    <p className="font-bold text-primary text-[14px]">{formatCurrency(order.totalPrice)}</p>
                   </div>
                 </div>
 
                 {orderFilter === 'all' && (
-                  <div className="bg-[#4dbace]/10 p-3 rounded-lg flex items-start gap-2 border border-[#4dbace]/20 mb-4">
-                    <span className="material-symbols-outlined text-[#4dbace] text-[20px]">info</span>
-                    <p className="text-[11px] text-[#005750]">
+                  <div className="bg-primary/10 p-3 rounded-lg flex items-start gap-2 border border-primary/20 mb-4">
+                    <span className="material-symbols-outlined text-primary text-[20px]">info</span>
+                    <p className="text-[11px] text-on-primary-container">
                       {order.status === 'Production'
                         ? 'Pesanan Anda sedang dalam tahap produksi masal.'
                         : 'Menunggu konfirmasi atau tahap selanjutnya.'}
@@ -108,10 +108,10 @@ export default function MobileOrdersPage({
                   </div>
                 )}
               </div>
-              <div className="bg-[#f2f3ff] px-4 py-2 flex justify-between items-center">
+              <div className="bg-surface-container-low px-4 py-2 flex justify-between items-center">
                 <button
                   onClick={() => onViewOrder(order._id)}
-                  className="text-[#4dbace] font-bold text-[12px]"
+                  className="text-primary font-bold text-[12px] cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   Lihat Detail
                 </button>
@@ -119,8 +119,8 @@ export default function MobileOrdersPage({
             </div>
           )) : (
             <div className="text-center py-10">
-              <span className="material-symbols-outlined text-4xl text-[#bbc9c7]">inventory_2</span>
-              <p className="text-[#3c4947] mt-2">Tidak ada pesanan.</p>
+              <span className="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
+              <p className="text-on-surface-variant mt-2">Tidak ada pesanan.</p>
             </div>
           )}
         </div>

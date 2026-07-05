@@ -60,12 +60,12 @@ export default function MobileCatalogPage({
   };
 
   return (
-    <div className="lg:hidden bg-[#faf8ff] min-h-screen">
+    <div className="lg:hidden bg-background min-h-screen">
 
       <main className="px-4 pt-4 pb-4">
         {/* Result Stats */}
         <div className="flex items-center justify-between mb-4 px-1">
-          <p className="text-[11px] font-bold text-[#6c7a77] uppercase tracking-wider">
+          <p className="text-[11px] font-bold text-muted uppercase tracking-wider">
             {filteredProducts.length} Produk ditemukan
           </p>
         </div>
@@ -75,25 +75,25 @@ export default function MobileCatalogPage({
           {paginated.map((catalog) => (
             <div
               key={catalog._id}
-              className="group flex flex-col bg-white rounded-[1rem] overflow-hidden shadow-[0_4px_12px_-2px_rgba(0,106,98,0.06)] hover:shadow-md transition-all duration-300 cursor-pointer border border-[#e2e7ff]/40"
+              className="group flex flex-col bg-surface-container-lowest rounded-[1rem] overflow-hidden shadow-card hover:shadow-md transition-all duration-200 cursor-pointer border border-outline-variant/40"
               onClick={() => onViewProduct(catalog._id)}
             >
-              <div className="relative aspect-square overflow-hidden bg-[#f8f9ff]">
+              <div className="relative aspect-square overflow-hidden bg-surface-container-low">
                 {catalog.images?.length > 0 ? (
-                  <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
+                  <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover transition-all duration-200 group-hover:scale-[1.05]" loading="lazy" />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-[#3c4947] opacity-40">
+                  <div className="w-full h-full flex flex-col items-center justify-center text-on-surface-variant opacity-40">
                     <span className="material-symbols-outlined text-xl mb-1">image</span>
                   </div>
                 )}
               </div>
               <div className="p-2.5 flex flex-col flex-grow">
-                <span className="text-[8px] font-bold text-[#4dbace] uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
-                <h3 className="text-[12px] font-bold text-[#131b2e] tracking-tight font-headline line-clamp-1 leading-tight mb-1.5">{catalog.name}</h3>
+                <span className="text-[8px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{catalog.category}</span>
+                <h3 className="text-[12px] font-bold text-on-surface tracking-tight font-headline line-clamp-1 leading-tight mb-1.5">{catalog.name}</h3>
                 
                 <div className="space-y-1 mb-2.5 flex-grow">
-                  <div className="text-[14px] font-black text-[#4dbace] flex items-baseline gap-0.5">
-                    {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-[#3c4947]/70 uppercase tracking-tighter">/ pcs</span>
+                  <div className="text-[14px] font-black text-primary flex items-baseline gap-0.5">
+                    {formatCurrency(catalog.priceB2B)} <span className="text-[8px] font-bold text-on-surface-variant/70 uppercase tracking-tighter">/ pcs</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">
@@ -102,7 +102,7 @@ export default function MobileCatalogPage({
                   </div>
                 </div>
 
-                <button className="w-full bg-[#4dbace] text-white font-bold py-2 rounded-lg text-[10px] hover:bg-[#3ea0b5] transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-[#4dbace]/10 active:scale-95">
+                <button className="w-full bg-primary text-on-primary font-bold py-2 rounded-lg text-[10px] hover:bg-primary/80 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-card shadow-primary/10 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                   <span className="material-symbols-outlined text-[13px]">shopping_cart</span>
                   Pesan
                 </button>
@@ -114,16 +114,16 @@ export default function MobileCatalogPage({
         {/* Empty State */}
         {filteredProducts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <div className="w-20 h-20 bg-[#f2f3ff] rounded-full flex items-center justify-center">
-              <span className="material-symbols-outlined text-4xl text-[#6c7a77]/40">search_off</span>
+            <div className="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-4xl text-muted/40">search_off</span>
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-[#131b2e]">Produk tidak ditemukan</h3>
-              <p className="text-[11px] text-[#6c7a77] max-w-[200px]">Coba ubah kata kunci atau reset filter Anda.</p>
+              <h3 className="text-sm font-bold text-on-surface">Produk tidak ditemukan</h3>
+              <p className="text-[11px] text-muted max-w-[200px]">Coba ubah kata kunci atau reset filter Anda.</p>
             </div>
             <button
               onClick={handleResetFilters}
-              className="px-6 py-2 bg-[#4dbace] text-white text-[12px] font-bold rounded-full shadow-lg shadow-[#4dbace]/20"
+              className="px-6 py-2 bg-primary text-on-primary text-[12px] font-bold rounded-full shadow-card-hover shadow-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Reset Filter
             </button>
@@ -137,21 +137,21 @@ export default function MobileCatalogPage({
               type="button"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#bbc9c7]/30 bg-white text-[#3c4947] disabled:opacity-30 active:scale-90 transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant disabled:opacity-30 active:scale-90 transition-all duration-200"
             >
               <span className="material-symbols-outlined text-lg">chevron_left</span>
             </button>
 
             {pageNumbers.map((num, idx) => (
               num === '...' ? (
-                <span key={`dots-${idx}`} className="px-1 text-[#bbc9c7]">...</span>
+                <span key={`dots-${idx}`} className="px-1 text-outline-variant">...</span>
               ) : (
                 <button
                   key={num}
                   onClick={() => setCurrentPage(num)}
                   className={`w-8 h-8 flex items-center justify-center rounded-lg text-[12px] font-bold transition-all active:scale-90 ${safePage === num
-                    ? 'bg-[#4dbace] text-white shadow-md'
-                    : 'bg-white border border-[#bbc9c7]/30 text-[#3c4947]'
+                    ? 'bg-primary text-on-primary shadow-md'
+                    : 'bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant'
                     }`}
                 >
                   {num}
@@ -163,7 +163,7 @@ export default function MobileCatalogPage({
               type="button"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#bbc9c7]/30 bg-white text-[#3c4947] disabled:opacity-30 active:scale-90 transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant disabled:opacity-30 active:scale-90 transition-all duration-200"
             >
               <span className="material-symbols-outlined text-lg">chevron_right</span>
             </button>
@@ -173,11 +173,11 @@ export default function MobileCatalogPage({
         {/* CTA Get in Touch - Bright Version */}
         <section className="mt-4 mb-8">
           <div className="relative overflow-hidden rounded-3xl bg-primary p-8 shadow-xl shadow-primary/20">
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/20 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-surface-container-lowest/20 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-surface-container-lowest/10 rounded-full blur-2xl"></div>
 
             <div className="relative flex flex-col items-center text-center space-y-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-inner">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-surface-container-lowest/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-inner">
                 <span className="material-symbols-outlined text-white text-3xl">chat</span>
               </div>
 
@@ -194,7 +194,7 @@ export default function MobileCatalogPage({
                 href="https://wa.me/6281226733221"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 w-full py-3.5 bg-white text-primary text-[12px] font-black rounded-2xl shadow-lg active:scale-[0.98] transition-all uppercase tracking-widest border border-white/10"
+                className="flex items-center justify-center gap-3 w-full py-3.5 bg-surface-container-lowest text-primary text-[12px] font-black rounded-2xl shadow-card-hover active:scale-[0.98] transition-all duration-200 uppercase tracking-widest border border-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
               >
                 Konsultasi via WhatsApp
               </a>
@@ -222,9 +222,9 @@ export default function MobileCatalogPage({
 
 function FilterChip({ label, onClear }) {
   return (
-    <div className="flex items-center gap-1.5 bg-[#4dbace]/10 text-[#4dbace] px-2.5 py-1.5 rounded-lg border border-[#4dbace]/20 whitespace-nowrap">
+    <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-2.5 py-1.5 rounded-lg border border-primary/20 whitespace-nowrap">
       <span className="text-[11px] font-bold">{label}</span>
-      <button onClick={onClear} className="flex items-center justify-center hover:opacity-70 transition-opacity">
+      <button onClick={onClear} className="flex items-center justify-center hover:opacity-70 transition-all duration-200">
         <span className="material-symbols-outlined text-sm font-bold">close</span>
       </button>
     </div>

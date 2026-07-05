@@ -8,6 +8,7 @@ import { buildCatalogGroups } from '../utils/catalog';
 import { getCartItems, upsertCartItem } from '../utils/cart';
 import VariantSelectorSection from './customer-order/VariantSelectorSection';
 import CustomerNavbar from './customer-portal/CustomerNavbar';
+import ShippingSelector from './customer-portal/ShippingSelector';
 import { formatCurrency } from '../utils/formatters';
 
 export default function CreateOrderPage() {
@@ -40,6 +41,8 @@ export default function CreateOrderPage() {
         quantity: 100,
         useValve: false
     });
+
+    const [shipping, setShipping] = useState(null);
 
     const fetchProducts = useCallback(async () => {
         setLoadingProducts(true);
@@ -85,6 +88,7 @@ export default function CreateOrderPage() {
         : 0;
     const subtotal = (basePrice + valvePrice) * safeQuantity;
     const totalPrice = isSample ? subtotal + SAMPLE_SHIPPING : subtotal;
+    const grandTotal = isSample ? totalPrice : totalPrice + (shipping?.cost || 0);
 
     useEffect(() => {
         if (catalogGroups.length === 0 || selectedCatalogKey) return;
@@ -287,6 +291,10 @@ export default function CreateOrderPage() {
             return toast.error(`Stok tidak mencukupi. Hanya tersedia ${selectedVariant.stock} pcs untuk varian ini.`);
         }
 
+        if (!isSample && !shipping) {
+            return toast.error('Pilih alamat tujuan & kurir (ongkir) terlebih dahulu.');
+        }
+
         setCreatingOrder(true);
         try {
             const payload = {
@@ -296,6 +304,16 @@ export default function CreateOrderPage() {
                 useValve: isSample ? false : orderForm.useValve
             };
             if (isSample) payload.orderType = 'Sample';
+            if (!isSample && shipping) {
+                payload.shipping = {
+                    destinationId: shipping.destinationId,
+                    courierCode: shipping.courierCode,
+                    courierService: shipping.courierService,
+                    cost: shipping.cost,
+                    cashback: shipping.cashback,
+                    recipient: shipping.recipient,
+                };
+            }
             await api.post(ENDPOINTS.ORDERS, payload);
             toast.success(isSample ? 'Sample berhasil dipesan!' : 'Pesanan berhasil dibuat!');
             setTimeout(() => navigate('/portal'), 500);
@@ -316,7 +334,7 @@ export default function CreateOrderPage() {
                     <div className="mb-10 flex items-center">
                         <button
                             onClick={() => navigate(-1)}
-                            className="group flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-primary"
+                            className="group flex items-center gap-2 text-sm font-bold text-on-surface-variant transition-colors hover:text-primary cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                         >
                             <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
                             Kembali
@@ -324,29 +342,29 @@ export default function CreateOrderPage() {
                     </div>
 
                     <div className="mb-10">
-                        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tighter text-slate-900 capitalize sm:gap-4 sm:text-4xl">
+                        <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tighter text-on-surface capitalize sm:gap-4 sm:text-4xl">
                             <ShoppingCart className="h-10 w-10 text-primary" />
                             {isSample ? 'Pesan Sample' : 'Buat Pesanan Baru'}
                             {isSample && <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold">SAMPLE</span>}
                         </h1>
-                        <p className="mt-2 font-medium text-slate-500">
+                        <p className="mt-2 font-medium text-on-surface-variant">
                             {isSample
                                 ? 'Pilih varian produk sample. Maksimal 3 pcs per sample.'
                                 : 'Pilih katalog kemasan, lalu tentukan varian ukuran dan warna yang Anda butuhkan.'}
                         </p>
                     </div>
 
-                    <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
+                    <div className="overflow-hidden rounded-3xl border border-outline-variant/30 bg-surface-container-lowest shadow-card">
                         <div className="p-6 sm:p-8 lg:p-10">
                             {loadingProducts ? (
                                 <div className="flex flex-col items-center justify-center py-20">
                                     <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
-                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Memuat katalog...</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-muted">Memuat katalog...</p>
                                 </div>
                             ) : (
                                 <form onSubmit={handleCreateOrder} className="space-y-10">
                                     <div className="space-y-4">
-                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
+                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
                                             <Layers size={16} /> Pilih Kategori
                                         </label>
                                         <div className="flex flex-wrap gap-2">
@@ -356,9 +374,9 @@ export default function CreateOrderPage() {
                                                      type="button"
                                                      onClick={() => handleSelectCategory(category)}
                                                      data-testid={`category-btn-${category}`}
-                                                     className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all ${selectedCategory === category
+                                                     className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedCategory === category
                                                              ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                                             : 'border border-slate-200 bg-slate-50 text-slate-500 hover:border-primary/30 hover:text-primary'
+                                                             : 'border border-outline-variant bg-surface-container-low text-on-surface-variant hover:border-primary/30 hover:text-primary'
                                                          }`}
                                                  >
                                                     {category}
@@ -368,7 +386,7 @@ export default function CreateOrderPage() {
                                     </div>
 
                                     <div className="space-y-4">
-                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
+                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
                                             <Package size={16} /> Pilih Katalog
                                         </label>
                                         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -378,31 +396,31 @@ export default function CreateOrderPage() {
                                                      type="button"
                                                      onClick={() => handleSelectCatalog(catalog)}
                                                      data-testid={`catalog-btn-${catalog.key}`}
-                                                     className={`rounded-3xl border p-5 text-left transition-all ${selectedCatalogKey === catalog.key
+                                                     className={`rounded-3xl border p-5 text-left transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedCatalogKey === catalog.key
                                                              ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                                             : 'border-slate-200 bg-white hover:border-primary/30 hover:shadow-sm'
+                                                             : 'border-outline-variant bg-surface-container-lowest hover:border-primary/30 hover:shadow-card'
                                                          }`}
                                                  >
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div>
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{catalog.category}</p>
-                                                            <h3 className="mt-1 text-lg font-black text-slate-900">{catalog.name}</h3>
-                                                            <p className="mt-1 text-sm font-medium text-slate-500">{catalog.materialLabel}</p>
+                                                            <h3 className="mt-1 text-lg font-bold text-on-surface">{catalog.name}</h3>
+                                                            <p className="mt-1 text-sm font-medium text-on-surface-variant">{catalog.materialLabel}</p>
                                                         </div>
-                                                        <div className="rounded-2xl bg-slate-100 px-3 py-2 text-right">
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mulai</p>
-                                                            <p className="mt-1 text-sm font-black text-primary">{formatCurrency(catalog.priceB2B)}</p>
+                                                        <div className="rounded-2xl bg-surface-container-high px-3 py-2 text-right">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Mulai</p>
+                                                            <p className="mt-1 text-sm font-bold text-primary">{formatCurrency(catalog.priceB2B)}</p>
                                                         </div>
                                                     </div>
 
                                                     <div className="mt-4 flex flex-wrap gap-2">
                                                         {catalog.availableSizes.slice(0, 5).map((size) => (
-                                                            <span key={size} className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
+                                                            <span key={size} className="rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold text-on-surface-variant">
                                                                 {size}
                                                             </span>
                                                         ))}
                                                         {catalog.availableSizes.length > 5 && (
-                                                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">
+                                                            <span className="rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold text-on-surface-variant">
                                                                 +{catalog.availableSizes.length - 5} ukuran
                                                             </span>
                                                         )}
@@ -434,7 +452,7 @@ export default function CreateOrderPage() {
 
                                                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                                                     <div className="space-y-3">
-                                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
+                                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
                                                             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[10px] text-primary">#</span>
                                                             Kuantitas (pcs)
                                                         </label>
@@ -446,27 +464,27 @@ export default function CreateOrderPage() {
                                                                  step={isSample ? 1 : minimumOrder}
                                                                  max={isSample ? 3 : (selectedVariant?.stock || undefined)}
                                                                  data-testid="order-quantity-input"
-                                                                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-6 pr-16 text-xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                                                 className="w-full rounded-2xl border border-outline-variant bg-surface-container-low py-4 pl-6 pr-16 text-xl font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
                                                                  value={safeQuantity}
                                                                 onChange={(e) => setOrderForm((current) => ({
                                                                     ...current,
                                                                     quantity: Number(e.target.value) || (isSample ? 1 : minimumOrder)
                                                                 }))}
                                                             />
-                                                            <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-slate-400">pcs</span>
+                                                            <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-muted">pcs</span>
                                                         </div>
-                                                        <p className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                                                        <p className="flex items-center gap-1 text-[10px] font-bold text-muted">
                                                             <Info size={12} /> {isSample ? 'Maksimal 3 pcs untuk sample.' : `Minimal order ${minimumOrder.toLocaleString()} pcs. Harga B2B aktif mulai 1000 pcs.`}
                                                         </p>
                                                     </div>
 
                                                     {!isSample && (
                                                     <div className="space-y-3">
-                                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Tambahan Valve</label>
+                                                        <label className="text-xs font-black uppercase tracking-widest text-muted">Tambahan Valve</label>
                                                         <div className="grid grid-cols-2 gap-4">
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${orderForm.useValve
+                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${orderForm.useValve
                                                                     ? 'border-primary bg-primary/5 text-primary'
-                                                                    : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
+                                                                    : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
                                                                 } ${(selectedCatalog.addons?.valvePrice || 0) <= 0 ? 'cursor-not-allowed opacity-40' : ''}`}>
                                                                 <input
                                                                     type="radio"
@@ -476,11 +494,11 @@ export default function CreateOrderPage() {
                                                                     onChange={() => setOrderForm((current) => ({ ...current, useValve: true }))}
                                                                     className="sr-only"
                                                                 />
-                                                                <span className="font-black">Ya, Pakai</span>
+                                                                <span className="font-bold">Ya, Pakai</span>
                                                             </label>
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all ${!orderForm.useValve
+                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!orderForm.useValve
                                                                     ? 'border-primary bg-primary text-white'
-                                                                    : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
+                                                                    : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
                                                                 }`}>
                                                                 <input
                                                                     type="radio"
@@ -489,7 +507,7 @@ export default function CreateOrderPage() {
                                                                     onChange={() => setOrderForm((current) => ({ ...current, useValve: false }))}
                                                                     className="sr-only"
                                                                 />
-                                                                <span className="font-black">Tidak</span>
+                                                                <span className="font-bold">Tidak</span>
                                                             </label>
                                                         </div>
                                                         {selectedCatalog.addons?.valvePrice > 0 && orderForm.useValve && (
@@ -522,15 +540,32 @@ export default function CreateOrderPage() {
                                                     <SummaryRow label="Harga Aktif" value={formatCurrency(basePrice)} />
                                                     <SummaryRow label="Valve" value={formatCurrency(valvePrice)} />
                                                     {isSample && <SummaryRow label="Ongkir (fixed)" value={formatCurrency(SAMPLE_SHIPPING)} />}
+                                                    {!isSample && shipping && <SummaryRow label={`Ongkir (${shipping.courierCode})`} value={formatCurrency(shipping.cost)} />}
                                                 </div>
 
                                                 <div className="mt-6 border-t border-white/10 pt-5">
                                                     <div className="flex items-center justify-between">
                                                         <p className="text-sm font-bold text-white/70">Total Harga</p>
-                                                        <p className="text-3xl font-black tracking-tight">{formatCurrency(totalPrice)}</p>
+                                                        <p className="text-3xl font-bold tracking-tight">{formatCurrency(grandTotal)}</p>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    )}
+
+                                    {selectedCatalog && !isSample && (
+                                        <div className="rounded-3xl border border-outline-variant/30 bg-surface-container-lowest p-6 shadow-card sm:p-8">
+                                            <div className="mb-5 flex items-center gap-3">
+                                                <ShoppingCart className="h-5 w-5 text-primary" />
+                                                <p className="text-sm font-black uppercase tracking-widest text-muted">Alamat & Pengiriman</p>
+                                            </div>
+                                            <ShippingSelector
+                                                items={[{ productId: orderForm.productId, variantId: orderForm.variantId, quantity: safeQuantity }]}
+                                                itemValue={subtotal}
+                                                value={shipping}
+                                                onChange={setShipping}
+                                                formatCurrency={formatCurrency}
+                                            />
                                         </div>
                                     )}
 
@@ -539,14 +574,14 @@ export default function CreateOrderPage() {
                                             type="button"
                                             onClick={handleAddToCart}
                                             disabled={catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
-                                            className="flex w-full items-center justify-center gap-3 rounded-3xl border border-primary bg-white py-5 text-lg font-black text-primary shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
+                                            className="flex w-full items-center justify-center gap-3 rounded-3xl border border-primary bg-surface-container-lowest py-5 text-lg font-bold text-primary shadow-card transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-1 hover:bg-primary/5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
                                         >
                                             <ShoppingCart className="h-6 w-6" /> Tambah ke Keranjang
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={creatingOrder || catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
-                                            className="flex w-full items-center justify-center gap-3 rounded-3xl bg-primary py-5 text-lg font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
+                                            className="flex w-full items-center justify-center gap-3 rounded-3xl bg-primary py-5 text-lg font-bold text-white shadow-xl shadow-primary/30 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-1 hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
                                         >
                                             {creatingOrder ? <><Loader2 className="h-6 w-6 animate-spin" /> Memproses...</> : (isSample ? 'Konfirmasi & Pesan Sample' : 'Konfirmasi & Buat Pesanan')}
                                         </button>
@@ -564,6 +599,6 @@ export default function CreateOrderPage() {
 const SummaryRow = ({ label, value, danger }) => (
     <div className="flex items-center justify-between gap-4">
         <p className="text-xs font-bold text-white/60">{label}</p>
-        <p className={`text-sm font-black ${danger ? 'text-red-300' : 'text-white'}`}>{value}</p>
+        <p className={`text-sm font-bold ${danger ? 'text-red-300' : 'text-white'}`}>{value}</p>
     </div>
 );

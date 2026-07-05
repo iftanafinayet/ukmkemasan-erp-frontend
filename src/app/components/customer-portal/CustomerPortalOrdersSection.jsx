@@ -63,7 +63,7 @@ export default function CustomerPortalOrdersSection({
           <button
             type="button"
             onClick={onNavigateToCreateOrder}
-            className="flex items-center gap-2 bg-primary px-4 py-2 rounded-lg text-white text-sm font-bold shadow-md hover:scale-105 transition-transform"
+            className="flex items-center gap-2 bg-primary px-4 py-2 rounded-lg text-white text-sm font-bold shadow-card hover:scale-105 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <span className="material-symbols-outlined text-sm">add</span> Buat
           </button>
@@ -72,7 +72,7 @@ export default function CustomerPortalOrdersSection({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-3 space-y-6 lg:sticky lg:top-28 lg:self-start">
-          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)]">
+          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-card">
             <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
             <div className="space-y-3">
               {[
@@ -87,10 +87,10 @@ export default function CustomerPortalOrdersSection({
                   <button
                     key={statusBtn.id}
                     onClick={() => setOrderFilter(statusBtn.id)}
-                    className={`w-full text-left px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    className={`focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 w-full text-left px-5 py-3 rounded-xl text-sm font-bold transition-all duration-200 ${
                       isActive
-                        ? 'bg-primary text-white shadow-lg shadow-primary/20 translate-x-1'
-                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                        ? 'bg-primary text-white shadow-card-hover shadow-primary/20 translate-x-1'
+                        : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface-variant'
                     }`}
                   >
                     {statusBtn.label}
@@ -103,7 +103,7 @@ export default function CustomerPortalOrdersSection({
             <div className="relative z-10">
               <h3 className="font-bold text-xl mb-2 font-headline">Butuh Bantuan?</h3>
               <p className="text-primary-fixed text-sm mb-4 leading-relaxed font-body">Hubungi admin untuk pertanyaan mengenai produksi.</p>
-              <button className="bg-white text-primary px-6 py-2 rounded-full text-sm font-bold hover:scale-105 transition-transform">WhatsApp Admin</button>
+              <button className="bg-surface-container-lowest text-primary px-6 py-2 rounded-full text-sm font-bold hover:scale-105 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">WhatsApp Admin</button>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
               <span className="material-symbols-outlined !text-9xl">support_agent</span>
@@ -133,7 +133,7 @@ export default function CustomerPortalOrdersSection({
             const material = getOrderMaterial(order);
 
             return (
-              <article key={order._id} onClick={() => onViewOrder(order._id)} className={`cursor-pointer group bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_12px_32px_-4px_rgba(0,106,98,0.08)] transition-opacity ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}>
+              <article key={order._id} onClick={() => onViewOrder(order._id)} className={`cursor-pointer group bg-surface-container-lowest rounded-xl overflow-hidden shadow-card transition-opacity ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}>
                 <div className="bg-surface-container-high px-6 py-4 flex flex-col md:flex-row justify-between md:items-center gap-3">
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-bold text-primary tracking-wider">#{order.orderNumber || order._id.slice(-6)}</span>
@@ -152,7 +152,7 @@ export default function CustomerPortalOrdersSection({
                 </div>
                 <div className="p-6 md:p-8">
                   <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
-                    <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-sm border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
+                    <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-card border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
                       {firstImage ? (
                         <img src={firstImage} alt={firstName} className="w-full h-full object-cover" />
                       ) : (
@@ -181,13 +181,13 @@ export default function CustomerPortalOrdersSection({
                     <div className="flex items-end shrink-0 gap-2">
                        {isPending ? (
                          <>
-                          <button onClick={(e) => { e.stopPropagation(); onCancelOrder?.(order._id); }} className="px-4 py-2.5 rounded-full border-2 border-error text-error text-xs font-bold hover:bg-error/5 transition-colors">Batalkan</button>
-                          <button onClick={(e) => { e.stopPropagation(); onNavigateToPayment(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">Bayar Sekarang</button>
+                          <button onClick={(e) => { e.stopPropagation(); onCancelOrder?.(order._id); }} className="px-4 py-2.5 rounded-full border-2 border-error text-error text-xs font-bold hover:bg-error/5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Batalkan</button>
+                          <button onClick={(e) => { e.stopPropagation(); onNavigateToPayment(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-all duration-200 shadow-card-hover shadow-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Bayar Sekarang</button>
                          </>
                        ) : isCompleted ? (
-                          <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
+                           <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Pesan Lagi</button>
                        ) : (
-                          <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:scale-[1.02] hover:shadow-lg active:scale-95 transition-all">Detail Progress</button>
+                           <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:scale-[1.02] hover:shadow-card-hover active:scale-95 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Detail Progress</button>
                        )}
                     </div>
                   </div>

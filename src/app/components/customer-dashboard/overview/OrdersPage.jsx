@@ -41,7 +41,7 @@ export default function OrdersPage({
           <button
             type="button"
             onClick={onCreateOrder}
-            className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+            className="bg-primary text-on-primary px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Plus size={16} />
             Buat Pesanan
@@ -51,7 +51,7 @@ export default function OrdersPage({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.isArray(filteredOrders) && filteredOrders.map((order) => (
-          <div key={order._id} onClick={() => onViewOrder(order._id)} className="cursor-pointer">
+          <div key={order._id} onClick={() => onViewOrder(order._id)} className="cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
             <OrderCard order={order} />
           </div>
         ))}

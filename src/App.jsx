@@ -11,6 +11,7 @@ const RegisterPage = lazy(() => import('./app/components/RegisterPage'));
 const CustomerDashboard = lazy(() => import('./app/components/CustomerDashboard'));
 const CustomerPortal = lazy(() => import('./app/components/CustomerPortal'));
 const CreateOrderPage = lazy(() => import('./app/components/CreateOrderPage'));
+const CheckoutPage = lazy(() => import('./app/components/CheckoutPage'));
 const ProductDetailPage = lazy(() => import('./app/components/ProductDetailPage'));
 const CustomerPaymentPage = lazy(() => import('./app/components/customer-portal/CustomerPaymentPage'));
 const CustomerPortalArticleDetail = lazy(() => import('./app/components/customer-portal/CustomerPortalArticleDetail'));
@@ -144,6 +145,16 @@ function AppRoutes() {
             element={
               <AuthWrapper>
                 <CreateOrderPage />
+              </AuthWrapper>
+            }
+          />
+
+          {/* Customer Checkout */}
+          <Route
+            path="/portal/checkout"
+            element={
+              <AuthWrapper>
+                <CheckoutPage />
               </AuthWrapper>
             }
           />

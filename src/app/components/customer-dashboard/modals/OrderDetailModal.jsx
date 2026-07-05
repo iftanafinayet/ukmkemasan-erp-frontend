@@ -3,6 +3,7 @@ import { Download, Clock } from 'lucide-react';
 import { InfoBlock, ModalWrapper } from '../shared';
 import { normalizePaymentHistory, printInvoicePdf } from '../../../utils/phase2';
 import api from '../../../utils/api';
+import AdminShippingSection from './AdminShippingSection';
 
 export default function OrderDetailModal({
   formatCurrency,
@@ -11,6 +12,7 @@ export default function OrderDetailModal({
   isAdmin,
   isOpen,
   onClose,
+  onRefreshOrder,
   onTogglePaid,
   onUpdateOrderStatus,
   orderStatuses,
@@ -21,12 +23,21 @@ export default function OrderDetailModal({
   const [logsLoading, setLogsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOpen || !selectedOrder?._id) return;
-    setLogsLoading(true);
-    api.get(`/orders/${selectedOrder._id}/logs`)
-      .then((res) => setLogs(res.data))
-      .catch(() => {})
-      .finally(() => setLogsLoading(false));
+    if (!isOpen || !selectedOrder?._id) return undefined;
+    let active = true;
+    const loadLogs = async () => {
+      setLogsLoading(true);
+      try {
+        const res = await api.get(`/orders/${selectedOrder._id}/logs`);
+        if (active) setLogs(res.data);
+      } catch {
+        /* ignore */
+      } finally {
+        if (active) setLogsLoading(false);
+      }
+    };
+    loadLogs();
+    return () => { active = false; };
   }, [isOpen, selectedOrder?._id]);
 
   if (!isOpen || !selectedOrder) return null;
@@ -149,6 +160,14 @@ export default function OrderDetailModal({
           <p className="text-sm font-medium text-slate-400">Belum ada aktivitas tercatat.</p>
         )}
       </div>
+
+      {isAdmin && (
+        <AdminShippingSection
+          order={selectedOrder}
+          formatDateTime={formatDateTime}
+          onRefreshOrder={onRefreshOrder}
+        />
+      )}
 
       {isAdmin && (
         <div className="space-y-4 border-t border-slate-100 pt-6">

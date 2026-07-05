@@ -86,17 +86,17 @@ export function SalesProcessingSection({
         <button
           type="button"
           onClick={() => exportToFile(ENDPOINTS.EXPORT_SALES_OVERVIEW, 'sales-overview.xlsx')}
-          className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+          className="bg-surface-container-lowest text-on-surface-variant border border-outline-variant px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider shadow-card hover:bg-surface-container-low transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <FileDown size={16} />
           Export
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-3xl border border-outline-variant/30 overflow-hidden shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1080px] text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-surface-container-low border-b border-outline-variant/30">
               <tr>
                 <TableHead>Order</TableHead>
                 <TableHead>Customer</TableHead>
@@ -107,17 +107,17 @@ export function SalesProcessingSection({
                 <TableHead>Aksi</TableHead>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-outline-variant/30">
               {filteredProcessing.map((order) => (
-                <tr key={order._id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={order._id} className="hover:bg-surface-container-low/70 transition-colors">
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{order.orderNumber}</p>
-                    <p className="text-xs text-slate-500 font-medium mt-1">{order.product?.name || 'Produk tidak ditemukan'}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">{toNumber(order.details?.quantity).toLocaleString()} pcs</p>
+                    <p className="font-black text-on-surface text-sm">{order.orderNumber}</p>
+                    <p className="text-xs text-on-surface-variant font-medium mt-1">{order.product?.name || 'Produk tidak ditemukan'}</p>
+                    <p className="text-[11px] text-muted mt-1">{toNumber(order.details?.quantity).toLocaleString()} pcs</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{order.customer?.name || '-'}</p>
-                    <p className="text-xs text-slate-400">{order.customer?.email || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{order.customer?.name || '-'}</p>
+                    <p className="text-xs text-muted">{order.customer?.email || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
                     <div className="space-y-3">
@@ -126,7 +126,7 @@ export function SalesProcessingSection({
                         value={order.status}
                         onChange={(event) => onUpdateOrderStatus(order._id, event.target.value)}
                         disabled={updatingStatus}
-                        className="w-full max-w-[180px] px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary disabled:opacity-50"
+                        className="w-full max-w-[180px] px-3 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest text-xs font-bold text-on-surface-variant outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary disabled:opacity-50"
                       >
                         {SALES_ORDER_STATUSES.map((status) => (
                           <option key={status} value={status}>{status}</option>
@@ -140,8 +140,8 @@ export function SalesProcessingSection({
                         <span className={`inline-flex px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] ${getInvoiceStatusClasses(order.invoice.status)}`}>
                           {order.invoice.status}
                         </span>
-                        <p className="font-bold text-slate-800 text-sm mt-3">{order.invoice.invoiceNumber}</p>
-                        <p className="text-xs text-slate-400">Jatuh tempo {formatDate(order.invoice.dueDate)}</p>
+                        <p className="font-bold text-on-surface text-sm mt-3">{order.invoice.invoiceNumber}</p>
+                        <p className="text-xs text-muted">Jatuh tempo {formatDate(order.invoice.dueDate)}</p>
                       </div>
                     ) : (
                       <button
@@ -154,17 +154,17 @@ export function SalesProcessingSection({
                     )}
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">
+                    <p className="font-black text-on-surface text-sm">
                       {formatCurrency(order.paymentTotal)} / {formatCurrency(order.invoice?.totalAmount || order.totalPrice)}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">Sisa {formatCurrency(order.outstandingAmount)}</p>
-                    <p className={`text-[11px] font-black mt-2 ${order.isPaid ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    <p className="text-xs text-on-surface-variant mt-1">Sisa {formatCurrency(order.outstandingAmount)}</p>
+                    <p className={`text-[11px] font-black mt-2 ${order.isPaid ? 'text-success' : 'text-warning'}`}>
                       {order.isPaid ? 'Lunas' : 'Belum Lunas'}
                     </p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{toNumber(order.returnQuantity).toLocaleString()} pcs</p>
-                    <p className="text-xs text-slate-500 mt-1">{formatCurrency(order.returnAmount)}</p>
+                    <p className="font-black text-on-surface text-sm">{toNumber(order.returnQuantity).toLocaleString()} pcs</p>
+                    <p className="text-xs text-on-surface-variant mt-1">{formatCurrency(order.returnAmount)}</p>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex flex-wrap gap-2">
@@ -255,17 +255,17 @@ export function InvoicesSection({
         <button
           type="button"
           onClick={() => exportToFile(ENDPOINTS.EXPORT_INVOICES, 'invoices.xlsx')}
-          className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+          className="bg-surface-container-lowest text-on-surface-variant border border-outline-variant px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider shadow-card hover:bg-surface-container-low transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <FileDown size={16} />
           Export
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-3xl border border-outline-variant/30 overflow-hidden shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-surface-container-low border-b border-outline-variant/30">
               <tr>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Order</TableHead>
@@ -277,28 +277,28 @@ export function InvoicesSection({
                 <TableHead>Aksi</TableHead>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-outline-variant/30">
               {filteredInvoices.map((invoice) => (
-                <tr key={invoice._id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={invoice._id} className="hover:bg-surface-container-low/70 transition-colors">
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{invoice.invoiceNumber}</p>
-                    <p className="text-xs text-slate-500 mt-1">{invoice.product?.name || '-'}</p>
+                    <p className="font-black text-on-surface text-sm">{invoice.invoiceNumber}</p>
+                    <p className="text-xs text-on-surface-variant mt-1">{invoice.product?.name || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{invoice.order?.orderNumber || '-'}</p>
-                    <p className="text-xs text-slate-400 mt-1">{toNumber(invoice.quantity).toLocaleString()} pcs</p>
+                    <p className="font-bold text-on-surface text-sm">{invoice.order?.orderNumber || '-'}</p>
+                    <p className="text-xs text-muted mt-1">{toNumber(invoice.quantity).toLocaleString()} pcs</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{invoice.customer?.name || '-'}</p>
-                    <p className="text-xs text-slate-400">{invoice.customer?.email || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{invoice.customer?.name || '-'}</p>
+                    <p className="text-xs text-muted">{invoice.customer?.email || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{formatDate(invoice.issuedDate)}</p>
-                    <p className="text-xs text-slate-400">Due {formatDate(invoice.dueDate)}</p>
+                    <p className="font-bold text-on-surface text-sm">{formatDate(invoice.issuedDate)}</p>
+                    <p className="text-xs text-muted">Due {formatDate(invoice.dueDate)}</p>
                   </td>
-                  <td className="px-5 py-4 font-black text-slate-900 text-sm">{formatCurrency(invoice.totalAmount)}</td>
+                  <td className="px-5 py-4 font-black text-on-surface text-sm">{formatCurrency(invoice.totalAmount)}</td>
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{formatCurrency(invoice.paidAmount)}</p>
+                    <p className="font-black text-on-surface text-sm">{formatCurrency(invoice.paidAmount)}</p>
                     <p className="text-xs text-slate-500">Sisa {formatCurrency(getInvoiceOutstanding(invoice))}</p>
                   </td>
                   <td className="px-5 py-4">
@@ -382,10 +382,10 @@ export function PaymentsSection({
         onAction={() => onOpenPaymentModal()}
       />
 
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-3xl border border-outline-variant/30 overflow-hidden shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[960px] text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-surface-container-low border-b border-outline-variant/30">
               <tr>
                 <TableHead>No. Payment</TableHead>
                 <TableHead>Invoice</TableHead>
@@ -396,28 +396,28 @@ export function PaymentsSection({
                 <TableHead>Referensi</TableHead>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-outline-variant/30">
               {filteredPayments.map((payment) => (
-                <tr key={payment._id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={payment._id} className="hover:bg-surface-container-low/70 transition-colors">
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{payment.paymentNumber}</p>
-                    <p className="text-xs text-slate-500 mt-1">{payment.order?.orderNumber || '-'}</p>
+                    <p className="font-black text-on-surface text-sm">{payment.paymentNumber}</p>
+                    <p className="text-xs text-on-surface-variant mt-1">{payment.order?.orderNumber || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{payment.invoice?.invoiceNumber || '-'}</p>
-                    <p className="text-xs text-slate-400 mt-1">{payment.invoice?.status || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{payment.invoice?.invoiceNumber || '-'}</p>
+                    <p className="text-xs text-muted mt-1">{payment.invoice?.status || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{payment.customer?.name || '-'}</p>
-                    <p className="text-xs text-slate-400">{payment.customer?.email || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{payment.customer?.name || '-'}</p>
+                    <p className="text-xs text-muted">{payment.customer?.email || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{formatDate(payment.paymentDate)}</p>
-                    <p className="text-xs text-slate-400">{formatDateTime(payment.paymentDate)}</p>
+                    <p className="font-bold text-on-surface text-sm">{formatDate(payment.paymentDate)}</p>
+                    <p className="text-xs text-muted">{formatDateTime(payment.paymentDate)}</p>
                   </td>
-                  <td className="px-5 py-4 text-sm font-bold text-slate-700">{payment.method || '-'}</td>
-                  <td className="px-5 py-4 font-black text-emerald-600 text-sm">{formatCurrency(payment.amount)}</td>
-                  <td className="px-5 py-4 text-sm text-slate-500 font-medium">{payment.referenceNo || '-'}</td>
+                  <td className="px-5 py-4 text-sm font-bold text-on-surface-variant">{payment.method || '-'}</td>
+                  <td className="px-5 py-4 font-black text-success text-sm">{formatCurrency(payment.amount)}</td>
+                  <td className="px-5 py-4 text-sm text-on-surface-variant font-medium">{payment.referenceNo || '-'}</td>
                 </tr>
               ))}
             </tbody>
@@ -486,10 +486,10 @@ export function ReturnsSection({
         onAction={() => onOpenReturnModal()}
       />
 
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-3xl border border-outline-variant/30 overflow-hidden shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1040px] text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-surface-container-low border-b border-outline-variant/30">
               <tr>
                 <TableHead>No. Retur</TableHead>
                 <TableHead>Order</TableHead>
@@ -501,36 +501,36 @@ export function ReturnsSection({
                 <TableHead>Tanggal</TableHead>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-outline-variant/30">
               {filteredReturns.map((entry) => (
-                <tr key={entry._id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={entry._id} className="hover:bg-surface-container-low/70 transition-colors">
                   <td className="px-5 py-4">
-                    <p className="font-black text-slate-900 text-sm">{entry.returnNumber}</p>
-                    <p className="text-xs text-slate-500 mt-1">{entry.reason}</p>
+                    <p className="font-black text-on-surface text-sm">{entry.returnNumber}</p>
+                    <p className="text-xs text-on-surface-variant mt-1">{entry.reason}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{entry.order?.orderNumber || '-'}</p>
-                    <p className="text-xs text-slate-400 mt-1">{entry.invoice?.invoiceNumber || 'Tanpa invoice'}</p>
+                    <p className="font-bold text-on-surface text-sm">{entry.order?.orderNumber || '-'}</p>
+                    <p className="text-xs text-muted mt-1">{entry.invoice?.invoiceNumber || 'Tanpa invoice'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{entry.customer?.name || '-'}</p>
-                    <p className="text-xs text-slate-400">{entry.customer?.email || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{entry.customer?.name || '-'}</p>
+                    <p className="text-xs text-muted">{entry.customer?.email || '-'}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{entry.product?.name || '-'}</p>
-                    <p className="text-xs text-slate-400 mt-1">{entry.product?.sku || '-'}</p>
+                    <p className="font-bold text-on-surface text-sm">{entry.product?.name || '-'}</p>
+                    <p className="text-xs text-muted mt-1">{entry.product?.sku || '-'}</p>
                   </td>
-                  <td className="px-5 py-4 font-black text-slate-900 text-sm">{toNumber(entry.quantity).toLocaleString()} pcs</td>
-                  <td className="px-5 py-4 font-black text-rose-600 text-sm">{formatCurrency(entry.totalAmount)}</td>
+                  <td className="px-5 py-4 font-black text-on-surface text-sm">{toNumber(entry.quantity).toLocaleString()} pcs</td>
+                  <td className="px-5 py-4 font-black text-error text-sm">{formatCurrency(entry.totalAmount)}</td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{entry.warehouse?.name || '-'}</p>
-                    <p className={`text-xs font-black mt-1 ${entry.restocked ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <p className="font-bold text-on-surface text-sm">{entry.warehouse?.name || '-'}</p>
+                    <p className={`text-xs font-black mt-1 ${entry.restocked ? 'text-success' : 'text-muted'}`}>
                       {entry.restocked ? 'Restock ke inventory' : 'Tanpa restock'}
                     </p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-slate-800 text-sm">{formatDate(entry.returnDate)}</p>
-                    <p className="text-xs text-slate-400">{formatDateTime(entry.returnDate)}</p>
+                    <p className="font-bold text-on-surface text-sm">{formatDate(entry.returnDate)}</p>
+                    <p className="text-xs text-muted">{formatDateTime(entry.returnDate)}</p>
                   </td>
                 </tr>
               ))}

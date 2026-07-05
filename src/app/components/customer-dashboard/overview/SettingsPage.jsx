@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { InputField } from '../shared';
 import LandingContentSettingsSection from './LandingContentSettingsSection';
+import ShippingSettingsSection from './ShippingSettingsSection';
 
 export default function SettingsPage({
   isAdmin,
@@ -45,8 +46,8 @@ export default function SettingsPage({
 }) {
   return (
     <div className={`space-y-8 animate-in fade-in duration-500 ${isAdmin ? 'max-w-5xl' : 'max-w-2xl'}`}>
-      <div className="bg-white p-8 rounded-3xl border border-slate-100">
-        <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2">
+      <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant shadow-card">
+        <h3 className="font-black text-on-surface mb-6 flex items-center gap-2">
           <User className="w-5 h-5 text-primary" />
           Profil Saya
         </h3>
@@ -62,7 +63,7 @@ export default function SettingsPage({
           <button
             type="submit"
             disabled={savingProfile}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Simpan Profil
@@ -70,8 +71,8 @@ export default function SettingsPage({
         </form>
       </div>
 
-      <div className="bg-white p-8 rounded-3xl border border-slate-100">
-        <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2">
+      <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant shadow-card">
+        <h3 className="font-black text-on-surface mb-6 flex items-center gap-2">
           <Lock className="w-5 h-5 text-primary" />
           Ganti Password
         </h3>
@@ -106,7 +107,7 @@ export default function SettingsPage({
           <button
             type="submit"
             disabled={savingPassword}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-800 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-slate-700 active:scale-95 disabled:opacity-50 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-8 py-3 text-sm font-bold text-on-secondary shadow-card transition-all duration-200 hover:bg-secondary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             {savingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
             Ubah Password
@@ -114,12 +115,16 @@ export default function SettingsPage({
         </form>
       </div>
 
-      <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Info Akun</p>
-        <p className="text-sm text-slate-600">
+      <div className="bg-surface-container-low p-6 rounded-3xl border border-outline-variant">
+        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Info Akun</p>
+        <p className="text-sm text-on-surface-variant">
           Role: <span className="font-bold text-primary uppercase">{user?.role}</span>
         </p>
       </div>
+
+      {isAdmin && (
+        <ShippingSettingsSection />
+      )}
 
       {isAdmin && (
         <LandingContentSettingsSection

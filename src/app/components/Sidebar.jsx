@@ -26,7 +26,7 @@ import logoUrl from '../../assets/LogoUKM.svg';
 export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState(['inventory', 'sales']); // Default expanded
+  const [expandedMenus, setExpandedMenus] = useState(['inventory', 'sales']);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -86,9 +86,9 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
 
   const handleMenuClick = (item) => {
     if (item.children && item.children.length > 0) {
-      setExpandedMenus(prev => 
-        prev.includes(item.id) 
-          ? prev.filter(id => id !== item.id) 
+      setExpandedMenus(prev =>
+        prev.includes(item.id)
+          ? prev.filter(id => id !== item.id)
           : [...prev, item.id]
       );
     } else {
@@ -119,7 +119,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-sidebar p-2 bg-primary text-white rounded-lg shadow-card cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -128,16 +128,16 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
         <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={() => setIsOpen(false)} />
       )}
 
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-100 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed lg:static inset-y-0 left-0 z-sidebar w-64 bg-surface-container-lowest border-r border-outline-variant/30 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full font-sans">
-          <div className="p-6 border-b border-slate-50">
+          <div className="p-6 border-b border-outline-variant/30">
             <div className="flex items-center gap-3">
               <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
-              <h1 className="font-black text-lg text-slate-800 uppercase tracking-tighter">UKM Kemasan</h1>
+              <h1 className="font-bold text-lg text-on-surface uppercase tracking-tight">UKM Kemasan</h1>
             </div>
           </div>
 
-          <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">
+          <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
@@ -150,44 +150,44 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
                     <button
                       onClick={() => handleMenuClick(item)}
                       data-testid={`menu-item-${item.id}`}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
                         isParentActive && !hasChildren
-                          ? 'bg-slate-100 text-primary font-bold'
-                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                          ? 'bg-surface-container-high text-primary font-bold'
+                          : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-1.5 rounded-lg ${isParentActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'}`}>
+                        <div className={`p-1.5 rounded-lg ${isParentActive ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'}`}>
                           <Icon size={18} />
                         </div>
-                        <span className={`text-sm ${isParentActive ? 'font-bold text-slate-800' : 'font-medium text-slate-500'}`}>
+                        <span className={`text-sm ${isParentActive ? 'font-bold text-on-surface' : 'font-medium text-on-surface-variant'}`}>
                           {item.label}
                         </span>
                         {item.id === 'inquiries' && inquiryBadge > 0 && (
-                          <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                          <span className="ml-auto bg-error text-on-error text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                             {inquiryBadge > 99 ? '99+' : inquiryBadge}
                           </span>
                         )}
                       </div>
                       {hasChildren && (
-                        <ChevronDown 
-                          size={16} 
-                          className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} 
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                         />
                       )}
                     </button>
 
                     {hasChildren && isExpanded && (
-                      <ul className="ml-4 pl-4 border-l border-slate-100 mt-1 space-y-1">
+                      <ul className="ml-4 pl-4 border-l border-outline-variant/30 mt-1 space-y-1">
                         {item.children.map((sub) => (
                           <li key={sub.id}>
                             <button
                               onClick={(e) => handleSubMenuClick(e, sub.id)}
                               data-testid={`menu-item-${sub.id}`}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
+                              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
                                 activeMenu === sub.id
-                                  ? 'text-primary font-black bg-primary/5'
-                                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 font-medium'
+                                  ? 'text-primary font-bold bg-primary/5'
+                                  : 'text-muted hover:text-on-surface hover:bg-surface-container-low font-medium'
                               }`}
                             >
                               {sub.label}
@@ -202,12 +202,12 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
             </ul>
           </nav>
 
-          <div className="p-4 bg-slate-50/50 border-t border-slate-100">
-             <button
-               onClick={handleLogout}
-               data-testid="logout-btn"
-               className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
-             >
+          <div className="p-4 bg-surface-container-low/50 border-t border-outline-variant/30">
+            <button
+              onClick={handleLogout}
+              data-testid="logout-btn"
+              className="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container rounded-xl transition-colors duration-200 font-semibold text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2"
+            >
               <LogOut className="w-5 h-5" />
               <span>Keluar Sistem</span>
             </button>

@@ -37,16 +37,16 @@ export default function StockCardPage({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="px-8 py-7 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-cyan-50">
+      <div className="bg-surface-container-lowest rounded-[2rem] border border-outline-variant/30 shadow-card overflow-hidden">
+        <div className="px-8 py-7 border-b border-outline-variant/30 bg-gradient-to-r from-surface-container-low via-surface-container-lowest to-cyan-50">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 border border-slate-200 text-[10px] font-black uppercase tracking-[0.24em] text-slate-500 mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest/90 border border-outline-variant text-[10px] font-black uppercase tracking-[0.24em] text-on-surface-variant mb-4">
                 <Layers className="w-3.5 h-3.5 text-primary" />
                 Stock Card
               </div>
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Histori mutasi stok yang lebih rapi dan terbaca.</h3>
-              <p className="text-sm text-slate-500 font-medium mt-2">
+              <h3 className="text-2xl font-bold text-on-surface tracking-tight">Histori mutasi stok yang lebih rapi dan terbaca.</h3>
+              <p className="text-sm text-on-surface-variant font-medium mt-2">
                 Pilih produk untuk melihat pergerakan stok masuk, keluar, dan saldo akhirnya secara kronologis.
               </p>
             </div>
@@ -56,7 +56,7 @@ export default function StockCardPage({
                 <select
                   value={stockCardProductId}
                   onChange={(event) => onSelectProduct(event.target.value)}
-                  className="appearance-none w-full px-5 pr-11 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-sm text-slate-800 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  className="appearance-none w-full px-5 pr-11 py-4 bg-surface-container-lowest border border-outline-variant rounded-2xl font-bold text-sm text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
                 >
                   <option value="">Pilih produk...</option>
                   {stockProducts.map((product) => (
@@ -65,13 +65,13 @@ export default function StockCardPage({
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
               </div>
               <button
                 type="button"
                 onClick={() => onRefresh(stockCardProductId)}
                 disabled={!stockCardProductId || stockCardLoading}
-                className="px-5 py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.22em] shadow-lg shadow-slate-200 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+                className="px-5 py-4 bg-slate-900 text-white rounded-xl font-black text-[11px] uppercase tracking-[0.22em] shadow-card-hover shadow-slate-200 disabled:opacity-50 disabled:shadow-none cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 flex items-center justify-center gap-2"
               >
                 {stockCardLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                 Muat Ulang
@@ -82,13 +82,13 @@ export default function StockCardPage({
 
         <div className="p-8 space-y-6">
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr_1fr_1.4fr]">
-            <div className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
+            <div className="rounded-3xl border border-outline-variant/30 bg-surface-container-low p-5">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Produk</p>
-                <Package className="w-4 h-4 text-slate-300" />
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-muted">Produk</p>
+                <Package className="w-4 h-4 text-muted" />
               </div>
-              <p className="text-lg font-black text-slate-900 leading-tight">{selectedProduct?.name || 'Belum dipilih'}</p>
-              <p className="text-xs text-slate-500 font-medium mt-1">{selectedProduct?.sku || selectedProduct?.category || 'Pilih produk dari dropdown di atas.'}</p>
+              <p className="text-lg font-bold text-on-surface leading-tight">{selectedProduct?.name || 'Belum dipilih'}</p>
+              <p className="text-xs text-on-surface-variant font-medium mt-1">{selectedProduct?.sku || selectedProduct?.category || 'Pilih produk dari dropdown di atas.'}</p>
             </div>
 
             <div className="rounded-3xl border border-emerald-100 bg-emerald-50 p-5">
@@ -111,33 +111,33 @@ export default function StockCardPage({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-slate-100 bg-white p-5">
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Filter Histori</p>
+            <div className="rounded-3xl border border-outline-variant/30 bg-surface-container-lowest p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-muted">Filter Histori</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <input
                   type="date"
                   value={filters.dateFrom}
                   onChange={(event) => setFilters((current) => ({ ...current, dateFrom: event.target.value }))}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                  className="rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-3 text-sm font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
                 />
                 <input
                   type="date"
                   value={filters.dateTo}
                   onChange={(event) => setFilters((current) => ({ ...current, dateTo: event.target.value }))}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                  className="rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-3 text-sm font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
                 />
                 <div className="relative">
                   <select
                     value={filters.refType}
                     onChange={(event) => setFilters((current) => ({ ...current, refType: event.target.value }))}
-                    className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-10 text-sm font-bold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                    className="w-full appearance-none rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-3 pr-10 text-sm font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
                   >
                     <option value="all">Semua referensi</option>
                     {refTypeOptions.map((refType) => (
                       <option key={refType} value={refType}>{refType}</option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 </div>
               </div>
             </div>
@@ -145,32 +145,32 @@ export default function StockCardPage({
 
           {selectedProduct && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Total Masuk</p>
-                <p className="text-2xl font-black text-emerald-600 mt-2">{totalIn.toLocaleString()}</p>
-                <p className="text-xs text-slate-500 font-medium mt-1">pcs dari seluruh histori</p>
+              <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Total Masuk</p>
+                <p className="text-2xl font-bold text-emerald-600 mt-2">{totalIn.toLocaleString()}</p>
+                <p className="text-xs text-on-surface-variant font-medium mt-1">pcs dari seluruh histori</p>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Total Keluar</p>
-                <p className="text-2xl font-black text-rose-600 mt-2">{totalOut.toLocaleString()}</p>
-                <p className="text-xs text-slate-500 font-medium mt-1">pcs dari seluruh histori</p>
+              <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Total Keluar</p>
+                <p className="text-2xl font-bold text-rose-600 mt-2">{totalOut.toLocaleString()}</p>
+                <p className="text-xs text-on-surface-variant font-medium mt-1">pcs dari seluruh histori</p>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Saldo Akhir Histori</p>
-                <p className="text-2xl font-black text-slate-800 mt-2">
+              <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Saldo Akhir Histori</p>
+                <p className="text-2xl font-bold text-on-surface mt-2">
                   {Array.isArray(filteredRows) && filteredRows.length > 0
                     ? toNumber(filteredRows[filteredRows.length - 1]?.balance || filteredRows[0]?.balance).toLocaleString()
                     : 0}
                 </p>
-                <p className="text-xs text-slate-500 font-medium mt-1">pcs berdasarkan baris terakhir yang tersedia</p>
+                <p className="text-xs text-on-surface-variant font-medium mt-1">pcs berdasarkan baris terakhir yang tersedia</p>
               </div>
             </div>
           )}
 
-          <div className="rounded-[1.75rem] border border-slate-100 overflow-hidden">
+          <div className="rounded-[1.75rem] border border-outline-variant/30 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.22em] border-b border-slate-100">
+                <thead className="bg-surface-container-low text-[10px] font-black text-muted uppercase tracking-[0.22em] border-b border-outline-variant/30">
                   <tr>
                     <th className="px-5 py-4">Tanggal</th>
                     <th className="px-5 py-4">Ref Tipe</th>
@@ -181,10 +181,10 @@ export default function StockCardPage({
                     <th className="px-5 py-4 text-right">Saldo</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-outline-variant/30">
                   {!stockCardProductId && (
                     <tr>
-                      <td className="px-6 py-20 text-center italic uppercase text-[10px] font-black tracking-[0.22em] text-slate-500" colSpan={7}>
+                      <td className="px-6 py-20 text-center italic uppercase text-[10px] font-black tracking-[0.22em] text-on-surface-variant" colSpan={7}>
                         Silakan pilih produk untuk melihat histori mutasi stok.
                       </td>
                     </tr>
@@ -193,7 +193,7 @@ export default function StockCardPage({
                   {stockCardProductId && stockCardLoading && (
                     <tr>
                       <td className="px-6 py-16" colSpan={7}>
-                        <div className="flex items-center justify-center gap-3 text-slate-400 font-bold text-sm">
+                        <div className="flex items-center justify-center gap-3 text-muted font-bold text-sm">
                           <Loader2 className="w-5 h-5 animate-spin" />
                           Memuat histori stock card...
                         </div>
@@ -204,13 +204,13 @@ export default function StockCardPage({
                   {stockCardProductId && !stockCardLoading && (!Array.isArray(filteredRows) || filteredRows.length === 0) && (
                     <tr>
                       <td className="px-6 py-20 text-center" colSpan={7}>
-                        <div className="flex flex-col items-center gap-3 text-slate-400">
-                          <div className="w-16 h-16 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-                            <ClipboardList className="w-7 h-7 text-slate-300" />
+                        <div className="flex flex-col items-center gap-3 text-muted">
+                          <div className="w-16 h-16 rounded-3xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-center">
+                            <ClipboardList className="w-7 h-7 text-muted" />
                           </div>
                           <div>
-                            <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Histori tidak ditemukan</p>
-                            <p className="text-sm font-medium text-slate-400 mt-1">Produk ini belum punya histori yang cocok dengan filter aktif.</p>
+                            <p className="text-xs font-black uppercase tracking-[0.22em] text-muted">Histori tidak ditemukan</p>
+                            <p className="text-sm font-medium text-muted mt-1">Produk ini belum punya histori yang cocok dengan filter aktif.</p>
                           </div>
                         </div>
                       </td>
@@ -218,32 +218,32 @@ export default function StockCardPage({
                   )}
 
                   {stockCardProductId && !stockCardLoading && Array.isArray(filteredRows) && filteredRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={row.id} className="hover:bg-surface-container-low/70 transition-colors">
                       <td className="px-5 py-4">
-                        <p className="font-bold text-slate-800 text-sm">{formatDate(row.date)}</p>
-                        <p className="text-[11px] text-slate-400 font-medium mt-1">{formatDateTime(row.date)}</p>
+                        <p className="font-bold text-on-surface text-sm">{formatDate(row.date)}</p>
+                        <p className="text-[11px] text-muted font-medium mt-1">{formatDateTime(row.date)}</p>
                       </td>
                       <td className="px-5 py-4">
-                        <span className="inline-flex px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-[0.18em]">
+                        <span className="inline-flex px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-black uppercase tracking-[0.18em]">
                           {row.refType}
                         </span>
                       </td>
-                      <td className="px-5 py-4 font-bold text-slate-700 text-sm">{row.refNo}</td>
+                      <td className="px-5 py-4 font-bold text-on-surface text-sm">{row.refNo}</td>
                       <td className="px-5 py-4">
-                        <p className="text-sm font-medium text-slate-600">{row.note || '-'}</p>
-                        {row.warehouseName && <p className="text-[11px] text-slate-400 font-medium mt-1">{row.warehouseName}</p>}
+                        <p className="text-sm font-medium text-on-surface-variant">{row.note || '-'}</p>
+                        {row.warehouseName && <p className="text-[11px] text-muted font-medium mt-1">{row.warehouseName}</p>}
                       </td>
                       <td className="px-5 py-4 text-center">
-                        <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyIn > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyIn > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-surface-container-high text-muted'}`}>
                           {row.qtyIn > 0 ? `+${row.qtyIn.toLocaleString()}` : '-'}
                         </span>
                       </td>
                       <td className="px-5 py-4 text-center">
-                        <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyOut > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <span className={`inline-flex min-w-[86px] justify-center px-3 py-1.5 rounded-xl text-xs font-black ${row.qtyOut > 0 ? 'bg-rose-50 text-rose-600' : 'bg-surface-container-high text-muted'}`}>
                           {row.qtyOut > 0 ? `-${row.qtyOut.toLocaleString()}` : '-'}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-right font-black text-slate-800 text-sm">{row.balance.toLocaleString()} pcs</td>
+                      <td className="px-5 py-4 text-right font-bold text-on-surface text-sm">{row.balance.toLocaleString()} pcs</td>
                     </tr>
                   ))}
                 </tbody>

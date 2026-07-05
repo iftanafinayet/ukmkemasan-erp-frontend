@@ -14,9 +14,9 @@ const createVariantDraft = () => ({
 });
 
 const SummaryCard = ({ label, value }) => (
-  <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center">
-    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-    <p className="mt-1 text-sm font-black text-slate-800">{value}</p>
+  <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest px-4 py-3 text-center">
+    <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{label}</p>
+    <p className="mt-1 text-sm font-bold text-on-surface">{value}</p>
   </div>
 );
 
@@ -57,7 +57,6 @@ export default function ProductModal({
     const nextVariants = variants.map((variant, variantIndex) =>
       variantIndex === index ? { ...variant, [field]: value } : variant
     );
-
     setNewProduct({ ...newProduct, variants: nextVariants });
   };
 
@@ -70,7 +69,6 @@ export default function ProductModal({
       setNewProduct({ ...newProduct, variants: [createVariantDraft()] });
       return;
     }
-
     setNewProduct({
       ...newProduct,
       variants: variants.filter((_, variantIndex) => variantIndex !== index),
@@ -80,8 +78,8 @@ export default function ProductModal({
   return (
     <ModalWrapper onClose={onClose} wide>
       <div className="mb-8">
-        <h3 className="text-2xl font-black tracking-tight text-slate-800">{editingProduct ? 'Edit Produk' : 'Tambah Katalog'}</h3>
-        <p className="text-sm font-medium text-slate-500">
+        <h3 className="text-2xl font-bold tracking-tight text-on-surface">{editingProduct ? 'Edit Produk' : 'Tambah Katalog'}</h3>
+        <p className="text-sm font-medium text-on-surface-variant">
           {editingProduct ? 'Perbarui katalog dan setiap varian produk.' : 'Buat keluarga katalog beserta varian ukuran, warna, harga, dan stoknya.'}
         </p>
       </div>
@@ -97,11 +95,11 @@ export default function ProductModal({
             dataTestId="product-name"
           />
           <div className="space-y-2">
-            <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Kategori</label>
+            <label className="ml-1 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Kategori</label>
             <select
               required
               data-testid="product-category"
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 font-bold text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+              className="w-full rounded-2xl border border-outline-variant bg-surface-container-low px-5 py-3.5 font-medium text-on-surface outline-none transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/10"
               value={newProduct.category}
               onChange={(event) => setNewProduct({ ...newProduct, category: event.target.value })}
             >
@@ -114,51 +112,28 @@ export default function ProductModal({
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          <FormInput
-            label="Material"
-            value={newProduct.material}
-            onChange={(value) => setNewProduct({ ...newProduct, material: value })}
-            required
-            placeholder="PET / ALU / LLDPE"
-            dataTestId="product-material"
-          />
-          <FormInput
-            label="Min. Order"
-            type="number"
-            value={newProduct.minOrder}
-            onChange={(value) => setNewProduct({ ...newProduct, minOrder: value })}
-            required
-            placeholder="100"
-            dataTestId="product-min-order"
-          />
-          <FormInput
-            label="Valve / pcs (Rp)"
-            type="number"
-            value={newProduct.valvePrice}
-            onChange={(value) => setNewProduct({ ...newProduct, valvePrice: value })}
-            placeholder="600"
-            dataTestId="product-valve-price"
-          />
+          <FormInput label="Material" value={newProduct.material} onChange={(value) => setNewProduct({ ...newProduct, material: value })} required placeholder="PET / ALU / LLDPE" dataTestId="product-material" />
+          <FormInput label="Min. Order" type="number" value={newProduct.minOrder} onChange={(value) => setNewProduct({ ...newProduct, minOrder: value })} required placeholder="100" dataTestId="product-min-order" />
+          <FormInput label="Valve / pcs (Rp)" type="number" value={newProduct.valvePrice} onChange={(value) => setNewProduct({ ...newProduct, valvePrice: value })} placeholder="600" dataTestId="product-valve-price" />
         </div>
 
         <div className="space-y-2">
-          <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Deskripsi</label>
+          <label className="ml-1 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Deskripsi</label>
           <textarea
             rows={3}
             data-testid="product-description"
             value={newProduct.description}
             onChange={(event) => setNewProduct({ ...newProduct, description: event.target.value })}
             placeholder="Contoh: Flat Bottom dengan pilihan ukuran 250 gr, 500 gr, dan 1000 gr."
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 font-medium text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+            className="w-full rounded-2xl border border-outline-variant bg-surface-container-low px-5 py-4 font-medium text-on-surface outline-none transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/10"
           />
         </div>
 
-        {/* Sample Settings */}
-        <div className="rounded-3xl border border-slate-200 bg-amber-50/50 p-5 sm:p-6">
+        <div className="rounded-3xl border border-outline-variant bg-warning-container/30 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-sm font-black uppercase tracking-widest text-slate-800">Sample Produk</p>
-              <p className="mt-1 text-xs font-medium text-slate-500">Izinkan customer memesan sample produk ini.</p>
+              <p className="text-sm font-bold uppercase tracking-wider text-on-surface">Sample Produk</p>
+              <p className="mt-1 text-xs font-medium text-on-surface-variant">Izinkan customer memesan sample produk ini.</p>
             </div>
             <label className="relative inline-flex cursor-pointer items-center">
               <input
@@ -167,34 +142,22 @@ export default function ProductModal({
                 onChange={(e) => setNewProduct({ ...newProduct, sampleAvailable: e.target.checked })}
                 className="peer sr-only"
               />
-              <div className="h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-amber-500 peer-checked:after:translate-x-full"></div>
+              <div className="h-6 w-11 rounded-full bg-outline-variant after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-warning peer-checked:after:translate-x-full"></div>
             </label>
           </div>
           {newProduct.sampleAvailable && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormInput
-                label="Harga Sample (Rp) — kosongkan = pakai harga B2C"
-                type="number"
-                value={newProduct.samplePrice}
-                onChange={(value) => setNewProduct({ ...newProduct, samplePrice: value })}
-                placeholder="Biarkan kosong jika = harga B2C"
-              />
-              <FormInput
-                label="Maks Sample per Customer"
-                type="number"
-                value={newProduct.maxSamplePerCustomer}
-                onChange={(value) => setNewProduct({ ...newProduct, maxSamplePerCustomer: value })}
-                placeholder="1"
-              />
+              <FormInput label="Harga Sample (Rp) — kosongkan = pakai harga B2C" type="number" value={newProduct.samplePrice} onChange={(value) => setNewProduct({ ...newProduct, samplePrice: value })} placeholder="Biarkan kosong jika = harga B2C" />
+              <FormInput label="Maks Sample per Customer" type="number" value={newProduct.maxSamplePerCustomer} onChange={(value) => setNewProduct({ ...newProduct, maxSamplePerCustomer: value })} placeholder="1" />
             </div>
           )}
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+        <div className="rounded-3xl border border-outline-variant bg-surface-container-low p-5 sm:p-6">
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm font-black uppercase tracking-widest text-slate-800">Daftar Varian</p>
-              <p className="mt-1 text-xs font-medium text-slate-500">Kelola SKU, ukuran, warna, harga B2C/B2B, dan stok per kombinasi.</p>
+              <p className="text-sm font-bold uppercase tracking-wider text-on-surface">Daftar Varian</p>
+              <p className="mt-1 text-xs font-medium text-on-surface-variant">Kelola SKU, ukuran, warna, harga B2C/B2B, dan stok per kombinasi.</p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <SummaryCard label="Varian" value={`${variants.length}`} />
@@ -206,73 +169,28 @@ export default function ProductModal({
 
           <div className="space-y-4">
             {variants.map((variant, index) => (
-              <div key={variant._id || `${variant.sku}-${index}`} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div key={variant._id || `${variant.sku}-${index}`} className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-widest text-primary">Varian {index + 1}</p>
-                    <p className="mt-1 text-xs font-medium text-slate-500">Gunakan kombinasi ukuran dan warna yang unik.</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-primary">Varian {index + 1}</p>
+                    <p className="mt-1 text-xs font-medium text-on-surface-variant">Gunakan kombinasi ukuran dan warna yang unik.</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeVariant(index)}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-2 text-xs font-black uppercase tracking-widest text-red-500 transition-all hover:bg-red-100"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-error/20 bg-error-container px-4 py-2 text-xs font-bold uppercase tracking-wider text-error transition-all duration-200 hover:bg-error/10 cursor-pointer focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2"
                   >
                     <Trash2 size={14} /> Hapus
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  <FormInput
-                    label="SKU"
-                    value={variant.sku}
-                    onChange={(value) => updateVariant(index, 'sku', value)}
-                    required
-                    placeholder="FBT-250-BLK"
-                    dataTestId={`variant-sku-${index}`}
-                  />
-                  <FormInput
-                    label="Ukuran"
-                    value={variant.size}
-                    onChange={(value) => updateVariant(index, 'size', value)}
-                    required
-                    placeholder="250 gr"
-                    dataTestId={`variant-size-${index}`}
-                  />
-                  <FormInput
-                    label="Warna"
-                    value={variant.color}
-                    onChange={(value) => updateVariant(index, 'color', value)}
-                    required
-                    placeholder="Black"
-                    dataTestId={`variant-color-${index}`}
-                  />
-                  <FormInput
-                    label="Harga B2C (Rp)"
-                    type="number"
-                    value={variant.priceB2C}
-                    onChange={(value) => updateVariant(index, 'priceB2C', value)}
-                    required
-                    placeholder="2800"
-                    dataTestId={`variant-price-b2c-${index}`}
-                  />
-                  <FormInput
-                    label="Harga B2B (Rp)"
-                    type="number"
-                    value={variant.priceB2B}
-                    onChange={(value) => updateVariant(index, 'priceB2B', value)}
-                    required
-                    placeholder="2400"
-                    dataTestId={`variant-price-b2b-${index}`}
-                  />
-                  <FormInput
-                    label="Stok"
-                    type="number"
-                    value={variant.stock}
-                    onChange={(value) => updateVariant(index, 'stock', value)}
-                    required
-                    placeholder="500"
-                    dataTestId={`variant-stock-${index}`}
-                  />
+                  <FormInput label="SKU" value={variant.sku} onChange={(value) => updateVariant(index, 'sku', value)} required placeholder="FBT-250-BLK" dataTestId={`variant-sku-${index}`} />
+                  <FormInput label="Ukuran" value={variant.size} onChange={(value) => updateVariant(index, 'size', value)} required placeholder="250 gr" dataTestId={`variant-size-${index}`} />
+                  <FormInput label="Warna" value={variant.color} onChange={(value) => updateVariant(index, 'color', value)} required placeholder="Black" dataTestId={`variant-color-${index}`} />
+                  <FormInput label="Harga B2C (Rp)" type="number" value={variant.priceB2C} onChange={(value) => updateVariant(index, 'priceB2C', value)} required placeholder="2800" dataTestId={`variant-price-b2c-${index}`} />
+                  <FormInput label="Harga B2B (Rp)" type="number" value={variant.priceB2B} onChange={(value) => updateVariant(index, 'priceB2B', value)} required placeholder="2400" dataTestId={`variant-price-b2b-${index}`} />
+                  <FormInput label="Stok" type="number" value={variant.stock} onChange={(value) => updateVariant(index, 'stock', value)} required placeholder="500" dataTestId={`variant-stock-${index}`} />
                 </div>
               </div>
             ))}
@@ -281,7 +199,7 @@ export default function ProductModal({
               type="button"
               onClick={addVariant}
               data-testid="add-variant-btn"
-              className="flex w-full items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-4 text-sm font-black uppercase tracking-widest text-primary transition-all hover:border-primary hover:bg-primary/10"
+              className="flex w-full items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-all duration-200 hover:border-primary hover:bg-primary/10 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <Plus size={18} /> Tambah Varian
             </button>
@@ -289,17 +207,17 @@ export default function ProductModal({
         </div>
 
         <div className="space-y-3">
-          <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Gambar Produk (Maks. 10)</label>
+          <label className="ml-1 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Gambar Produk (Maks. 10)</label>
 
           {existingImages.length > 0 && (
             <div className="flex flex-wrap gap-3">
               {existingImages.map((image) => (
                 <div key={image.publicId} className="group relative">
-                  <img src={image.url} alt={image.alt} className="h-20 w-20 rounded-2xl border-2 border-slate-200 object-cover" />
+                  <img src={image.url} alt={image.alt} className="h-20 w-20 rounded-2xl border-2 border-outline-variant object-cover" />
                   <button
                     type="button"
                     onClick={() => onRemoveExistingImage(image.publicId)}
-                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-error text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 cursor-pointer focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2"
                   >
                     <X size={12} />
                   </button>
@@ -316,7 +234,7 @@ export default function ProductModal({
                   <button
                     type="button"
                     onClick={() => onRemoveNewImage(index)}
-                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-error text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 cursor-pointer focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2"
                   >
                     <X size={12} />
                   </button>
@@ -326,9 +244,9 @@ export default function ProductModal({
           )}
 
           {totalImages < 10 && (
-            <label className="group flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-5 transition-all hover:border-primary/40 hover:bg-slate-100">
-              <ImagePlus className="h-6 w-6 text-slate-400 transition-colors group-hover:text-primary" />
-              <span className="text-sm font-bold text-slate-500 transition-colors group-hover:text-primary">
+            <label className="group flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-outline-variant bg-surface-container-low px-6 py-5 transition-all duration-200 hover:border-primary/40 hover:bg-surface-container-lowest">
+              <ImagePlus className="h-6 w-6 text-on-surface-variant transition-colors group-hover:text-primary" />
+              <span className="text-sm font-semibold text-on-surface-variant transition-colors group-hover:text-primary">
                 {totalImages > 0 ? 'Tambah Gambar' : 'Pilih Gambar'}
               </span>
               <input
@@ -344,13 +262,13 @@ export default function ProductModal({
             </label>
           )}
 
-          <p className="ml-1 text-[10px] text-slate-400">Format: JPEG, PNG, WebP. Otomatis dikonversi ke AVIF.</p>
+          <p className="ml-1 text-[10px] text-muted">Format: JPEG, PNG, WebP. Otomatis dikonversi ke AVIF.</p>
         </div>
 
         <button
           type="submit"
           data-testid="product-submit"
-          className="mt-4 w-full rounded-3xl bg-primary py-5 font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95"
+          className="mt-4 w-full rounded-3xl bg-primary py-5 font-bold text-white shadow-elevated shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           {editingProduct ? 'Update Produk' : 'Simpan ke Sistem'}
         </button>

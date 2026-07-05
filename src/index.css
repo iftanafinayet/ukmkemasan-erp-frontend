@@ -2,12 +2,11 @@
 @config "../tailwind.config.js";
 
 @theme {
-  /* Ini cara mendaftarkan warna primary di Tailwind v4 */
   --color-primary: #4dbace;
   --color-primary-dark: #3a8fa3;
 }
 
-/* Material Symbols Outlined Configuration */
+/* Material Symbols Outlined */
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined', sans-serif;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -24,26 +23,160 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Base styling & focus-visible */
+/* Base styles */
 @layer base {
+  *, *::before, *::after {
+    border-color: var(--color-border-color);
+  }
+
   html {
     min-height: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen flex flex-col;
   }
 
   body {
-    @apply min-h-screen bg-gray-50 text-slate-900 antialiased overflow-x-hidden;
+    @apply min-h-screen bg-background text-on-surface font-sans antialiased overflow-x-hidden;
   }
 
+  /* Focus ring for keyboard navigation */
   button:focus-visible,
   a:focus-visible,
   [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
   [tabindex]:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-outline-variant);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-outline);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--color-on-surface);
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  /* Glass card for light mode */
+  .glass {
+    @apply bg-white/85 backdrop-blur-xl border border-white/20;
+  }
+
+  /* Clickable card */
+  .card-interactive {
+    @apply cursor-pointer transition-all duration-200;
+    @apply hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  /* Skeleton loading */
+  .skeleton-pulse {
+    @apply bg-surface-container-high animate-skeleton rounded-md;
+  }
+
+  /* ═══ Neumorphic / Soft UI ═══ */
+  /* Embossed (raised) card — for KPI cards, stat widgets */
+  .neumo {
+    background: var(--color-background);
+    border-radius: 24px;
+    box-shadow:
+      8px 8px 16px rgba(166, 171, 189, 0.35),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+  }
+
+  .neumo:hover {
+    box-shadow:
+      6px 6px 12px rgba(166, 171, 189, 0.3),
+      -4px -4px 10px rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+  }
+
+  .neumo:active,
+  .neumo-pressed {
+    box-shadow:
+      inset 4px 4px 8px rgba(166, 171, 189, 0.25),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+    transform: translateY(0);
+  }
+
+  /* Subtle neumorphic card — lighter emboss, for grouped cards */
+  .neumo-subtle {
+    background: var(--color-background);
+    border-radius: 20px;
+    box-shadow:
+      4px 4px 10px rgba(166, 171, 189, 0.2),
+      -3px -3px 8px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .neumo-subtle:hover {
+    box-shadow:
+      6px 6px 14px rgba(166, 171, 189, 0.25),
+      -4px -4px 10px rgba(255, 255, 255, 0.95);
+  }
+
+  /* Flat neumorphic surface — no elevation, subtle texture */
+  .neumo-flat {
+    background: var(--color-background);
+    border-radius: 16px;
+    box-shadow:
+      inset 1px 1px 3px rgba(166, 171, 189, 0.15),
+      inset -1px -1px 3px rgba(255, 255, 255, 0.7);
+  }
+
+  /* Neumorphic icon container */
+  .neumo-icon {
+    background: var(--color-background);
+    border-radius: 14px;
+    box-shadow:
+      3px 3px 6px rgba(166, 171, 189, 0.25),
+      -2px -2px 5px rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.2s ease;
+  }
+
+  /* Dark variant — for dark sections or dark mode */
+  .neumo-dark {
+    background: var(--color-inverse-surface);
+    border-radius: 24px;
+    box-shadow:
+      6px 6px 12px rgba(0, 0, 0, 0.3),
+      -4px -4px 10px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: box-shadow 0.25s ease;
   }
 }
 
@@ -63,7 +196,6 @@
 @media (max-width: 1024px) {
   [data-sonner-toaster] {
     width: 90vw !important;
-    /* Force transform disable so left works cleanly relative to screen */
     transform: none !important;
     left: 5vw !important;
     right: auto !important;

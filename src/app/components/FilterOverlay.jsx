@@ -64,19 +64,19 @@ export default function FilterOverlay({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300, duration: 0.4 }}
-            className="fixed bottom-0 left-0 right-0 z-[101] bg-white rounded-t-3xl shadow-2xl overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-[101] bg-surface-container-lowest rounded-t-3xl shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-5 bg-white border-b border-slate-100">
+            <div className="flex items-center justify-between p-5 bg-surface-container-lowest border-b border-outline-variant/30">
               <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4 text-[#4dbace]" />
                 <h2 className="text-lg font-bold text-[#131b2e] font-headline">Filter Katalog</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
-                <X className="w-5 h-5 text-slate-400" />
+                <X className="w-5 h-5 text-muted" />
               </button>
             </div>
 
@@ -84,7 +84,7 @@ export default function FilterOverlay({
             <div className="p-5 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
               {/* Kategori Filter */}
               <div>
-                <label className="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-[0.15em] font-label">
+                <label className="block text-[10px] font-black text-muted mb-3 uppercase tracking-[0.15em] font-label">
                   Kategori Produk
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -92,9 +92,9 @@ export default function FilterOverlay({
                     <button
                       key={category}
                       onClick={() => setLocalCategory(category)}
-                      className={`text-center py-2.5 px-2 rounded-xl text-[12px] font-bold transition-all border ${localCategory === category
+                      className={`text-center py-2.5 px-2 rounded-xl text-[12px] font-bold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${localCategory === category
                         ? 'bg-[#4dbace] text-white border-[#4dbace] shadow-md shadow-[#4dbace]/20'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:bg-surface-container-low'
                         }`}
                     >
                       {category}
@@ -106,7 +106,7 @@ export default function FilterOverlay({
               {/* Warna Filter */}
               {colors.length > 0 && (
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-[0.15em] font-label">
+                  <label className="block text-[10px] font-black text-muted mb-3 uppercase tracking-[0.15em] font-label">
                     Warna
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -114,9 +114,9 @@ export default function FilterOverlay({
                       <button
                         key={color}
                         onClick={() => setLocalColor(localColor === color ? '' : color)}
-                        className={`text-center py-2 rounded-lg text-[11px] font-bold transition-all border ${localColor === color
-                          ? 'bg-[#4dbace] text-white border-[#4dbace] shadow-sm'
-                          : 'bg-white text-slate-600 border-slate-200'
+                        className={`text-center py-2 rounded-lg text-[11px] font-bold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${localColor === color
+                          ? 'bg-[#4dbace] text-white border-[#4dbace] shadow-card'
+                          : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant'
                           }`}
                       >
                         {color}
@@ -128,16 +128,16 @@ export default function FilterOverlay({
             </div>
 
             {/* Footer Actions */}
-            <div className="flex gap-3 p-5 bg-slate-50/50 border-t border-slate-100 pb-10">
+            <div className="flex gap-3 p-5 bg-surface-container-low border-t border-outline-variant/30 pb-10">
               <button
                 onClick={handleReset}
-                className="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-600 text-[12px] font-bold rounded-xl active:scale-95 transition-all"
+                className="flex-1 px-4 py-3 bg-surface-container-lowest border border-outline-variant text-on-surface-variant text-[12px] font-bold rounded-xl active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Reset
               </button>
               <button
                 onClick={handleApplyFilters}
-                className="flex-1 px-4 py-3 bg-[#4dbace] text-white text-[12px] font-bold rounded-xl shadow-lg shadow-[#4dbace]/20 active:scale-95 transition-all"
+                className="flex-1 px-4 py-3 bg-[#4dbace] text-white text-[12px] font-bold rounded-xl shadow-lg shadow-[#4dbace]/20 active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Terapkan
               </button>

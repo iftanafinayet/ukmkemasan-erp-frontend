@@ -50,9 +50,9 @@ const loadMidtransSnapScript = ({ clientKey, isProduction = false }) => {
 };
 
 const SummaryCard = ({ label, value, accent = false }) => (
-  <div className={`rounded-3xl border p-5 ${accent ? 'border-primary/20 bg-primary/[0.06]' : 'border-slate-200 bg-white'}`}>
-    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">{label}</p>
-    <p className={`mt-3 text-2xl font-black tracking-tight ${accent ? 'text-primary' : 'text-slate-900'}`}>{value}</p>
+  <div className={`rounded-3xl border p-5 ${accent ? 'border-primary/20 bg-primary/[0.06]' : 'border-outline-variant bg-surface-container-lowest'}`}>
+    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-muted">{label}</p>
+    <p className={`mt-3 text-2xl font-black tracking-tight ${accent ? 'text-primary' : 'text-on-surface'}`}>{value}</p>
   </div>
 );
 
@@ -144,7 +144,7 @@ export default function CustomerPaymentPage() {
             onBack={() => navigate('/portal?menu=orders')}
          />
       </div>
-       <div className="hidden lg:flex min-h-screen bg-transparent text-slate-900 flex-col">
+       <div className="hidden lg:flex min-h-screen bg-transparent text-on-surface flex-col">
          <div
            className="fixed inset-0 -z-10 opacity-20 pointer-events-none"
            style={{
@@ -163,24 +163,24 @@ export default function CustomerPaymentPage() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.28em] text-primary">The Payment Portal</p>
-              <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-900">Pembayaran</h1>
+              <h1 className="mt-2 text-4xl font-black tracking-tight text-on-surface">Pembayaran</h1>
             </div>
             <button
               onClick={fetchPaymentData}
-              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50"
+              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-card transition hover:bg-surface-container-low focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <RefreshCw className={loading ? 'animate-spin' : ''} size={20} />
             </button>
           </div>
 
           <div className="mt-12">
-            <p className="mt-2 text-slate-500">Selesaikan transaksi pembayaran untuk pesanan Anda.</p>
+            <p className="mt-2 text-on-surface-variant">Selesaikan transaksi pembayaran untuk pesanan Anda.</p>
           </div>
         </section>
 
         {loading ? (
-          <div className="flex min-h-[320px] items-center justify-center rounded-[32px] border border-dashed border-slate-300 bg-white">
-            <div className="flex items-center gap-3 text-slate-500">
+          <div className="flex min-h-[320px] items-center justify-center rounded-[32px] border border-dashed border-outline-variant bg-surface-container-lowest">
+            <div className="flex items-center gap-3 text-on-surface-variant">
               <LoaderCircle className="animate-spin" />
               Memuat data pembayaran...
             </div>
@@ -188,19 +188,19 @@ export default function CustomerPaymentPage() {
         ) : (
           <>
             <div className="grid gap-6 md:grid-cols-3">
-              <div className="relative overflow-hidden rounded-[32px] bg-white p-8 shadow-sm border border-slate-100/50">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Tagihan</p>
-                <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.totalAmount)}</p>
-                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-slate-50 opacity-50"></div>
+              <div className="relative overflow-hidden rounded-[32px] bg-surface-container-lowest p-8 shadow-card border border-outline-variant/30">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted">Total Tagihan</p>
+                <p className="mt-3 text-3xl font-black text-on-surface">{formatCurrency(summary?.totalAmount)}</p>
+                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-surface-container-low opacity-50"></div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[32px] bg-white p-8 shadow-sm border border-slate-100/50">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sudah Dibayar</p>
-                <p className="mt-3 text-3xl font-black text-slate-900">{formatCurrency(summary?.paidAmount)}</p>
-                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-slate-50 opacity-50"></div>
+              <div className="relative overflow-hidden rounded-[32px] bg-surface-container-lowest p-8 shadow-card border border-outline-variant/30">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted">Sudah Dibayar</p>
+                <p className="mt-3 text-3xl font-black text-on-surface">{formatCurrency(summary?.paidAmount)}</p>
+                <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-surface-container-low opacity-50"></div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[32px] bg-primary p-8 shadow-lg shadow-primary/20 text-white">
+              <div className="relative overflow-hidden rounded-[32px] bg-primary p-8 shadow-card-hover shadow-primary/20 text-white">
                 <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Sisa Tagihan</p>
                 <p className="mt-3 text-3xl font-black">{formatCurrency(outstandingAmount)}</p>
                 <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-full bg-white/10"></div>
@@ -209,12 +209,12 @@ export default function CustomerPaymentPage() {
 
             {/* Middle Section - 2 Grid: Invoice Left, Konfirmasi Right */}
             <div className="grid gap-8 lg:grid-cols-[1fr_0.4fr]">
-              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm h-fit">
-                <div className="flex flex-col gap-4 border-b border-slate-100 pb-8 sm:flex-row sm:items-start sm:justify-between">
+              <div className="rounded-[40px] border border-outline-variant bg-surface-container-lowest p-8 shadow-card h-fit">
+                <div className="flex flex-col gap-4 border-b border-outline-variant/30 pb-8 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Invoice</p>
-                    <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">{invoice?.invoiceNumber || 'Draft'}</h2>
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-muted">Invoice</p>
+                    <h2 className="mt-2 text-3xl font-black tracking-tight text-on-surface">{invoice?.invoiceNumber || 'Draft'}</h2>
+                    <p className="mt-2 text-sm text-on-surface-variant">
                       Diterbitkan {formatDate(invoice?.issuedDate)} • Jatuh tempo {formatDate(invoice?.dueDate)}
                     </p>
                   </div>
@@ -225,24 +225,24 @@ export default function CustomerPaymentPage() {
                 </div>
 
                 <div className="mt-8">
-                  <div className="rounded-[32px] bg-slate-50 p-8">
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Ringkasan Pesanan</p>
+                  <div className="rounded-[32px] bg-surface-container-low p-8">
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Ringkasan Pesanan</p>
                     <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-6 sm:grid-cols-2 text-sm">
-                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
-                        <span className="text-slate-500">Produk</span>
-                        <span className="font-bold text-slate-900">{order?.product?.name || '-'}</span>
+                      <div className="flex justify-between gap-4 border-b border-outline-variant/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-on-surface-variant">Produk</span>
+                        <span className="font-bold text-on-surface">{order?.product?.name || '-'}</span>
                       </div>
-                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
-                        <span className="text-slate-500">Jumlah</span>
-                        <span className="font-bold text-slate-900">{order?.details?.quantity?.toLocaleString?.() || 0} pcs</span>
+                      <div className="flex justify-between gap-4 border-b border-outline-variant/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-on-surface-variant">Jumlah</span>
+                        <span className="font-bold text-on-surface">{order?.details?.quantity?.toLocaleString?.() || 0} pcs</span>
                       </div>
-                      <div className="flex justify-between gap-4 border-b border-slate-200/60 pb-4 sm:border-0 sm:pb-0">
-                        <span className="text-slate-500">Material</span>
-                        <span className="font-bold text-slate-900">{order?.details?.material || order?.product?.material || '-'}</span>
+                      <div className="flex justify-between gap-4 border-b border-outline-variant/60 pb-4 sm:border-0 sm:pb-0">
+                        <span className="text-on-surface-variant">Material</span>
+                        <span className="font-bold text-on-surface">{order?.details?.material || order?.product?.material || '-'}</span>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <span className="text-slate-500">Valve</span>
-                        <span className="font-bold text-slate-900">{order?.details?.useValve ? 'Ya' : 'Tidak'}</span>
+                        <span className="text-on-surface-variant">Valve</span>
+                        <span className="font-bold text-on-surface">{order?.details?.useValve ? 'Ya' : 'Tidak'}</span>
                       </div>
                     </div>
                   </div>
@@ -253,7 +253,7 @@ export default function CustomerPaymentPage() {
                     type="button"
                     onClick={handlePayNow}
                     disabled={creatingToken || isPaid || outstandingAmount <= 0}
-                    className="flex-1 inline-flex items-center justify-center gap-3 rounded-3xl bg-primary px-8 py-5 text-sm font-black text-white shadow-lg shadow-primary/20 transition hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                    className="flex-1 inline-flex items-center justify-center gap-3 rounded-3xl bg-primary px-8 py-5 text-sm font-black text-white shadow-card-hover shadow-primary/20 transition cursor-pointer hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   >
                     {creatingToken ? <LoaderCircle className="animate-spin" size={20} /> : <CreditCard size={20} />}
                     {isPaid ? 'Pesanan Sudah Lunas' : 'Bayar Sekarang'}
@@ -261,7 +261,7 @@ export default function CustomerPaymentPage() {
                   <button
                     type="button"
                     onClick={() => navigate('/portal?menu=orders')}
-                    className="inline-flex items-center justify-center gap-3 rounded-3xl border border-slate-200 bg-white px-8 py-5 text-sm font-black text-slate-600 transition hover:bg-slate-50 active:scale-[0.98]"
+                    className="inline-flex items-center justify-center gap-3 rounded-3xl border border-outline-variant bg-surface-container-lowest px-8 py-5 text-sm font-black text-on-surface-variant transition cursor-pointer hover:bg-surface-container-low active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   >
                     <ArrowLeft size={20} />
                     Kembali
@@ -271,20 +271,20 @@ export default function CustomerPaymentPage() {
 
               {/* Help/Konfirmasi Card - Right Side */}
               <div className="space-y-6">
-                <div className="rounded-[40px] bg-emerald-50 border border-emerald-100 p-8 shadow-sm">
+                <div className="rounded-[40px] bg-emerald-50 border border-emerald-100 p-8 shadow-card">
                   <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Konfirmasi Pembayaran</p>
-                  <h3 className="mt-3 text-2xl font-black text-slate-900 leading-tight">Butuh Bantuan?</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                  <h3 className="mt-3 text-2xl font-black text-on-surface leading-tight">Butuh Bantuan?</h3>
+                  <p className="mt-3 text-sm leading-6 text-on-surface-variant">
                     Jika status belum berubah beberapa menit setelah pembayaran selesai, silakan hubungi admin kami.
                   </p>
                   <div className="mt-8 space-y-4 border-t border-emerald-200/50 pt-8">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Order ID</p>
-                      <p className="mt-1 text-sm font-bold text-slate-900">{order?.orderNumber || orderId}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Order ID</p>
+                      <p className="mt-1 text-sm font-bold text-on-surface">{order?.orderNumber || orderId}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Customer</p>
-                      <p className="mt-1 text-sm font-bold text-slate-900">{user?.name || order?.customer?.name}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Customer</p>
+                      <p className="mt-1 text-sm font-bold text-on-surface">{user?.name || order?.customer?.name}</p>
                     </div>
                   </div>
                 </div>
@@ -293,22 +293,22 @@ export default function CustomerPaymentPage() {
 
             {/* Payment Ledger Section - Full Width Bottom */}
             {payments.length > 0 && (
-              <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Riwayat Pembayaran</p>
-                <h3 className="mt-3 text-2xl font-black text-slate-900 mb-8">Payment Ledger</h3>
+              <div className="rounded-[40px] border border-outline-variant bg-surface-container-lowest p-8 shadow-card">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-muted">Riwayat Pembayaran</p>
+                <h3 className="mt-3 text-2xl font-black text-on-surface mb-8">Payment Ledger</h3>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {payments.map((payment) => (
-                    <div key={payment._id || payment.paymentNumber} className="rounded-[32px] border border-slate-100 bg-slate-50 p-6">
+                    <div key={payment._id || payment.paymentNumber} className="rounded-[32px] border border-outline-variant/30 bg-surface-container-low p-6">
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="text-sm font-black text-slate-900">{payment.paymentNumber}</p>
-                          <p className="mt-1 text-xs font-medium text-slate-500">
+                          <p className="text-sm font-black text-on-surface">{payment.paymentNumber}</p>
+                          <p className="mt-1 text-xs font-medium text-on-surface-variant">
                             {formatDateTime(payment.paymentDate || payment.createdAt)}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-black text-primary">{formatCurrency(payment.amount)}</p>
-                          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{payment.method || 'Payment'}</p>
+                          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted">{payment.method || 'Payment'}</p>
                         </div>
                       </div>
                     </div>

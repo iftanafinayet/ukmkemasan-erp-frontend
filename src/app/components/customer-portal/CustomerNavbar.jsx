@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import ConfirmDialog from '../ui/ConfirmDialog';
 import { storage } from '../../config/environment';
 import { getCartCount, subscribeCart } from '../../utils/cart';
@@ -51,27 +52,27 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
 
   return (
     <>
-    <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md transition-all duration-300 ease-in-out font-sans">
+    <nav className="fixed top-0 w-full z-navbar bg-surface-container-lowest/80 backdrop-blur-md transition-all duration-300 font-sans">
       <div className="flex justify-between items-center px-4 sm:px-8 h-20 max-w-full mx-auto">
         <div className="flex items-center">
           <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
         </div>
-        <div className="hidden md:flex items-center space-x-8 font-headline text-sm font-semibold tracking-tight h-full pt-8">
+        <div className="hidden md:flex items-center space-x-8 font-semibold tracking-tight h-full pt-8">
           {navItems.map((item) => {
             const isActive = activeMenu === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleMenuClick(item.id)}
-                className={`flex items-center gap-2 pb-2 h-full transition-all duration-300 ease-in-out active:scale-95 ${
-                  isActive 
+                className={`flex items-center gap-2 pb-2 h-full transition-all duration-200 cursor-pointer ${
+                  isActive
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-slate-500 hover:text-primary transition-colors'
+                    : 'text-on-surface-variant hover:text-primary'
                 }`}
               >
                 {item.label}
                 {item.badge > 0 && (
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${isActive ? 'bg-primary/20 text-primary' : 'bg-slate-100 text-slate-500'}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? 'bg-primary/20 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
                     {item.badge}
                   </span>
                 )}
@@ -82,39 +83,35 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
         <div className="flex items-center space-x-4">
           {storage.getToken() ? (
             <>
-              <button 
-                onClick={handleLogout} 
-                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 hover:from-slate-200 hover:to-slate-100 text-slate-700 font-semibold rounded-full border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out active:scale-95 group"
+              <button
+                onClick={handleLogout}
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant font-semibold rounded-full border border-outline-variant hover:border-outline shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group"
               >
                 <span className="text-sm">Keluar</span>
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
+                <LogOut className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </button>
-              <button 
-                onClick={handleLogout} 
-                className="sm:hidden flex items-center justify-center p-2 text-slate-600 hover:text-slate-900 transition-colors"
+              <button
+                onClick={handleLogout}
+                className="sm:hidden flex items-center justify-center p-2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 title="Keluar"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
+                <LogOut className="w-5 h-5" />
               </button>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 overflow-hidden flex flex-shrink-0 items-center justify-center text-white font-black text-lg shadow-lg">
+              <div className="w-10 h-10 rounded-full bg-primary overflow-hidden flex flex-shrink-0 items-center justify-center text-white font-bold text-lg shadow-card">
                 {user?.name?.charAt(0) || 'C'}
               </div>
             </>
           ) : (
             <div className="flex items-center gap-2 sm:gap-3">
-              <button 
+              <button
                 onClick={() => navigate('/login')}
-                className="px-4 py-2 text-primary font-bold text-sm hover:text-primary/80 transition-colors"
+                className="px-4 py-2 text-primary font-semibold text-sm hover:text-primary/80 transition-colors duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Masuk
               </button>
-              <button 
+              <button
                 onClick={() => navigate('/register')}
-                className="px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                className="px-5 py-2.5 bg-primary text-on-primary font-semibold text-sm rounded-full shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Daftar
               </button>
@@ -122,7 +119,7 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
           )}
         </div>
       </div>
-      <div className="bg-slate-100 h-[1px] w-full absolute bottom-0"></div>
+      <div className="bg-outline-variant/30 h-px w-full absolute bottom-0"></div>
     </nav>
       <ConfirmDialog
         isOpen={showLogoutConfirm}

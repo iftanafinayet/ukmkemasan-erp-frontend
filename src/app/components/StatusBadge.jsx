@@ -1,54 +1,43 @@
 import React from 'react';
 
-/**
- * StatusBadge Component
- * Menampilkan badge status dengan warna yang sesuai status pesanan dari backend
- * Backend Order status enum: Quotation, Payment, Production, Quality Control, Shipping, Completed
- */
-export function StatusBadge({ status }) {
-  const getStatusStyles = (status) => {
-    const statusLower = status?.toLowerCase() || '';
+const STATUS_STYLES = {
+  quotation:   'bg-warning-container text-on-warning-container border-warning/20',
+  payment:     'bg-warning-container text-on-warning-container border-warning/20',
+  production:  'bg-info-container text-on-info-container border-info/20',
+  'quality control': 'bg-secondary-container text-on-secondary-container border-secondary/20',
+  shipping:    'bg-primary/10 text-primary border-primary/20',
+  completed:   'bg-success-container text-on-success-container border-success/20',
+  selesai:     'bg-success-container text-on-success-container border-success/20',
+  cancelled:   'bg-error-container text-on-error-container border-error/20',
+};
 
-    switch (statusLower) {
-      case 'quotation':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'payment':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'production':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'quality control':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-300';
-      case 'shipping':
-        return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'completed':
-      case 'selesai':
-        return 'bg-green-100 text-green-800 border-green-300';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
-    }
-  };
+const STATUS_LABELS = {
+  'quotation': 'Penawaran',
+  'payment': 'Pembayaran',
+  'production': 'Produksi',
+  'quality control': 'Quality Control',
+  'shipping': 'Pengiriman',
+  'completed': 'Selesai',
+  'selesai': 'Selesai',
+  'cancelled': 'Dibatalkan',
+};
 
-  const getStatusLabel = (status) => {
-    const statusLower = status?.toLowerCase() || '';
+const DEFAULT_STYLE = 'bg-surface-container-high text-on-surface-variant border-outline-variant';
 
-    const statusMap = {
-      'quotation': 'Penawaran',
-      'payment': 'Pembayaran',
-      'production': 'Produksi',
-      'quality control': 'Quality Control',
-      'shipping': 'Pengiriman',
-      'completed': 'Selesai',
-      'selesai': 'Selesai'
-    };
+export function getStatusStyles(status) {
+  const key = status?.toLowerCase() || '';
+  return STATUS_STYLES[key] || DEFAULT_STYLE;
+}
 
-    return statusMap[statusLower] || status;
-  };
+export function getStatusLabel(status) {
+  const key = status?.toLowerCase() || '';
+  return STATUS_LABELS[key] || status;
+}
 
+export function StatusBadge({ status, className = '' }) {
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full border text-xs font-bold ${getStatusStyles(
-        status
-      )}`}
+      className={`inline-flex items-center px-3 py-1 rounded-full border text-xs font-bold whitespace-nowrap ${getStatusStyles(status)} ${className}`}
     >
       {getStatusLabel(status)}
     </span>

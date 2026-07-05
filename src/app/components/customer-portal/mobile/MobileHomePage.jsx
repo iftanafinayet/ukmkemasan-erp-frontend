@@ -79,13 +79,13 @@ export default function MobileHomePage({
     ];
 
   return (
-    <div className="lg:hidden bg-[#faf8ff]">
+    <div className="lg:hidden bg-background">
       <main className="space-y-4 pb-12">
         {/* 1. Top Bar & Search (Assume handled by parent/wrapper) */}
 
         {/* 2. Main Banner Promo */}
         <section className="px-4 pt-4">
-          <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
+          <div className="relative w-full overflow-hidden rounded-2xl shadow-card-hover">
             <Carousel
               className="w-full"
               opts={{
@@ -113,7 +113,7 @@ export default function MobileHomePage({
                   <button
                     key={i}
                     onClick={() => bannerApi?.scrollTo(i)}
-                    className={`transition-all duration-500 rounded-full h-1.5 ${activeBannerIndex === i ? 'w-6 bg-white shadow-lg' : 'w-1.5 bg-white/40 hover:bg-white/60'}`}
+                    className={`transition-all duration-200 rounded-full h-1.5 focus-visible:ring-2 focus-visible:ring-white ${activeBannerIndex === i ? 'w-6 bg-surface-container-lowest shadow-card-hover' : 'w-1.5 bg-surface-container-lowest/40 hover:bg-surface-container-lowest/60'}`}
                     aria-label={`Go to slide ${i + 1}`}
                   />
                 ))}
@@ -126,47 +126,47 @@ export default function MobileHomePage({
         <section className="px-4 py-2">
           <div className="grid grid-cols-4 gap-y-4">
             <div onClick={onNavigateToCatalog} className="flex flex-col items-center gap-1.5 cursor-pointer">
-              <div className="w-11 h-11 bg-[#4dbace]/10 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#4dbace] text-2xl">package_2</span>
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-2xl">package_2</span>
               </div>
-              <span className="text-[10px] text-center font-medium leading-tight text-[#131b2e]">Stok Kemasan</span>
+              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Stok Kemasan</span>
             </div>
             <div onClick={onNavigateToInquiries} className="flex flex-col items-center gap-1.5 cursor-pointer">
-              <div className="w-11 h-11 bg-[#4dbace]/10 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#4dbace] text-2xl">architecture</span>
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-2xl">architecture</span>
               </div>
-              <span className="text-[10px] text-center font-medium leading-tight text-[#131b2e]">Kustom Desain</span>
+              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Kustom Desain</span>
             </div>
             <div onClick={() => handleAction(onViewAllOrders)} className="flex flex-col items-center gap-1.5 cursor-pointer">
-              <div className="w-11 h-11 bg-[#4dbace]/10 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#4dbace] text-2xl">local_shipping</span>
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-2xl">local_shipping</span>
               </div>
-              <span className="text-[10px] text-center font-medium leading-tight text-[#131b2e]">Lacak Kirim</span>
+              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Lacak Kirim</span>
             </div>
             <div className="flex flex-col items-center gap-1.5">
-              <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#ba1a1a] text-2xl">support_agent</span>
+              <div className="w-11 h-11 bg-error-container rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-error text-2xl">support_agent</span>
               </div>
-              <span className="text-[10px] text-center font-medium leading-tight text-[#131b2e]">Bantuan</span>
+              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Bantuan</span>
             </div>
           </div>
         </section>
 
         {/* 4. Pilihan Terbaik / Produk Terlaris */}
-        <section className="bg-white py-6 border-y border-[#bbc9c7]/20">
+        <section className="bg-surface-container-lowest py-6 border-y border-outline-variant/20">
           <div className="px-4 flex justify-between items-end mb-4">
             <div>
-              <h2 className="text-xs font-bold text-[#131b2e] font-headline">Pilihan Terbaik</h2>
-              <p className="text-[10px] text-[#3c4947]">Produk kemasan paling laris bulan ini</p>
+              <h2 className="text-xs font-bold text-on-surface font-headline">Pilihan Terbaik</h2>
+              <p className="text-[10px] text-on-surface-variant">Produk kemasan paling laris bulan ini</p>
             </div>
-            <button onClick={onNavigateToCatalog} className="text-[#4dbace] text-[10px] font-bold">Lihat Semua</button>
+            <button onClick={onNavigateToCatalog} className="text-primary text-[10px] font-bold focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Lihat Semua</button>
           </div>
           <div className="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-2">
             {popularProducts.map((product) => (
               <div
                 key={product._id}
                 onClick={() => onViewProduct(product._id)}
-                className="min-w-[140px] max-w-[140px] bg-white rounded-lg border border-[#bbc9c7]/30 overflow-hidden shadow-sm cursor-pointer"
+                className="min-w-[140px] max-w-[140px] bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden shadow-card cursor-pointer transition-all duration-200"
               >
                 <img
                   className="w-full aspect-square object-cover"
@@ -174,13 +174,13 @@ export default function MobileHomePage({
                   alt={product.name}
                 />
                 <div className="p-2.5">
-                  <p className="text-[11px] text-[#131b2e] line-clamp-2 min-h-[32px]">{product.name}</p>
-                  <p className="text-[13px] font-bold text-[#131b2e] mt-1">
+                  <p className="text-[11px] text-on-surface line-clamp-2 min-h-[32px]">{product.name}</p>
+                  <p className="text-[13px] font-bold text-on-surface mt-1">
                     {product.priceB2B > 0 ? formatCurrency(product.priceB2B) : 'Hubungi Admin'}
                   </p>
                   <div className="flex flex-col gap-1 mt-1">
-                    <div className="text-[9px] text-[#3c4947] font-medium">Varian: {product.variants?.length || 0} opsi</div>
-                    <div className="text-[9px] text-[#3c4947]">Terjual {product.totalSold || 0}+</div>
+                    <div className="text-[9px] text-on-surface-variant font-medium">Varian: {product.variants?.length || 0} opsi</div>
+                    <div className="text-[9px] text-on-surface-variant">Terjual {product.totalSold || 0}+</div>
                   </div>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function MobileHomePage({
 
         {/* 5. Aktivitas Terbaru (Naikkan Posisi) */}
         <section className="px-4 pt-2 pb-4">
-          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Aktivitas Terbaru</h2>
+          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-on-surface-variant">Aktivitas Terbaru</h2>
           <div className="relative w-full">
             <Carousel
               className="w-full"
@@ -201,7 +201,7 @@ export default function MobileHomePage({
                 {activities.length > 0 ? (
                   activities.map((activity, idx) => (
                     <CarouselItem key={idx} className="pl-0 basis-full">
-                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#4dbace] shadow-sm">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-primary shadow-card">
                         <img
                           src={activity.imageUrl || "https://images.unsplash.com/photo-1542382103-60fce78ed46f"}
                           alt={activity.title || "UKM Kemasan"}
@@ -210,7 +210,7 @@ export default function MobileHomePage({
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                         <div className="absolute bottom-6 left-5 text-white space-y-2 max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-500">
-                          <span className="inline-block px-2.5 py-1 bg-[#4dbace]/20 backdrop-blur-md rounded-full text-[8px] font-bold uppercase tracking-widest text-[#4dbace] border border-[#4dbace]/20">
+                          <span className="inline-block px-2.5 py-1 bg-primary/20 backdrop-blur-md rounded-full text-[8px] font-bold uppercase tracking-widest text-primary border border-primary/20">
                             {activity.label || "Pameran"}
                           </span>
                           <h3 className="text-lg font-bold tracking-tight leading-tight font-headline">
@@ -225,7 +225,7 @@ export default function MobileHomePage({
                   ))
                 ) : (
                   <CarouselItem className="pl-0 basis-full">
-                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#4dbace] flex flex-col items-center justify-center text-white/40 space-y-3 border border-[#bbc9c7]/20">
+                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-primary flex flex-col items-center justify-center text-white/40 space-y-3 border border-outline-variant/20">
                       <span className="material-symbols-outlined text-5xl">gallery_thumbnail</span>
                       <p className="font-bold text-[9px] text-white/60 uppercase tracking-widest">Belum ada foto galeri</p>
                     </div>
@@ -238,9 +238,9 @@ export default function MobileHomePage({
                   {activities.map((_, i) => (
                     <div
                       key={i}
-                      className={`transition-all duration-500 rounded-full h-1 ${i === activeGalleryIndex
-                        ? 'bg-white w-4'
-                        : 'bg-white/40 w-1'
+                      className={`transition-all duration-200 rounded-full h-1 ${i === activeGalleryIndex
+                        ? 'bg-surface-container-lowest w-4'
+                        : 'bg-surface-container-lowest/40 w-1'
                         }`}
                     />
                   ))}
@@ -252,13 +252,13 @@ export default function MobileHomePage({
 
         {/* 6. Hasil Karya Terbaik (Portofolio) */}
         <section className="px-4 pt-2 pb-4">
-          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Hasil Karya Terbaik</h2>
+          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-on-surface-variant">Hasil Karya Terbaik</h2>
           <div className="relative overflow-hidden rounded-xl">
             <Carousel className="w-full" opts={{ loop: true, align: 'start' }}>
               <CarouselContent className="-ml-3">
                 {portfolios.map((portfolio, idx) => (
                   <CarouselItem key={idx} className="pl-3 basis-[85%]">
-                    <div className="relative rounded-lg overflow-hidden aspect-[16/9] shadow-sm">
+                    <div className="relative rounded-lg overflow-hidden aspect-[16/9] shadow-card">
                       <img
                         className="w-full h-full object-cover"
                         src={portfolio.imageUrl || "https://via.placeholder.com/300"}
@@ -277,13 +277,13 @@ export default function MobileHomePage({
 
         {/* 7. Artikel Pilihan */}
         <section className="px-4 pt-2 pb-4">
-          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-[#3c4947]">Artikel Pilihan</h2>
+          <h2 className="text-xs font-bold mb-3 font-headline uppercase tracking-wider text-on-surface-variant">Artikel Pilihan</h2>
           <div className="flex flex-col gap-3">
             {articles.slice(0, 3).map((article, idx) => (
               <div
                 key={idx}
                 onClick={() => navigate(`/portal/articles/${article._id || article.clientId}`)}
-                className="flex gap-3 items-center cursor-pointer active:opacity-70 transition-opacity"
+                className="flex gap-3 items-center cursor-pointer active:opacity-70 transition-all duration-200"
               >
                 <img
                   className="w-16 h-16 rounded-lg object-cover"
@@ -291,8 +291,8 @@ export default function MobileHomePage({
                   alt={article.title}
                 />
                 <div className="flex-1">
-                  <h4 className="font-bold text-[11px] text-[#131b2e] line-clamp-2">{article.title}</h4>
-                  <p className="text-[9px] text-[#3c4947] mt-1">{article.category || 'Tips'}</p>
+                  <h4 className="font-bold text-[11px] text-on-surface line-clamp-2">{article.title}</h4>
+                  <p className="text-[9px] text-on-surface-variant mt-1">{article.category || 'Tips'}</p>
                 </div>
               </div>
             ))}
@@ -303,11 +303,11 @@ export default function MobileHomePage({
         <section className="px-4 pt-4">
           <div className="relative overflow-hidden rounded-3xl bg-primary p-8 shadow-xl shadow-primary/20">
             {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/20 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-surface-container-lowest/20 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-surface-container-lowest/10 rounded-full blur-2xl"></div>
 
             <div className="relative flex flex-col items-center text-center space-y-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-inner">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-surface-container-lowest/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-inner">
                 <span className="material-symbols-outlined text-white text-3xl">chat</span>
               </div>
 
@@ -322,7 +322,7 @@ export default function MobileHomePage({
 
               <button
                 onClick={onNavigateToInquiries}
-                className="flex items-center justify-center gap-3 w-full py-3.5 bg-white text-primary text-[12px] font-black rounded-2xl shadow-lg active:scale-[0.98] transition-all uppercase tracking-widest border border-white/10"
+                className="flex items-center justify-center gap-3 w-full py-3.5 bg-surface-container-lowest text-primary text-[12px] font-black rounded-2xl shadow-card-hover active:scale-[0.98] transition-all duration-200 uppercase tracking-widest border border-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
               >
                 Hubungi Admin
               </button>

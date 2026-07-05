@@ -36,7 +36,7 @@ export default function CustomerPortalCatalogSection({
           </div>
           <button 
               onClick={onNavigateToCreateOrder}
-              className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
+              className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-200"
             >
               <Plus className="w-4 h-4" />
               Buat Pesanan Custom
@@ -48,10 +48,10 @@ export default function CustomerPortalCatalogSection({
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-5 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all border-2 ${
+              className={`px-5 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-200 border-2 ${
                 selectedCategory === category
                   ? 'border-primary/40 bg-primary/5 text-primary'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-primary/40 hover:text-primary'
+                  : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary/40 hover:text-primary'
               }`}
             >
               {category}
@@ -61,7 +61,7 @@ export default function CustomerPortalCatalogSection({
 
         <button 
             onClick={onNavigateToCreateOrder}
-            className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 transition-all w-full"
+            className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 transition-all duration-200 w-full focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Plus className="w-5 h-5" />
             Buat Pesanan Custom
@@ -72,14 +72,14 @@ export default function CustomerPortalCatalogSection({
         {filteredCatalogs.map((catalog, index) => (
           <div
             key={catalog.key}
-            className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-slate-200/60"
+            className="group flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer border border-outline-variant/60"
             onClick={() => onViewProduct(catalog.productId)}
           >
-            <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+            <div className="relative aspect-[4/3] overflow-hidden bg-surface-container">
               {catalog.images?.length > 0 ? (
                  <img src={catalog.images[0].url} alt={catalog.name} className="w-full h-full object-cover" loading="lazy" />
               ) : (
-                 <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                 <div className="w-full h-full flex flex-col items-center justify-center text-muted">
                    <span className="material-symbols-outlined !text-3xl mb-1">image</span>
                    <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
                  </div>
@@ -92,13 +92,13 @@ export default function CustomerPortalCatalogSection({
             </div>
             <div className="p-3">
               <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-label">{catalog.category}</span>
-              <h3 className="text-sm font-bold text-slate-800 mt-1 leading-tight line-clamp-2">{catalog.displayName || catalog.name}</h3>
-              <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
+              <h3 className="text-sm font-bold text-on-surface mt-1 leading-tight line-clamp-2">{catalog.displayName || catalog.name}</h3>
+              <div className="flex items-center justify-between mt-3 pt-2 border-t border-outline-variant">
                 <div>
                   <span className="text-base font-black text-primary">{formatCurrency(catalog.priceB2B)}</span>
-                  <span className="text-[9px] font-bold text-slate-500 ml-0.5">/pcs</span>
+                  <span className="text-[9px] font-bold text-on-surface-variant ml-0.5">/pcs</span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
+                <div className="flex items-center gap-1 text-[10px] text-on-surface-variant font-medium">
                   <span className="material-symbols-outlined !text-[14px]">inventory_2</span>
                   {catalog.stockPolos?.toLocaleString() || 0} stok
                 </div>

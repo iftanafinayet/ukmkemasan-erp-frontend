@@ -42,19 +42,19 @@ export default function MobileProductDetailPage({
   };
 
   return (
-    <div className="lg:hidden bg-[#faf8ff] min-h-screen pb-32">
+    <div className="lg:hidden bg-background min-h-screen pb-32">
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-[#bbc9c7]/20 px-4 h-14 flex items-center justify-between">
+      <header className="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/20 px-4 h-14 flex items-center justify-between">
         <button onClick={() => navigate('/portal?menu=catalog')} className="p-2 -ml-2">
-          <ArrowLeft size={24} className="text-[#131b2e]" />
+          <ArrowLeft size={24} className="text-on-surface" />
         </button>
-        <h1 className="text-[16px] font-bold text-[#131b2e] truncate max-w-[180px] font-headline">{product.name}</h1>
+        <h1 className="text-[16px] font-bold text-on-surface truncate max-w-[180px] font-headline">{product.name}</h1>
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#3c4947] text-[24px]">share</span>
+          <span className="material-symbols-outlined text-on-surface-variant text-[24px]">share</span>
           <button onClick={() => navigate('/portal?menu=cart')} className="relative">
-            <span className="material-symbols-outlined text-[#3c4947] text-[24px]">shopping_cart</span>
+            <span className="material-symbols-outlined text-on-surface-variant text-[24px]">shopping_cart</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#ba1a1a] text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-white">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-white">
                 {cartCount}
               </span>
             )}
@@ -64,7 +64,7 @@ export default function MobileProductDetailPage({
 
       <main className="pt-14">
         {/* Image Carousel */}
-        <section className="bg-white">
+        <section className="bg-surface-container-lowest">
           <div className="aspect-square w-full relative">
             <img
               src={product.images?.[activeImageIdx]?.url || "https://via.placeholder.com/400"}
@@ -76,7 +76,7 @@ export default function MobileProductDetailPage({
                 {product.images.map((_, idx) => (
                   <div
                     key={idx}
-                    className={`h-1.5 rounded-full transition-all ${activeImageIdx === idx ? 'w-6 bg-[#4dbace]' : 'w-1.5 bg-[#bbc9c7]'
+                    className={`h-1.5 rounded-full transition-all ${activeImageIdx === idx ? 'w-6 bg-primary' : 'w-1.5 bg-outline-variant'
                       }`}
                   />
                 ))}
@@ -89,7 +89,7 @@ export default function MobileProductDetailPage({
                 <button
                   key={idx}
                   onClick={() => setActiveImageIdx(idx)}
-                  className={`aspect-square rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${activeImageIdx === idx ? 'border-[#4dbace] scale-105' : 'border-transparent opacity-60'
+                  className={`aspect-square rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeImageIdx === idx ? 'border-primary scale-105' : 'border-transparent opacity-60'
                     }`}
                 >
                   <img src={img.url} className="w-full h-full object-cover" />
@@ -100,44 +100,44 @@ export default function MobileProductDetailPage({
         </section>
 
         {/* Product Info */}
-        <section className="bg-white px-4 py-6 border-b border-[#bbc9c7]/20">
+        <section className="bg-surface-container-lowest px-4 py-6 border-b border-outline-variant/20">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[#4dbace] text-[22px] font-bold font-headline">{formatCurrency(unitPrice)}</span>
-            <span className="bg-[#4dbace]/10 text-[#4dbace] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+            <span className="text-primary text-[22px] font-bold font-headline">{formatCurrency(unitPrice)}</span>
+            <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {quantity >= 1000 ? 'Grosir' : 'Retail'}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-4 border-b border-[#bbc9c7]/20 pb-4 mb-4">
+          <div className="grid grid-cols-2 gap-4 border-b border-outline-variant/20 pb-4 mb-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6c7a77]">Retail</p>
-              <p className="text-xs font-bold text-[#131b2e]">{formatCurrency(selectedVariant?.priceB2C || 0)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Retail</p>
+              <p className="text-xs font-bold text-on-surface">{formatCurrency(selectedVariant?.priceB2C || 0)}</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6c7a77]">Grosir</p>
-              <p className="text-xs font-bold text-[#4dbace]">{formatCurrency(selectedVariant?.priceB2B || 0)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted">Grosir</p>
+              <p className="text-xs font-bold text-primary">{formatCurrency(selectedVariant?.priceB2B || 0)}</p>
             </div>
           </div>
-          <h1 className="text-[18px] font-bold text-[#131b2e] leading-tight mb-3 font-headline">{product.name}</h1>
-          <div className="flex items-center gap-4 text-[#3c4947] text-[12px]">
+          <h1 className="text-[18px] font-bold text-on-surface leading-tight mb-3 font-headline">{product.name}</h1>
+          <div className="flex items-center gap-4 text-on-surface-variant text-[12px]">
             <div>Terjual {product.totalSold || 0}+</div>
-            <div className="w-px h-3 bg-[#bbc9c7]/30"></div>
-            <div className="text-[#4dbace] font-bold">Stok: {selectedVariant?.stock?.toLocaleString() || 0} pcs</div>
+            <div className="w-px h-3 bg-outline-variant/30"></div>
+            <div className="text-primary font-bold">Stok: {selectedVariant?.stock?.toLocaleString() || 0} pcs</div>
           </div>
         </section>
 
         {/* Variant Selection */}
-        <section className="bg-white px-4 py-6 mt-2 border-y border-[#bbc9c7]/20">
+        <section className="bg-surface-container-lowest px-4 py-6 mt-2 border-y border-outline-variant/20">
           <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Pilih Ukuran</h3>
+            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Pilih Ukuran</h3>
             <div className="flex flex-wrap gap-2">
               {sizeOptions.map((size) => (
                 <button
                   key={size}
                   disabled={isSizeDisabled(size)}
                   onClick={() => onSelectSize(size)}
-                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all ${selectedSize === size
-                      ? 'border-[#4dbace] bg-[#4dbace]/5 text-[#4dbace]'
-                      : 'border-[#bbc9c7]/30 text-[#3c4947] disabled:opacity-30'
+                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedSize === size
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
                 >
                   {size}
@@ -147,16 +147,16 @@ export default function MobileProductDetailPage({
           </div>
 
           <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Pilih Warna</h3>
+            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Pilih Warna</h3>
             <div className="flex flex-wrap gap-2">
               {colorOptions.map((color) => (
                 <button
                   key={color}
                   disabled={isColorDisabled(color)}
                   onClick={() => onSelectColor(color)}
-                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all ${selectedColor === color
-                      ? 'border-[#4dbace] bg-[#4dbace]/5 text-[#4dbace]'
-                      : 'border-[#bbc9c7]/30 text-[#3c4947] disabled:opacity-30'
+                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedColor === color
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
                 >
                   {color}
@@ -166,15 +166,15 @@ export default function MobileProductDetailPage({
           </div>
 
           <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Add-ons: Valve</h3>
+            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Add-ons: Valve</h3>
             <div className="grid grid-cols-2 gap-3">
                 <button
                     type="button"
                     onClick={() => setUseValve(true)}
                     disabled={(product.addons?.valvePrice || 0) <= 0}
-                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all ${useValve
-                        ? 'border-[#4dbace] bg-[#4dbace]/5 text-[#4dbace]'
-                        : 'border-[#bbc9c7]/20 bg-white text-slate-500'
+                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${useValve
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
                         } disabled:cursor-not-allowed disabled:opacity-40`}
                 >
                     Pakai Valve
@@ -182,27 +182,27 @@ export default function MobileProductDetailPage({
                 <button
                     type="button"
                     onClick={() => setUseValve(false)}
-                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all ${!useValve
-                        ? 'border-[#4dbace] bg-[#4dbace] text-white'
-                        : 'border-[#bbc9c7]/20 bg-white text-slate-500'
+                    className={`rounded-xl border-2 px-4 py-3 text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!useValve
+                        ? 'border-primary bg-primary text-on-primary'
+                        : 'border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant'
                         }`}
                 >
                     Tanpa Valve
                 </button>
             </div>
             {useValve && product.addons?.valvePrice > 0 && (
-                <p className="mt-2 text-[10px] font-bold text-[#4dbace]">
+                <p className="mt-2 text-[10px] font-bold text-primary">
                     + {formatCurrency(product.addons.valvePrice)}/pcs
                 </p>
             )}
           </div>
 
           <div>
-            <h3 className="text-[14px] font-bold text-[#131b2e] mb-3 uppercase tracking-wider text-[10px] text-slate-400">Jumlah Pesanan</h3>
-            <div className="flex items-center gap-4 bg-[#f2f3ff] rounded-xl p-1">
+            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Jumlah Pesanan</h3>
+            <div className="flex items-center gap-4 bg-surface-container-low rounded-xl p-1">
               <button
                 onClick={() => setQuantity(Math.max(product.minOrder, quantity - 100))}
-                className="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#4dbace]"
+                className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined">remove</span>
               </button>
@@ -210,70 +210,70 @@ export default function MobileProductDetailPage({
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(product.minOrder, Number(e.target.value)))}
-                className="flex-1 text-center font-bold text-[#131b2e] border-none bg-transparent text-lg"
+                className="flex-1 text-center font-bold text-on-surface border-none bg-transparent text-lg"
               />
               <button
                 onClick={() => setQuantity(quantity + 100)}
-                className="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#4dbace]"
+                className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined">add</span>
               </button>
             </div>
-            <p className="text-[11px] text-[#6c7a77] mt-3 italic">* Minimal order {product.minOrder} pcs (kelipatan 100)</p>
+            <p className="text-[11px] text-muted mt-3 italic">* Minimal order {product.minOrder} pcs (kelipatan 100)</p>
           </div>
         </section>
 
         {/* Specifications */}
-        <section className="bg-white px-4 py-6 mt-2 border-y border-[#bbc9c7]/20">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Informasi Produk</h3>
+        <section className="bg-surface-container-lowest px-4 py-6 mt-2 border-y border-outline-variant/20">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-4">Informasi Produk</h3>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
-              <Layers size={16} className="text-[#4dbace] mb-1.5" />
-              <p className="text-[9px] font-bold text-slate-400 uppercase">Kategori</p>
-              <p className="text-[12px] font-bold text-[#131b2e] truncate">{product.category}</p>
+            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
+              <Layers size={16} className="text-primary mb-1.5" />
+              <p className="text-[9px] font-bold text-muted uppercase">Kategori</p>
+              <p className="text-[12px] font-bold text-on-surface truncate">{product.category}</p>
             </div>
-            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
-              <Ruler size={16} className="text-[#4dbace] mb-1.5" />
-              <p className="text-[9px] font-bold text-slate-400 uppercase">Material</p>
-              <p className="text-[12px] font-bold text-[#131b2e] truncate">{product.material || '-'}</p>
+            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
+              <Ruler size={16} className="text-primary mb-1.5" />
+              <p className="text-[9px] font-bold text-muted uppercase">Material</p>
+              <p className="text-[12px] font-bold text-on-surface truncate">{product.material || '-'}</p>
             </div>
-            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
-              <Package size={16} className="text-[#4dbace] mb-1.5" />
-              <p className="text-[9px] font-bold text-slate-400 uppercase">Varian</p>
-              <p className="text-[12px] font-bold text-[#131b2e]">{product.variants?.length || 0} Opsi</p>
+            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
+              <Package size={16} className="text-primary mb-1.5" />
+              <p className="text-[9px] font-bold text-muted uppercase">Varian</p>
+              <p className="text-[12px] font-bold text-on-surface">{product.variants?.length || 0} Opsi</p>
             </div>
-            <div className="bg-[#faf8ff] p-3 rounded-xl border border-[#e2e7ff]/60">
-              <Box size={16} className="text-[#4dbace] mb-1.5" />
-              <p className="text-[9px] font-bold text-slate-400 uppercase">Min. Order</p>
-              <p className="text-[12px] font-bold text-[#131b2e]">{product.minOrder?.toLocaleString()} pcs</p>
+            <div className="bg-background p-3 rounded-xl border border-outline-variant/60">
+              <Box size={16} className="text-primary mb-1.5" />
+              <p className="text-[9px] font-bold text-muted uppercase">Min. Order</p>
+              <p className="text-[12px] font-bold text-on-surface">{product.minOrder?.toLocaleString()} pcs</p>
             </div>
           </div>
         </section>
 
         {/* Description */}
-        <section className="bg-white px-4 py-6 mt-2 pb-10 border-t border-[#bbc9c7]/20">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Deskripsi Produk</h3>
-          <p className="text-[13px] text-[#3c4947] leading-relaxed">
+        <section className="bg-surface-container-lowest px-4 py-6 mt-2 pb-10 border-t border-outline-variant/20">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-3">Deskripsi Produk</h3>
+          <p className="text-[13px] text-on-surface-variant leading-relaxed">
             {product.description}
           </p>
         </section>
       </main>
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-[#bbc9c7]/20 px-4 py-3 flex items-center gap-3">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-3 flex items-center gap-3">
         <button
           onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
-          className="p-3.5 rounded-xl border-2 border-[#4dbace]/30 text-[#4dbace] active:scale-95 transition-transform"
+          className="p-3.5 rounded-xl border-2 border-primary/30 text-primary active:scale-95 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <MessageSquare size={18} />
         </button>
         <div className="flex-1">
-          <p className="text-[10px] text-[#6c7a77] font-bold uppercase tracking-wider">Total Harga</p>
-          <p className="text-[18px] font-bold text-[#4dbace] font-headline">{formatCurrency(totalPrice)}</p>
+          <p className="text-[10px] text-muted font-bold uppercase tracking-wider">Total Harga</p>
+          <p className="text-[18px] font-bold text-primary font-headline">{formatCurrency(totalPrice)}</p>
         </div>
         <button
           onClick={handleAddToCartClick}
-          className="bg-[#4dbace] text-white px-6 py-3.5 rounded-xl font-bold text-[13px] flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-[#4dbace]/20"
+          className="bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-[13px] flex items-center gap-2 active:scale-95 transition-all duration-200 shadow-card-hover shadow-primary/20 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <ShoppingCart size={18} />
           Beli Sekarang
@@ -281,7 +281,7 @@ export default function MobileProductDetailPage({
         <button
           onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
           disabled={!selectedVariant || selectedVariant?.stock <= 0}
-          className="px-4 py-3.5 rounded-xl border-2 border-[#4dbace]/40 text-[#4dbace] font-bold text-[12px] active:scale-95 transition-transform disabled:opacity-40"
+          className="px-4 py-3.5 rounded-xl border-2 border-primary/40 text-primary font-bold text-[12px] active:scale-95 transition-all duration-200 disabled:opacity-40 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           Sample
         </button>

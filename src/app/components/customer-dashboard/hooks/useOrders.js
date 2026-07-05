@@ -30,6 +30,15 @@ export function useOrders() {
     }
   }, []);
 
+  const refreshSelectedOrder = useCallback(async (orderId) => {
+    try {
+      const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
+      setSelectedOrder(response.data);
+    } catch {
+      toast.error('Gagal memuat ulang detail order.');
+    }
+  }, []);
+
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     setUpdatingStatus(true);
     try {
@@ -115,6 +124,7 @@ export function useOrders() {
     handleViewOrder,
     handleUpdateOrderStatus,
     handleTogglePaid,
+    refreshSelectedOrder,
     openCreateOrder,
     handleCreateOrder,
   };

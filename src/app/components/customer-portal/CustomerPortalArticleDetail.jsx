@@ -32,10 +32,10 @@ export default function CustomerPortalArticleDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-surface-container-lowest">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Loading Article...</p>
+          <p className="text-on-surface-variant font-bold text-sm uppercase tracking-widest">Loading Article...</p>
         </div>
       </div>
     );
@@ -44,14 +44,14 @@ export default function CustomerPortalArticleDetail() {
   if (!article) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 text-center p-8">
-        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
+        <div className="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center text-muted">
           <span className="material-symbols-outlined text-4xl">error_outline</span>
         </div>
         <h2 className="text-2xl font-bold text-slate-900">Artikel Tidak Ditemukan</h2>
-        <p className="text-slate-500 max-w-md">Maaf, artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
+        <p className="text-on-surface-variant max-w-md">Maaf, artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
         <button
           onClick={() => navigate('/portal')}
-          className="px-6 py-3 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 transition-all"
+          className="px-6 py-3 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           Kembali ke Home
         </button>
@@ -59,7 +59,7 @@ export default function CustomerPortalArticleDetail() {
     );
   }
   const renderContent = (content) => {
-    if (!content) return <div className="text-slate-500 italic text-center py-10">Konten artikel belum tersedia.</div>;
+    if (!content) return <div className="text-on-surface-variant italic text-center py-10">Konten artikel belum tersedia.</div>;
 
     return content.split('\n\n').map((block, index) => {
       const trimmedBlock = block.trim();
@@ -73,9 +73,9 @@ export default function CustomerPortalArticleDetail() {
             <img 
               src={url} 
               alt={alt} 
-              className="w-full h-auto rounded-[2rem] shadow-lg object-cover max-h-[600px]" 
+              className="w-full h-auto rounded-[2rem] shadow-card-hover object-cover max-h-[600px]" 
             />
-            {alt && <p className="text-center text-sm text-slate-400 mt-3 italic">{alt}</p>}
+            {alt && <p className="text-center text-sm text-muted mt-3 italic">{alt}</p>}
           </div>
         );
       }
@@ -101,7 +101,7 @@ export default function CustomerPortalArticleDetail() {
         const id = trimmedBlock.replace('## ', '').toLowerCase().replace(/\s+/g, '-');
         return (
           <TextWrapper key={index}>
-            <h3 id={id} className="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-4 font-headline scroll-mt-24">
+            <h3 id={id} className="text-xl md:text-2xl font-bold text-on-surface mt-8 mb-4 font-headline scroll-mt-24">
               {trimmedBlock.replace('## ', '')}
             </h3>
           </TextWrapper>
@@ -111,7 +111,7 @@ export default function CustomerPortalArticleDetail() {
       if (trimmedBlock.startsWith('> ')) {
         return (
           <div key={index} className="bg-primary/5 border-l-8 border-primary p-8 rounded-r-3xl my-10 max-w-4xl mx-auto">
-            <p className="text-lg md:text-xl font-medium text-slate-700 italic leading-relaxed font-body">
+            <p className="text-lg md:text-xl font-medium text-on-surface italic leading-relaxed font-body">
               {trimmedBlock.replace('> ', '')}
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function CustomerPortalArticleDetail() {
 
       return (
         <TextWrapper key={index}>
-          <p className="text-slate-700 leading-loose font-body text-base md:text-lg mb-6 whitespace-pre-line">
+          <p className="text-on-surface leading-loose font-body text-base md:text-lg mb-6 whitespace-pre-line">
             {trimmedBlock}
           </p>
         </TextWrapper>
@@ -182,12 +182,12 @@ export default function CustomerPortalArticleDetail() {
             
             {/* Left Column: Article Body */}
             <div className="lg:col-span-8 space-y-8">
-              <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200 border border-slate-100 space-y-8">
+              <div className="bg-surface-container-lowest rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200 border border-outline-variant/30 space-y-8">
                 {/* Back Button */}
                 <div className="max-w-3xl mx-auto w-full">
                   <button
                     onClick={() => navigate('/portal')}
-                    className="group flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-bold text-sm uppercase tracking-wider"
+                    className="group flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-bold text-sm uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   >
                     <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
                     Kembali ke Home
@@ -197,11 +197,11 @@ export default function CustomerPortalArticleDetail() {
                 {/* Article Body */}
                 <div className="space-y-8">
                   <div className="max-w-3xl mx-auto w-full">
-                    <p className="text-lg md:text-xl font-medium text-slate-600 leading-relaxed whitespace-pre-line italic border-l-4 border-primary pl-6 mb-8">
+                    <p className="text-lg md:text-xl font-medium text-on-surface-variant leading-relaxed whitespace-pre-line italic border-l-4 border-primary pl-6 mb-8">
                       {article.excerpt}
                     </p>
                   </div>
-                  <div className="text-slate-800 leading-loose font-body text-base md:text-lg space-y-6">
+                  <div className="text-on-surface leading-loose font-body text-base md:text-lg space-y-6">
                     {renderContent(article.content)}
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default function CustomerPortalArticleDetail() {
               <div className="sticky top-24 space-y-8">
                 
                 {/* TOC Widget */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100">
+                <div className="bg-surface-container-lowest rounded-[2rem] p-6 shadow-card-hover shadow-slate-200/50 border border-outline-variant/30">
                   <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">format_list_bulleted</span>
                     Daftar Isi
@@ -234,7 +234,7 @@ export default function CustomerPortalArticleDetail() {
                                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                               }
                             }}
-                            className={`block text-left py-2 px-3 rounded-xl transition-all hover:bg-primary/10 hover:text-primary text-sm font-medium ${isMain ? 'text-slate-900 font-bold pl-0' : 'text-slate-500 pl-4'}`}
+                            className={`block text-left py-2 px-3 rounded-xl transition-all hover:bg-primary/10 hover:text-primary text-sm font-medium focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${isMain ? 'text-slate-900 font-bold pl-0' : 'text-on-surface-variant pl-4'}`}
                           >
                             {text}
                           </button>
@@ -245,7 +245,7 @@ export default function CustomerPortalArticleDetail() {
                 </div>
 
                 {/* Related Articles Widget */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100">
+                <div className="bg-surface-container-lowest rounded-[2rem] p-6 shadow-card-hover shadow-slate-200/50 border border-outline-variant/30">
                   <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">auto_stories</span>
                     Artikel Menarik
@@ -261,9 +261,9 @@ export default function CustomerPortalArticleDetail() {
                             navigate(`/portal/articles/${related._id || related.clientId}`);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
-                          className="group cursor-pointer flex gap-3 p-2 rounded-2xl hover:bg-slate-50 transition-all"
+                          className="group cursor-pointer flex gap-3 p-2 rounded-2xl hover:bg-surface-container-low transition-all"
                         >
-                          <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                          <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-high">
                             <img 
                               src={related.imageUrl || "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop"} 
                               alt={related.title}
@@ -274,7 +274,7 @@ export default function CustomerPortalArticleDetail() {
                             <h4 className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                               {related.title}
                             </h4>
-                            <p className="text-[11px] text-slate-400 mt-1 truncate">{related.category || 'Artikel'}</p>
+                            <p className="text-[11px] text-muted mt-1 truncate">{related.category || 'Artikel'}</p>
                           </div>
                         </div>
                       ))}
@@ -282,7 +282,7 @@ export default function CustomerPortalArticleDetail() {
                 </div>
 
                 {/* CTA Widget */}
-                <div className="bg-primary rounded-[2rem] p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
+                <div className="bg-primary rounded-[2rem] p-8 text-white shadow-card-hover shadow-primary/20 relative overflow-hidden group">
                   <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="relative z-10 space-y-4">
                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-2">
@@ -296,7 +296,7 @@ export default function CustomerPortalArticleDetail() {
                       href="https://wa.me/6282326237919" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-3 bg-white text-primary font-bold rounded-2xl text-xs uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95"
+                      className="flex items-center justify-center gap-2 w-full py-3 bg-surface-container-lowest text-primary font-bold rounded-2xl text-xs uppercase tracking-widest hover:bg-surface-container-low transition-all active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     >
                       Chat Admin Sekarang
                     </a>
@@ -311,4 +311,3 @@ export default function CustomerPortalArticleDetail() {
     </>
   );
 }
-

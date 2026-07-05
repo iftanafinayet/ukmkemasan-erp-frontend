@@ -110,6 +110,7 @@ export default function CustomerDashboard() {
     handleViewOrder,
     handleUpdateOrderStatus,
     handleTogglePaid,
+    refreshSelectedOrder,
     openCreateOrder,
     handleCreateOrder,
   } = useOrders();
@@ -686,6 +687,7 @@ export default function CustomerDashboard() {
         isAdmin={isAdmin}
         isOpen={isOrderDetailOpen}
         onClose={() => setIsOrderDetailOpen(false)}
+        onRefreshOrder={refreshSelectedOrder}
         onTogglePaid={handleTogglePaid}
         onUpdateOrderStatus={handleUpdateOrderStatus}
         orderStatuses={ORDER_STATUSES}

@@ -26,7 +26,7 @@ export default function CustomerPortalProfileSection({
           <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
         </div>
         <div className="relative z-10 px-4 md:px-8 flex flex-col md:flex-row items-end gap-6">
-          <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl border-4 border-white shadow-xl overflow-hidden bg-white shrink-0 flex items-center justify-center bg-surface-container">
+          <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl border-4 border-white shadow-card-hover overflow-hidden bg-surface-container-lowest shrink-0 flex items-center justify-center bg-surface-container">
             {user?.avatar ? (
               <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
             ) : (
@@ -51,20 +51,20 @@ export default function CustomerPortalProfileSection({
           <div className="bg-surface-container-low rounded-xl p-6 md:p-8">
             <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-secondary-container mb-6">Navigasi Profil</h2>
             <nav className="space-y-2">
-              <button onClick={() => scrollTo('edit-profil')} className="w-full flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all shadow-md">
+              <button onClick={() => scrollTo('edit-profil')} className="w-full flex items-center gap-3 p-3 rounded-lg bg-primary text-white font-semibold transition-all duration-200 shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                 Edit Profil
               </button>
-              <button onClick={() => scrollTo('ganti-password')} className="w-full flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all">
+              <button onClick={() => scrollTo('ganti-password')} className="w-full flex items-center gap-3 p-3 rounded-lg border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                 <span className="material-symbols-outlined">lock</span>
                 Ganti Password
               </button>
-              <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 text-slate-400 cursor-not-allowed">
+              <div className="flex items-center justify-between p-3 rounded-lg border border-outline-variant text-muted cursor-not-allowed">
                  <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined">notifications</span>
                     <span className="font-semibold">Notifikasi</span>
                  </div>
-                 <span className="text-[10px] font-bold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-md">SOON</span>
+                 <span className="text-[10px] font-bold bg-surface-container-high text-muted px-2 py-0.5 rounded-md">SOON</span>
               </div>
             </nav>
           </div>
@@ -72,7 +72,7 @@ export default function CustomerPortalProfileSection({
           <div className="bg-primary/5 rounded-xl p-6 md:p-8 border border-primary/10">
             <h3 className="font-headline text-lg font-bold text-primary mb-2">Butuh Bantuan?</h3>
             <p className="text-sm text-on-secondary-container mb-4 font-body">Tim dukungan kami siap membantu Anda untuk segala kendala pesanan.</p>
-            <button className="w-full py-3 px-4 rounded-full bg-white text-primary font-bold text-sm shadow-sm hover:shadow-md transition-all font-body">Hubungi CS</button>
+            <button className="w-full py-3 px-4 rounded-full bg-surface-container-lowest text-primary font-bold text-sm shadow-card hover:shadow-card-hover transition-all duration-200 font-body focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Hubungi CS</button>
           </div>
         </div>
 
@@ -91,22 +91,22 @@ export default function CustomerPortalProfileSection({
              <form onSubmit={onSaveProfile} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                    <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Nama Lengkap</label>
-                   <input required type="text" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body" value={profile.name || ''} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
+                   <input required type="text" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body" value={profile.name || ''} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
                 </div>
                 <div className="space-y-2">
                    <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Email</label>
-                   <input required type="email" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body opacity-70 cursor-not-allowed" value={profile.email || ''} readOnly disabled title="Email tidak dapat diubah" />
+                   <input required type="email" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body opacity-70 cursor-not-allowed" value={profile.email || ''} readOnly disabled title="Email tidak dapat diubah" />
                 </div>
                 <div className="space-y-2">
                    <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">No Telepon</label>
-                   <input type="tel" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body" value={profile.phone || ''} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
+                   <input type="tel" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body" value={profile.phone || ''} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                    <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Alamat Lengkap</label>
-                   <textarea rows="3" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body resize-none" value={profile.address || ''} onChange={(e) => setProfile({ ...profile, address: e.target.value })}></textarea>
+                   <textarea rows="3" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body resize-none" value={profile.address || ''} onChange={(e) => setProfile({ ...profile, address: e.target.value })}></textarea>
                 </div>
                 <div className="md:col-span-2 pt-4">
-                   <button type="submit" disabled={savingProfile} className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50 font-body w-full sm:w-auto">
+                   <button type="submit" disabled={savingProfile} className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold hover:bg-primary-container transition-all duration-200 active:scale-95 shadow-card-hover shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50 font-body w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                       {savingProfile ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
                       {savingProfile ? 'Menyimpan...' : 'Simpan Perubahan'}
                    </button>
@@ -128,19 +128,19 @@ export default function CustomerPortalProfileSection({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2 md:col-span-2">
                       <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Password Saat Ini</label>
-                      <input required type="password" placeholder="••••••••" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} />
+                      <input required type="password" placeholder="••••••••" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} />
                    </div>
                    <div className="space-y-2">
                       <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Password Baru</label>
-                      <input required type="password" placeholder="Min. 8 Karakter" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} />
+                      <input required type="password" placeholder="Min. 8 Karakter" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} />
                    </div>
                    <div className="space-y-2">
                       <label className="font-label text-xs font-bold uppercase tracking-wider text-on-secondary-container ml-1">Konfirmasi Password Baru</label>
-                      <input required type="password" placeholder="Ulangi Password" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all font-body" value={passwords.confirmPassword} onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })} />
+                      <input required type="password" placeholder="Ulangi Password" className="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-on-surface transition-all duration-200 font-body" value={passwords.confirmPassword} onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })} />
                    </div>
                 </div>
                 <div className="pt-4">
-                   <button type="submit" disabled={savingPassword} className="bg-white border-2 border-primary text-primary px-8 py-3 rounded-full font-bold hover:bg-primary/5 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 font-body w-full sm:w-auto">
+                   <button type="submit" disabled={savingPassword} className="bg-surface-container-lowest border-2 border-primary text-primary px-8 py-3 rounded-full font-bold hover:bg-primary/5 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 font-body w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                       {savingPassword ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
                       {savingPassword ? 'Memperbarui...' : 'Perbarui Password'}
                    </button>
