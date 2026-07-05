@@ -139,6 +139,7 @@ export const ENDPOINTS = {
   ORDER_BY_ID: (id) => `/orders/${id}`,
   UPDATE_ORDER_STATUS: (id) => `/orders/${id}/status`,
   UPDATE_ORDER_DESIGN: (id) => `/orders/${id}/design`,
+  CANCEL_ORDER: (id) => `/orders/${id}/cancel`,
 
   // Sales
   SALES_OVERVIEW: '/sales/overview',

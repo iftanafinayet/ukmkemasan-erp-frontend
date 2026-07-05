@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckSquare, Square } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +13,11 @@ export default function MobileCartPage({
     onClearCart,
     onRemoveItem,
     onCheckout,
-    onBack
+    onBack,
+    onToggleSelect,
+    onSelectAll,
+    selectedCount = 0,
+    allSelected = false,
 }) {
     const navigate = useNavigate();
     const isLoggedIn = !!storage.getToken();
@@ -66,9 +70,22 @@ export default function MobileCartPage({
                         </button>
                     </div>
                 ) : (
+                    <div className="w-full">
+                    <div className="flex items-center justify-between px-1 py-2">
+                        <button onClick={onSelectAll} className="flex items-center gap-1.5 text-[12px] font-bold text-[#4dbace]">
+                            {allSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                            {allSelected ? 'Semua Terpilih' : 'Pilih Semua'}
+                        </button>
+                        <span className="text-[11px] text-[#6c7a77]">{selectedCount} dipilih</span>
+                    </div>
                     <div className="space-y-4">
                         {cartItems.map((item, index) => (
-                            <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className="bg-white p-4 rounded-2xl flex gap-4 shadow-sm border border-[#bbc9c7]/10">
+                            <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className={`bg-white p-4 rounded-2xl flex gap-4 shadow-sm border ${item.selected !== false ? 'border-[#bbc9c7]/10' : 'border-red-200/40 opacity-60'}`}>
+                                <button onClick={() => onToggleSelect?.(index)} className="shrink-0 self-center p-1">
+                                    {item.selected !== false
+                                        ? <CheckSquare size={18} className="text-[#4dbace]" />
+                                        : <Square size={18} className="text-[#6c7a77]" />}
+                                </button>
                                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#f2f3ff] shrink-0 border border-[#bbc9c7]/20">
                                     {item.imageUrl ? (
                                         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
@@ -98,6 +115,7 @@ export default function MobileCartPage({
                             </div>
                         ))}
                     </div>
+                    </div>
                 )}
             </main>
 
@@ -110,16 +128,16 @@ export default function MobileCartPage({
                             <p className="text-[18px] font-bold text-[#4dbace] font-headline">{formatCurrency(cartTotal)}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] text-[#6c7a77] font-bold uppercase tracking-wider">Total Item</p>
+                            <p className="text-[10px] text-[#6c7a77] font-bold uppercase tracking-wider">{selectedCount} Produk Dipilih</p>
                             <p className="text-[14px] font-bold text-[#131b2e]">{cartQuantity.toLocaleString()} pcs</p>
                         </div>
                     </div>
                     <button 
                         onClick={onCheckout} 
-                        disabled={checkingOutCart} 
+                        disabled={selectedCount === 0 || checkingOutCart} 
                         className="w-full bg-[#4dbace] text-white py-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 shadow-lg shadow-[#4dbace]/20 active:scale-95 transition-transform"
                     >
-                        {checkingOutCart ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Checkout Pesanan'}
+                        {checkingOutCart ? <Loader2 className="h-5 w-5 animate-spin" /> : `Checkout ${selectedCount} Item`}
                     </button>
                 </div>
             )}
