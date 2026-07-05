@@ -301,7 +301,7 @@ export default function CreateOrderPage() {
                 productId: orderForm.productId,
                 variantId: orderForm.variantId || undefined,
                 quantity: safeQuantity,
-                useValve: isSample ? false : orderForm.useValve
+                 useValve: orderForm.useValve
             };
             if (isSample) payload.orderType = 'Sample';
             if (!isSample && shipping) {
@@ -329,27 +329,27 @@ export default function CreateOrderPage() {
         <div className="min-h-screen bg-surface-bright font-sans text-on-surface selection:bg-primary/20">
             <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
 
-            <main className="pt-32 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="mb-10 flex items-center">
+            <main className="pt-24 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12">
+                <div className="mx-auto max-w-4xl">
+                    <div className="mb-8 flex items-center">
                         <button
                             onClick={() => navigate(-1)}
-                            className="group flex items-center gap-2 text-sm font-bold text-on-surface-variant transition-colors hover:text-primary cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                            className="group flex items-center gap-2 text-sm font-semibold text-on-surface-variant transition-colors hover:text-primary cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                         >
                             <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
                             Kembali
                         </button>
                     </div>
 
-                    <div className="mb-10">
-                        <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tighter text-on-surface capitalize sm:gap-4 sm:text-4xl">
+                    <div className="mb-8">
+                        <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-on-surface sm:gap-4 sm:text-4xl">
                             <ShoppingCart className="h-10 w-10 text-primary" />
                             {isSample ? 'Pesan Sample' : 'Buat Pesanan Baru'}
-                            {isSample && <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold">SAMPLE</span>}
+                            {isSample && <span className="text-xs bg-warning-container text-on-warning-container px-3 py-1 rounded-full font-bold">SAMPLE</span>}
                         </h1>
-                        <p className="mt-2 font-medium text-on-surface-variant">
+                        <p className="mt-2 font-medium text-on-surface-variant leading-relaxed">
                             {isSample
-                                ? 'Pilih varian produk sample. Maksimal 3 pcs per sample.'
+                                ? 'Pesan maksimal 3 pcs per sample. Pilih ukuran & warna yang ingin dicoba.'
                                 : 'Pilih katalog kemasan, lalu tentukan varian ukuran dan warna yang Anda butuhkan.'}
                         </p>
                     </div>
@@ -431,110 +431,18 @@ export default function CreateOrderPage() {
                                     </div>
 
                                     {selectedCatalog && (
-                                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-                                            <div className="space-y-8">
-                                                <VariantSelectorSection
-                                                    title="Pilih Varian"
-                                                    activeVariantLabel={selectedVariant ? `${selectedVariant.size} • ${selectedVariant.color}` : 'Belum dipilih'}
-                                                    variants={selectedCatalog.variants}
-                                                    selectedVariantId={selectedVariant?.variantId || selectedVariantId}
-                                                    sizeOptions={selectedCatalog.availableSizes}
-                                                    colorOptions={selectedCatalog.availableColors}
-                                                    selectedSize={selectedSize}
-                                                    selectedColor={selectedColor}
-                                                    isSizeDisabled={isSizeDisabled}
-                                                    isColorDisabled={isColorDisabled}
-                                                    onSelectVariant={handleSelectVariant}
-                                                    onSelectSize={handleSelectSize}
-                                                    onSelectColor={handleSelectColor}
-                                                    getVariantId={(variant) => variant.variantId}
-                                                />
-
-                                                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                                    <div className="space-y-3">
-                                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                                                            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[10px] text-primary">#</span>
-                                                            Kuantitas (pcs)
-                                                        </label>
-                                                        <div className="relative">
-                                                            <input
-                                                                 type="number"
-                                                                 required
-                                                                 min={isSample ? 1 : minimumOrder}
-                                                                 step={isSample ? 1 : minimumOrder}
-                                                                 max={isSample ? 3 : (selectedVariant?.stock || undefined)}
-                                                                 data-testid="order-quantity-input"
-                                                                 className="w-full rounded-2xl border border-outline-variant bg-surface-container-low py-4 pl-6 pr-16 text-xl font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
-                                                                 value={safeQuantity}
-                                                                onChange={(e) => setOrderForm((current) => ({
-                                                                    ...current,
-                                                                    quantity: Number(e.target.value) || (isSample ? 1 : minimumOrder)
-                                                                }))}
-                                                            />
-                                                            <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-muted">pcs</span>
-                                                        </div>
-                                                        <p className="flex items-center gap-1 text-[10px] font-bold text-muted">
-                                                            <Info size={12} /> {isSample ? 'Maksimal 3 pcs untuk sample.' : `Minimal order ${minimumOrder.toLocaleString()} pcs. Harga B2B aktif mulai 1000 pcs.`}
-                                                        </p>
-                                                    </div>
-
-                                                    {!isSample && (
-                                                    <div className="space-y-3">
-                                                        <label className="text-xs font-black uppercase tracking-widest text-muted">Tambahan Valve</label>
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${orderForm.useValve
-                                                                    ? 'border-primary bg-primary/5 text-primary'
-                                                                    : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
-                                                                } ${(selectedCatalog.addons?.valvePrice || 0) <= 0 ? 'cursor-not-allowed opacity-40' : ''}`}>
-                                                                <input
-                                                                    type="radio"
-                                                                    name="valve"
-                                                                    checked={orderForm.useValve}
-                                                                    disabled={(selectedCatalog.addons?.valvePrice || 0) <= 0}
-                                                                    onChange={() => setOrderForm((current) => ({ ...current, useValve: true }))}
-                                                                    className="sr-only"
-                                                                />
-                                                                <span className="font-bold">Ya, Pakai</span>
-                                                            </label>
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!orderForm.useValve
-                                                                    ? 'border-primary bg-primary text-white'
-                                                                    : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
-                                                                }`}>
-                                                                <input
-                                                                    type="radio"
-                                                                    name="valve"
-                                                                    checked={!orderForm.useValve}
-                                                                    onChange={() => setOrderForm((current) => ({ ...current, useValve: false }))}
-                                                                    className="sr-only"
-                                                                />
-                                                                <span className="font-bold">Tidak</span>
-                                                            </label>
-                                                        </div>
-                                                        {selectedCatalog.addons?.valvePrice > 0 && orderForm.useValve && (
-                                                            <p className="flex items-center gap-1 text-[10px] font-bold text-primary">
-                                                                + Tambahan biaya {formatCurrency(selectedCatalog.addons.valvePrice)}/pcs
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="rounded-3xl bg-slate-900 p-6 text-white shadow-xl shadow-slate-900/10 sm:p-8">
-                                                <div className="mb-6 flex items-center gap-3">
+                                        <div className="space-y-6">
+                                            <div className="rounded-3xl bg-primary p-6 text-white shadow-elevated shadow-primary/20 sm:p-8">
+                                                <div className="mb-5 flex items-center gap-3">
                                                     <DollarSign className="h-6 w-6 text-white/90" />
-                                                    <p className="text-sm font-black uppercase tracking-widest text-white/90">Ringkasan Varian</p>
+                                                    <p className="text-sm font-bold uppercase tracking-wider text-white/90">Ringkasan Varian</p>
                                                 </div>
 
-                                                <div className="space-y-4">
+                                                <div className="space-y-3">
                                                     <SummaryRow label="Katalog" value={selectedCatalog.name} />
                                                     <SummaryRow label="Ukuran" value={selectedVariant?.size || '-'} />
                                                     <SummaryRow label="Warna" value={selectedVariant?.color || '-'} />
-                                                    <SummaryRow
-                                                        label="Stok Varian"
-                                                        value={`${(selectedVariant?.stock || 0).toLocaleString()} pcs`}
-                                                        danger={(selectedVariant?.stock || 0) < minimumOrder}
-                                                    />
+                                                    <SummaryRow label="Stok" value={`${(selectedVariant?.stock || 0).toLocaleString()} pcs`} danger={(selectedVariant?.stock || 0) < minimumOrder} />
                                                     <SummaryRow label="Harga B2C" value={formatCurrency(selectedVariant?.priceB2C || 0)} />
                                                     <SummaryRow label="Harga B2B" value={formatCurrency(selectedVariant?.priceB2B || 0)} />
                                                     <SummaryRow label="Harga Aktif" value={formatCurrency(basePrice)} />
@@ -543,12 +451,85 @@ export default function CreateOrderPage() {
                                                     {!isSample && shipping && <SummaryRow label={`Ongkir (${shipping.courierCode})`} value={formatCurrency(shipping.cost)} />}
                                                 </div>
 
-                                                <div className="mt-6 border-t border-white/10 pt-5">
+                                                <div className="mt-5 border-t border-white/20 pt-5">
                                                     <div className="flex items-center justify-between">
-                                                        <p className="text-sm font-bold text-white/70">Total Harga</p>
+                                                        <p className="text-sm font-semibold text-white/80">Total Harga</p>
                                                         <p className="text-3xl font-bold tracking-tight">{formatCurrency(grandTotal)}</p>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <VariantSelectorSection
+                                                title="Pilih Varian"
+                                                activeVariantLabel={selectedVariant ? `${selectedVariant.size} • ${selectedVariant.color}` : 'Belum dipilih'}
+                                                variants={selectedCatalog.variants}
+                                                selectedVariantId={selectedVariant?.variantId || selectedVariantId}
+                                                sizeOptions={selectedCatalog.availableSizes}
+                                                colorOptions={selectedCatalog.availableColors}
+                                                selectedSize={selectedSize}
+                                                selectedColor={selectedColor}
+                                                isSizeDisabled={isSizeDisabled}
+                                                isColorDisabled={isColorDisabled}
+                                                onSelectVariant={handleSelectVariant}
+                                                onSelectSize={handleSelectSize}
+                                                onSelectColor={handleSelectColor}
+                                                getVariantId={(variant) => variant.variantId}
+                                            />
+
+                                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                                <div className="space-y-3">
+                                                    <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
+                                                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[10px] text-primary">#</span>
+                                                        Kuantitas (pcs)
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            required
+                                                            min={isSample ? 1 : minimumOrder}
+                                                            step={isSample ? 1 : minimumOrder}
+                                                            max={isSample ? 3 : (selectedVariant?.stock || undefined)}
+                                                            data-testid="order-quantity-input"
+                                                            className="w-full rounded-2xl border border-outline-variant bg-surface-container-low py-4 pl-6 pr-16 text-xl font-bold text-on-surface outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                                            value={safeQuantity}
+                                                            onChange={(e) => setOrderForm((current) => ({
+                                                                ...current,
+                                                                quantity: Number(e.target.value) || (isSample ? 1 : minimumOrder)
+                                                            }))}
+                                                        />
+                                                        <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-muted">pcs</span>
+                                                    </div>
+                                                    <p className="flex items-center gap-1 text-[10px] font-bold text-muted">
+                                                        <Info size={12} /> {isSample ? 'Maksimal 3 pcs untuk sample.' : `Minimal order ${minimumOrder.toLocaleString()} pcs. Harga B2B aktif mulai 1000 pcs.`}
+                                                    </p>
+                                                </div>
+
+                                                {selectedCatalog.addons?.valvePrice > 0 && (
+                                                <div className="space-y-3">
+                                                    <label className="text-xs font-black uppercase tracking-widest text-muted">Tambahan Valve</label>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${orderForm.useValve
+                                                                ? 'border-primary bg-primary/5 text-primary'
+                                                                : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
+                                                            }`}>
+                                                            <input type="radio" name="valve" checked={orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: true }))} className="sr-only" />
+                                                            <span className="font-bold">Ya, Pakai</span>
+                                                        </label>
+                                                        <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!orderForm.useValve
+                                                                ? 'border-primary bg-primary text-white'
+                                                                : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
+                                                            }`}>
+                                                            <input type="radio" name="valve" checked={!orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: false }))} className="sr-only" />
+                                                            <span className="font-bold">Tidak</span>
+                                                        </label>
+                                                    </div>
+                                                    {orderForm.useValve && (
+                                                        <p className="flex items-center gap-1 text-[10px] font-bold text-primary">
+                                                            + Tambahan biaya {formatCurrency(selectedCatalog.addons.valvePrice)}/pcs
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -598,7 +579,7 @@ export default function CreateOrderPage() {
 
 const SummaryRow = ({ label, value, danger }) => (
     <div className="flex items-center justify-between gap-4">
-        <p className="text-xs font-bold text-white/60">{label}</p>
-        <p className={`text-sm font-bold ${danger ? 'text-red-300' : 'text-white'}`}>{value}</p>
+        <p className="text-xs font-semibold text-white/70">{label}</p>
+        <p className={`text-sm font-bold ${danger ? 'text-white/50 line-through' : 'text-white'}`}>{value}</p>
     </div>
 );
