@@ -483,11 +483,18 @@ export default function ProductDetailPage() {
                                                         <span className="text-xs text-slate-500">Total</span>
                                                         <span className="text-xl font-black text-slate-900">{formatCurrency(totalPrice)}</span>
                                                     </div>
-                                                    <button onClick={handleAddToCart} disabled={!selectedVariant || displayedStock <= 0}
-                                                        className="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
-                                                        <ShoppingCart size={18} />
-                                                        {!storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}
-                                                    </button>
+                                                <button onClick={handleAddToCart} disabled={!selectedVariant || displayedStock <= 0}
+                                                    className="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                                                    <ShoppingCart size={18} />
+                                                    {!storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}
+                                                </button>
+                                                {product.sampleAvailable && (
+                                                <button onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
+                                                    disabled={!selectedVariant || displayedStock <= 0}
+                                                    className="w-full py-3 rounded-xl border-2 border-primary/40 text-primary font-bold text-xs hover:bg-primary/5 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2">
+                                                    📦 Pesan Sample
+                                                </button>
+                                                )}
                                                     <button onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
                                                         className="w-full mt-2 py-2.5 rounded-xl border border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-1.5">
                                                         <MessageSquare size={14} />

@@ -15,6 +15,7 @@ export default function CreateOrderPage() {
     const [searchParams] = useSearchParams();
     const initialProductId = searchParams.get('productId') || '';
     const initialCatalogKey = searchParams.get('catalog') || '';
+    const isSample = searchParams.get('orderType') === 'Sample';
 
     const user = storage.getUser();
 
@@ -72,14 +73,18 @@ export default function CreateOrderPage() {
         || selectedCatalog?.variants.find((variant) => variant.size === selectedSize && variant.color === selectedColor)
         || null;
     const minimumOrder = selectedCatalog?.minOrder || 100;
-    const safeQuantity = Math.max(minimumOrder, Number(orderForm.quantity) || minimumOrder);
-    const valvePrice = orderForm.useValve && selectedCatalog?.addons?.valvePrice
-        ? selectedCatalog.addons.valvePrice
-        : 0;
+    const SAMPLE_SHIPPING = 20000;
+    const safeQuantity = isSample
+        ? Math.min(3, Math.max(1, Number(orderForm.quantity) || 1))
+        : Math.max(minimumOrder, Number(orderForm.quantity) || minimumOrder);
+    const valvePrice = (isSample || !orderForm.useValve || !selectedCatalog?.addons?.valvePrice)
+        ? 0
+        : selectedCatalog.addons.valvePrice;
     const basePrice = selectedVariant
-        ? (safeQuantity >= 1000 ? selectedVariant.priceB2B : selectedVariant.priceB2C)
+        ? (isSample ? selectedVariant.priceB2C : (safeQuantity >= 1000 ? selectedVariant.priceB2B : selectedVariant.priceB2C))
         : 0;
-    const totalPrice = (basePrice + valvePrice) * safeQuantity;
+    const subtotal = (basePrice + valvePrice) * safeQuantity;
+    const totalPrice = isSample ? subtotal + SAMPLE_SHIPPING : subtotal;
 
     useEffect(() => {
         if (catalogGroups.length === 0 || selectedCatalogKey) return;
@@ -274,7 +279,7 @@ export default function CreateOrderPage() {
             return toast.error('Silakan pilih katalog, ukuran, dan warna terlebih dahulu.');
         }
 
-        if (safeQuantity % 100 !== 0) {
+        if (!isSample && safeQuantity % 100 !== 0) {
             return toast.error('Jumlah pesanan harus kelipatan 100 pcs.');
         }
 
@@ -284,13 +289,15 @@ export default function CreateOrderPage() {
 
         setCreatingOrder(true);
         try {
-            await api.post(ENDPOINTS.ORDERS, {
+            const payload = {
                 productId: orderForm.productId,
                 variantId: orderForm.variantId || undefined,
                 quantity: safeQuantity,
-                useValve: orderForm.useValve
-            });
-            toast.success('Pesanan berhasil dibuat!');
+                useValve: isSample ? false : orderForm.useValve
+            };
+            if (isSample) payload.orderType = 'Sample';
+            await api.post(ENDPOINTS.ORDERS, payload);
+            toast.success(isSample ? 'Sample berhasil dipesan!' : 'Pesanan berhasil dibuat!');
             setTimeout(() => navigate('/portal'), 500);
         } catch (err) {
             toast.error(err.response?.data?.message || 'Gagal membuat pesanan.');
@@ -319,9 +326,14 @@ export default function CreateOrderPage() {
                     <div className="mb-10">
                         <h1 className="flex items-center gap-3 text-3xl font-black tracking-tighter text-slate-900 capitalize sm:gap-4 sm:text-4xl">
                             <ShoppingCart className="h-10 w-10 text-primary" />
-                            Buat Pesanan Baru
+                            {isSample ? 'Pesan Sample' : 'Buat Pesanan Baru'}
+                            {isSample && <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold">SAMPLE</span>}
                         </h1>
-                        <p className="mt-2 font-medium text-slate-500">Pilih katalog kemasan, lalu tentukan varian ukuran dan warna yang Anda butuhkan.</p>
+                        <p className="mt-2 font-medium text-slate-500">
+                            {isSample
+                                ? 'Pilih varian produk sample. Maksimal 3 pcs per sample.'
+                                : 'Pilih katalog kemasan, lalu tentukan varian ukuran dan warna yang Anda butuhkan.'}
+                        </p>
                     </div>
 
                     <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
@@ -430,24 +442,25 @@ export default function CreateOrderPage() {
                                                             <input
                                                                  type="number"
                                                                  required
-                                                                 min={minimumOrder}
-                                                                 step={minimumOrder}
-                                                                 max={selectedVariant?.stock || undefined}
+                                                                 min={isSample ? 1 : minimumOrder}
+                                                                 step={isSample ? 1 : minimumOrder}
+                                                                 max={isSample ? 3 : (selectedVariant?.stock || undefined)}
                                                                  data-testid="order-quantity-input"
                                                                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-6 pr-16 text-xl font-black text-slate-800 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
                                                                  value={safeQuantity}
                                                                 onChange={(e) => setOrderForm((current) => ({
                                                                     ...current,
-                                                                    quantity: Number(e.target.value) || minimumOrder
+                                                                    quantity: Number(e.target.value) || (isSample ? 1 : minimumOrder)
                                                                 }))}
                                                             />
                                                             <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-slate-400">pcs</span>
                                                         </div>
                                                         <p className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                                                            <Info size={12} /> Minimal order {minimumOrder.toLocaleString()} pcs. Harga B2B aktif mulai 1000 pcs.
+                                                            <Info size={12} /> {isSample ? 'Maksimal 3 pcs untuk sample.' : `Minimal order ${minimumOrder.toLocaleString()} pcs. Harga B2B aktif mulai 1000 pcs.`}
                                                         </p>
                                                     </div>
 
+                                                    {!isSample && (
                                                     <div className="space-y-3">
                                                         <label className="text-xs font-black uppercase tracking-widest text-slate-400">Tambahan Valve</label>
                                                         <div className="grid grid-cols-2 gap-4">
@@ -485,6 +498,7 @@ export default function CreateOrderPage() {
                                                             </p>
                                                         )}
                                                     </div>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -507,6 +521,7 @@ export default function CreateOrderPage() {
                                                     <SummaryRow label="Harga B2B" value={formatCurrency(selectedVariant?.priceB2B || 0)} />
                                                     <SummaryRow label="Harga Aktif" value={formatCurrency(basePrice)} />
                                                     <SummaryRow label="Valve" value={formatCurrency(valvePrice)} />
+                                                    {isSample && <SummaryRow label="Ongkir (fixed)" value={formatCurrency(SAMPLE_SHIPPING)} />}
                                                 </div>
 
                                                 <div className="mt-6 border-t border-white/10 pt-5">
@@ -533,7 +548,7 @@ export default function CreateOrderPage() {
                                             disabled={creatingOrder || catalogGroups.length === 0 || !selectedVariant || (selectedVariant?.stock || 0) <= 0}
                                             className="flex w-full items-center justify-center gap-3 rounded-3xl bg-primary py-5 text-lg font-black text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
                                         >
-                                            {creatingOrder ? <><Loader2 className="h-6 w-6 animate-spin" /> Memproses Pesanan...</> : 'Konfirmasi & Buat Pesanan'}
+                                            {creatingOrder ? <><Loader2 className="h-6 w-6 animate-spin" /> Memproses...</> : (isSample ? 'Konfirmasi & Pesan Sample' : 'Konfirmasi & Buat Pesanan')}
                                         </button>
                                     </div>
                                 </form>

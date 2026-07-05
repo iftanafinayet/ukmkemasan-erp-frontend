@@ -146,8 +146,11 @@ export default function CustomerPortalOrderDetailModal({
       <div className="mb-8 rounded-[28px] border border-primary/10 bg-gradient-to-br from-slate-50 via-cyan-50/40 to-white p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
+          <div className="flex items-center gap-2 mb-1">
             <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Progress Pesanan</p>
-            <p className="mt-2 text-sm font-medium text-slate-500">Pantau tahapan yang sudah selesai dan proses berikutnya.</p>
+            {order.orderType === 'Sample' && <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">SAMPLE</span>}
+          </div>
+          <p className="mt-2 text-sm font-medium text-slate-500">Pantau tahapan yang sudah selesai dan proses berikutnya.</p>
           </div>
           <span className="rounded-full border border-primary/15 bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary shadow-sm">
             {getStatusLabel(order.status)}

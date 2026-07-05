@@ -136,6 +136,7 @@ export default function CustomerPortalOrdersSection({
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-bold text-primary tracking-wider">#{order.orderNumber || order._id.slice(-6)}</span>
                     <span className="text-xs text-on-secondary-container bg-surface-container-highest px-3 py-1 rounded-full font-bold">{orderDate}</span>
+                    {order.orderType === 'Sample' && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Sample</span>}
                     {itemCount > 1 && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{itemCount} item</span>
                     )}
