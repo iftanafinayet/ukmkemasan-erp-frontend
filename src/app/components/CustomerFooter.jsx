@@ -10,7 +10,7 @@ const productLinks = [
 
 const companyLinks = [
   { label: 'Tentang Kami', to: '/portal' },
-  { label: 'FAQ', to: '/portal' },
+  { label: 'FAQ', to: '/faq' },
   { label: 'Hubungi Kami', href: 'mailto:info@ukmkemasan.com' },
 ];
 
