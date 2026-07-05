@@ -301,7 +301,7 @@ export default function CreateOrderPage() {
                 productId: orderForm.productId,
                 variantId: orderForm.variantId || undefined,
                 quantity: safeQuantity,
-                 useValve: orderForm.useValve
+                useValve: orderForm.useValve
             };
             if (isSample) payload.orderType = 'Sample';
             if (!isSample && shipping) {
@@ -330,7 +330,7 @@ export default function CreateOrderPage() {
             <CustomerNavbar activeMenu="catalog" onMenuChange={(menu) => navigate('/portal?menu=' + menu)} />
 
             <main className="pt-24 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12">
-                <div className="mx-auto max-w-4xl">
+                <div className="mx-auto max-w-6xl">
                     <div className="mb-8 flex items-center">
                         <button
                             onClick={() => navigate(-1)}
@@ -369,16 +369,16 @@ export default function CreateOrderPage() {
                                         </label>
                                         <div className="flex flex-wrap gap-2">
                                             {categories.map((category) => (
-                                                 <button
-                                                     key={category}
-                                                     type="button"
-                                                     onClick={() => handleSelectCategory(category)}
-                                                     data-testid={`category-btn-${category}`}
-                                                     className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedCategory === category
-                                                             ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                                             : 'border border-outline-variant bg-surface-container-low text-on-surface-variant hover:border-primary/30 hover:text-primary'
-                                                         }`}
-                                                 >
+                                                <button
+                                                    key={category}
+                                                    type="button"
+                                                    onClick={() => handleSelectCategory(category)}
+                                                    data-testid={`category-btn-${category}`}
+                                                    className={`rounded-2xl px-5 py-3 text-xs font-black uppercase tracking-widest transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedCategory === category
+                                                        ? 'bg-primary text-white shadow-md shadow-primary/20'
+                                                        : 'border border-outline-variant bg-surface-container-low text-on-surface-variant hover:border-primary/30 hover:text-primary'
+                                                        }`}
+                                                >
                                                     {category}
                                                 </button>
                                             ))}
@@ -386,44 +386,31 @@ export default function CreateOrderPage() {
                                     </div>
 
                                     <div className="space-y-4">
-                                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
+                                        <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
                                             <Package size={16} /> Pilih Katalog
                                         </label>
-                                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                             {filteredCatalogs.map((catalog) => (
-                                                 <button
-                                                     key={catalog.key}
-                                                     type="button"
-                                                     onClick={() => handleSelectCatalog(catalog)}
-                                                     data-testid={`catalog-btn-${catalog.key}`}
-                                                     className={`rounded-3xl border p-5 text-left transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedCatalogKey === catalog.key
-                                                             ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                                                             : 'border-outline-variant bg-surface-container-lowest hover:border-primary/30 hover:shadow-card'
-                                                         }`}
-                                                 >
-                                                    <div className="flex items-start justify-between gap-4">
-                                                        <div>
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{catalog.category}</p>
-                                                            <h3 className="mt-1 text-lg font-bold text-on-surface">{catalog.name}</h3>
-                                                            <p className="mt-1 text-sm font-medium text-on-surface-variant">{catalog.materialLabel}</p>
+                                                <button
+                                                    key={catalog.key}
+                                                    type="button"
+                                                    onClick={() => handleSelectCatalog(catalog)}
+                                                    data-testid={`catalog-btn-${catalog.key}`}
+                                                    className={`rounded-2xl border px-5 py-4 text-left transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                                                        selectedCatalogKey === catalog.key
+                                                            ? 'border-primary bg-primary/5 shadow-elevated shadow-primary/10'
+                                                            : 'border-outline-variant/30 bg-surface-container-lowest hover:border-primary/30 hover:shadow-card'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between gap-4">
+                                                        <div className="min-w-0">
+                                                            <p className="text-xs font-bold text-primary uppercase tracking-wider truncate">{catalog.category}</p>
+                                                            <h3 className="mt-0.5 text-sm font-bold text-on-surface truncate">{catalog.name}</h3>
                                                         </div>
-                                                        <div className="rounded-2xl bg-surface-container-high px-3 py-2 text-right">
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Mulai</p>
-                                                            <p className="mt-1 text-sm font-bold text-primary">{formatCurrency(catalog.priceB2B)}</p>
+                                                        <div className="shrink-0 text-right">
+                                                            <p className="text-[10px] font-semibold text-muted uppercase">Mulai</p>
+                                                            <p className="text-sm font-bold text-primary">{formatCurrency(catalog.priceB2B)}</p>
                                                         </div>
-                                                    </div>
-
-                                                    <div className="mt-4 flex flex-wrap gap-2">
-                                                        {catalog.availableSizes.slice(0, 5).map((size) => (
-                                                            <span key={size} className="rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold text-on-surface-variant">
-                                                                {size}
-                                                            </span>
-                                                        ))}
-                                                        {catalog.availableSizes.length > 5 && (
-                                                            <span className="rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold text-on-surface-variant">
-                                                                +{catalog.availableSizes.length - 5} ukuran
-                                                            </span>
-                                                        )}
                                                     </div>
                                                 </button>
                                             ))}
@@ -431,7 +418,7 @@ export default function CreateOrderPage() {
                                     </div>
 
                                     {selectedCatalog && (
-                                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+                                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1fr]">
                                             <div className="space-y-8">
                                                 <VariantSelectorSection
                                                     title="Pilih Ukuran & Warna"
@@ -481,38 +468,37 @@ export default function CreateOrderPage() {
                                                     </div>
 
                                                     {selectedCatalog.addons?.valvePrice > 0 && (
-                                                    <div className="space-y-3">
-                                                        <label className="text-xs font-black uppercase tracking-widest text-muted">Tambahan Valve</label>
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${orderForm.useValve
+                                                        <div className="space-y-3">
+                                                            <label className="text-xs font-black uppercase tracking-widest text-muted">Tambahan Valve</label>
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${orderForm.useValve
                                                                     ? 'border-primary bg-primary/5 text-primary'
                                                                     : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
-                                                                }`}>
-                                                                <input type="radio" name="valve" checked={orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: true }))} className="sr-only" />
-                                                                <span className="font-bold">Ya, Pakai</span>
-                                                            </label>
-                                                            <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!orderForm.useValve
+                                                                    }`}>
+                                                                    <input type="radio" name="valve" checked={orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: true }))} className="sr-only" />
+                                                                    <span className="font-bold">Ya, Pakai</span>
+                                                                </label>
+                                                                <label className={`flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${!orderForm.useValve
                                                                     ? 'border-primary bg-primary text-white'
                                                                     : 'border-outline-variant/30 bg-surface-container-lowest text-muted hover:border-outline-variant'
-                                                                }`}>
-                                                                <input type="radio" name="valve" checked={!orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: false }))} className="sr-only" />
-                                                                <span className="font-bold">Tidak</span>
-                                                            </label>
+                                                                    }`}>
+                                                                    <input type="radio" name="valve" checked={!orderForm.useValve} onChange={() => setOrderForm((current) => ({ ...current, useValve: false }))} className="sr-only" />
+                                                                    <span className="font-bold">Tidak</span>
+                                                                </label>
+                                                            </div>
+                                                            {orderForm.useValve && (
+                                                                <p className="flex items-center gap-1 text-[10px] font-bold text-primary">
+                                                                    + Tambahan biaya {formatCurrency(selectedCatalog.addons.valvePrice)}/pcs
+                                                                </p>
+                                                            )}
                                                         </div>
-                                                        {orderForm.useValve && (
-                                                            <p className="flex items-center gap-1 text-[10px] font-bold text-primary">
-                                                                + Tambahan biaya {formatCurrency(selectedCatalog.addons.valvePrice)}/pcs
-                                                            </p>
-                                                        )}
-                                                    </div>
                                                     )}
                                                 </div>
                                             </div>
 
                                             <div className="rounded-3xl bg-primary p-6 text-white shadow-elevated shadow-primary/20 sm:p-8">
                                                 <div className="mb-6 flex items-center gap-3">
-                                                    <DollarSign className="h-6 w-6 text-white/90" />
-                                                    <p className="text-sm font-bold uppercase tracking-wider text-white/90">Ringkasan Varian</p>
+                                                    <p className="text-l font-bold uppercase tracking-wider text-white/90">Ringkasan Varian</p>
                                                 </div>
 
                                                 <div className="space-y-4">

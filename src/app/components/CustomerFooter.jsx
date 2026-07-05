@@ -4,7 +4,7 @@ import { ArrowRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from '
 
 const productLinks = [
   { label: 'Kemasan Pouch', to: '/portal?menu=catalog' },
-  { label: 'Custom Packaging', to: '/portal/orders/create' },
+  { label: 'Custom Packaging', href: 'https://wa.me/62817345168?text=Halo%2C%20saya%20mau%20buat%20pesanan%20custom%20kemasan.' },
   { label: 'Katalog Lengkap', to: '/portal?menu=catalog' },
 ];
 

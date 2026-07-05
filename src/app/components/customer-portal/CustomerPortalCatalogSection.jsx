@@ -35,8 +35,8 @@ export default function CustomerPortalCatalogSection({
             <span className="text-sm font-bold text-on-surface/60 uppercase tracking-widest font-label">Kategori Produk</span>
           </div>
           <button 
-              onClick={onNavigateToCreateOrder}
-              className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-200"
+              onClick={() => window.open('https://wa.me/62817345168?text=Halo%2C%20saya%20mau%20buat%20pesanan%20custom%20kemasan.', '_blank')}
+              className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <Plus className="w-4 h-4" />
               Buat Pesanan Custom
@@ -60,8 +60,8 @@ export default function CustomerPortalCatalogSection({
         </div>
 
         <button 
-            onClick={onNavigateToCreateOrder}
-            className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 transition-all duration-200 w-full focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            onClick={() => window.open('https://wa.me/62817345168?text=Halo%2C%20saya%20mau%20buat%20pesanan%20custom%20kemasan.', '_blank')}
+            className="flex md:hidden items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-2xl text-sm font-bold shadow-card transition-all duration-200 w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Plus className="w-5 h-5" />
             Buat Pesanan Custom
