@@ -25,18 +25,16 @@ export default function VariantSelectorSection({
     getVariantStock = defaultGetVariantStock
 }) {
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
-            <div className="mb-6 flex items-start justify-between gap-4">
-                <div>
-                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">{title}</h3>
-                    <p className="mt-2 text-sm font-medium text-slate-500">{description}</p>
-                </div>
+        <div className="rounded-3xl border border-outline-variant/30 bg-surface-container-lowest p-6 shadow-card sm:p-8">
+            <div className="mb-6">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted">{title}</h3>
+                <p className="mt-2 text-sm font-medium text-on-surface-variant">{description}</p>
             </div>
 
             <div className="space-y-6">
                 {showDirectVariants && (
                     <div>
-                        <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Varian Langsung</p>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-muted">Varian Langsung</p>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             {variants.map((variant) => {
                                 const variantId = String(getVariantId(variant));
@@ -50,14 +48,15 @@ export default function VariantSelectorSection({
                                          type="button"
                                          onClick={() => onSelectVariant?.(variant)}
                                          aria-pressed={isSelected}
-                                          className={`rounded-2xl border p-4 text-left transition-all ${isSelected
-                                              ? 'border-primary/30 bg-primary/5'
-                                              : 'border-slate-200 bg-white hover:border-primary/30'
-                                              } ${isOutOfStock ? 'opacity-60' : ''}`}
+                                         className={`rounded-2xl border p-4 text-left transition-all duration-200 cursor-pointer ${
+                                             isSelected
+                                                 ? 'border-primary/30 bg-primary/5'
+                                                 : 'border-outline-variant bg-surface-container-lowest hover:border-primary/30'
+                                         } ${isOutOfStock ? 'opacity-60' : ''}`}
                                      >
-                                        <p className="text-sm font-black text-slate-800">{variant.size} • {variant.color}</p>
-                                        <p className="mt-1 text-[11px] font-bold text-slate-400">{getVariantSku(variant)}</p>
-                                        <p className={`mt-3 text-xs font-black ${isOutOfStock ? 'text-red-500' : 'text-slate-600'}`}>
+                                        <p className="text-sm font-bold text-on-surface">{variant.size} • {variant.color}</p>
+                                        <p className="mt-1 text-[11px] font-semibold text-muted">{getVariantSku(variant)}</p>
+                                        <p className={`mt-3 text-xs font-bold ${isOutOfStock ? 'text-error' : 'text-on-surface-variant'}`}>
                                             {isOutOfStock ? 'Stok habis' : `${stock.toLocaleString()} pcs`}
                                         </p>
                                     </button>
@@ -68,7 +67,7 @@ export default function VariantSelectorSection({
                 )}
 
                 <div>
-                    <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Ukuran</p>
+                    <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-muted">Ukuran</p>
                     <div className="flex flex-wrap gap-3">
                         {sizeOptions.map((size) => (
                             <SelectionChip
@@ -83,7 +82,7 @@ export default function VariantSelectorSection({
                 </div>
 
                 <div>
-                    <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Warna</p>
+                    <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-muted">Warna</p>
                     <div className="flex flex-wrap gap-3">
                         {colorOptions.map((color) => (
                             <SelectionChip
@@ -107,11 +106,11 @@ const SelectionChip = ({ label, selected, disabled, onClick }) => (
         disabled={disabled}
         onClick={onClick}
         aria-pressed={selected}
-        className={`rounded-2xl border-2 px-4 py-3 text-sm font-black transition-all ${
+        className={`rounded-2xl border-2 px-4 py-3 text-sm font-bold transition-all duration-200 cursor-pointer ${
             selected
                 ? 'border-primary/40 bg-primary/5 text-primary'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary'
-        } disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300 disabled:shadow-none`}
+                : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary/40 hover:text-primary'
+        } disabled:cursor-not-allowed disabled:opacity-40`}
     >
         {label}
     </button>
