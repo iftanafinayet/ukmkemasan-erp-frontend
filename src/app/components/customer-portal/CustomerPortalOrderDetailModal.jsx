@@ -114,7 +114,7 @@ export default function CustomerPortalOrderDetailModal({
 }) {
   if (!order) return null;
   const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
-  const canCancel = !order.isPaid && !['Completed', 'Shipping', 'Quality Control', 'Cancelled'].includes(order.status);
+  const canCancel = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
   const payments = normalizePaymentHistory(order);
   const stepTimestamps = getStepTimestamps(order, payments);
   const itemRows = getItemRows(order);
