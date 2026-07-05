@@ -278,7 +278,6 @@ export default function MobileProductDetailPage({
           <ShoppingCart size={18} />
           Beli Sekarang
         </button>
-        {product.sampleAvailable && (
         <button
           onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
           disabled={!selectedVariant || selectedVariant?.stock <= 0}
@@ -286,7 +285,6 @@ export default function MobileProductDetailPage({
         >
           Sample
         </button>
-        )}
       </div>
     </div>
   );

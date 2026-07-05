@@ -488,13 +488,11 @@ export default function ProductDetailPage() {
                                                     <ShoppingCart size={18} />
                                                     {!storage.getToken() ? 'Tambah ke Keranjang' : 'Checkout Sekarang'}
                                                 </button>
-                                                {product.sampleAvailable && (
                                                 <button onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
                                                     disabled={!selectedVariant || displayedStock <= 0}
                                                     className="w-full py-3 rounded-xl border-2 border-primary/40 text-primary font-bold text-xs hover:bg-primary/5 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2">
-                                                    📦 Pesan Sample
+                                                    📦 Pesan Sample (max 3 pcs)
                                                 </button>
-                                                )}
                                                     <button onClick={() => navigate('/portal?menu=inquiries', { state: { prefillProduct: product } })}
                                                         className="w-full mt-2 py-2.5 rounded-xl border border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-1.5">
                                                         <MessageSquare size={14} />

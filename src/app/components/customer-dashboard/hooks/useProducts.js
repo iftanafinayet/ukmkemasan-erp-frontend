@@ -15,7 +15,7 @@ const EMPTY_PRODUCT_FORM = {
   valvePrice: 600,
   description: '',
   variants: [],
-  sampleAvailable: false,
+  sampleAvailable: true,
   samplePrice: '',
   maxSamplePerCustomer: 3,
 };
