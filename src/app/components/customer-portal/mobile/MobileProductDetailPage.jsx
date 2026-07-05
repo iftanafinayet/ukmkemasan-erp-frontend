@@ -273,11 +273,20 @@ export default function MobileProductDetailPage({
         </div>
         <button
           onClick={handleAddToCartClick}
-          className="bg-[#4dbace] text-white px-8 py-3.5 rounded-xl font-bold text-[14px] flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-[#4dbace]/20"
+          className="bg-[#4dbace] text-white px-6 py-3.5 rounded-xl font-bold text-[13px] flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-[#4dbace]/20"
         >
           <ShoppingCart size={18} />
           Beli Sekarang
         </button>
+        {product.sampleAvailable && (
+        <button
+          onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}
+          disabled={!selectedVariant || selectedVariant?.stock <= 0}
+          className="px-4 py-3.5 rounded-xl border-2 border-[#4dbace]/40 text-[#4dbace] font-bold text-[12px] active:scale-95 transition-transform disabled:opacity-40"
+        >
+          Sample
+        </button>
+        )}
       </div>
     </div>
   );

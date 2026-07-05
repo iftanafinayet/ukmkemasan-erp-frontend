@@ -153,6 +153,43 @@ export default function ProductModal({
           />
         </div>
 
+        {/* Sample Settings */}
+        <div className="rounded-3xl border border-slate-200 bg-amber-50/50 p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-sm font-black uppercase tracking-widest text-slate-800">Sample Produk</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">Izinkan customer memesan sample produk ini.</p>
+            </div>
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                checked={newProduct.sampleAvailable}
+                onChange={(e) => setNewProduct({ ...newProduct, sampleAvailable: e.target.checked })}
+                className="peer sr-only"
+              />
+              <div className="h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-amber-500 peer-checked:after:translate-x-full"></div>
+            </label>
+          </div>
+          {newProduct.sampleAvailable && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormInput
+                label="Harga Sample (Rp) — kosongkan = pakai harga B2C"
+                type="number"
+                value={newProduct.samplePrice}
+                onChange={(value) => setNewProduct({ ...newProduct, samplePrice: value })}
+                placeholder="Biarkan kosong jika = harga B2C"
+              />
+              <FormInput
+                label="Maks Sample per Customer"
+                type="number"
+                value={newProduct.maxSamplePerCustomer}
+                onChange={(value) => setNewProduct({ ...newProduct, maxSamplePerCustomer: value })}
+                placeholder="1"
+              />
+            </div>
+          )}
+        </div>
+
         <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>

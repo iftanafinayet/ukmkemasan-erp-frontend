@@ -15,6 +15,9 @@ const EMPTY_PRODUCT_FORM = {
   valvePrice: 600,
   description: '',
   variants: [],
+  sampleAvailable: false,
+  samplePrice: '',
+  maxSamplePerCustomer: 3,
 };
 
 const createEmptyVariant = () => ({
@@ -85,6 +88,9 @@ export function useProducts(setData) {
       valvePrice: product.addons?.valvePrice ?? 0,
       description: product.description || '',
       variants: normalizeProductVariants(product.variants),
+      sampleAvailable: product.sampleAvailable || false,
+      samplePrice: product.samplePrice ?? '',
+      maxSamplePerCustomer: product.maxSamplePerCustomer ?? 3,
     });
     setExistingImages(product.images || []);
     setImageFiles([]);
@@ -137,6 +143,9 @@ export function useProducts(setData) {
         valvePrice: Number(newProduct.valvePrice || 0),
       }));
       formData.append('variants', JSON.stringify(normalizedVariants));
+      formData.append('sampleAvailable', newProduct.sampleAvailable ? 'true' : 'false');
+      if (newProduct.samplePrice) formData.append('samplePrice', Number(newProduct.samplePrice));
+      formData.append('maxSamplePerCustomer', Number(newProduct.maxSamplePerCustomer || 3));
 
       imageFiles.forEach((file) => formData.append('images', file));
 
