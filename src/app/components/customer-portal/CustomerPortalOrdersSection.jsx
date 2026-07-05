@@ -79,7 +79,8 @@ export default function CustomerPortalOrdersSection({
                 { id: 'all', label: 'Semua Pesanan' },
                 { id: 'payment', label: 'Payment' },
                 { id: 'production', label: 'Production' },
-                { id: 'completed', label: 'Completed' }
+                { id: 'completed', label: 'Completed' },
+                { id: 'cancelled', label: 'Dibatalkan' }
               ].map(statusBtn => {
                 const isActive = statusBtn.id === orderFilter;
                 return (
@@ -117,6 +118,7 @@ export default function CustomerPortalOrdersSection({
               if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
               if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
               if (orderFilter === 'completed') return order.status === 'Completed';
+              if (orderFilter === 'cancelled') return order.status === 'Cancelled';
               return true;
             })
             .map((order) => {
