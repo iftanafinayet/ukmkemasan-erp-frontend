@@ -77,6 +77,31 @@ const formatStepTimestamp = (dateValue) => {
   return STEP_DATE_FORMATTER.format(parsed);
 };
  
+const getItemRows = (order) => {
+  if (order.items && order.items.length > 0) {
+    return order.items.map((item) => ({
+      name: item.product?.name || item.sku || 'Produk',
+      sku: item.sku || '',
+      size: item.size || '',
+      color: item.color || '',
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      useValve: item.useValve,
+      image: item.product?.images?.[0]?.url || null,
+    }));
+  }
+  return [{
+    name: order.product?.name || 'Produk Custom',
+    sku: order.details?.sku || '',
+    size: order.details?.size || '',
+    color: order.details?.color || '',
+    quantity: order.details?.quantity || 0,
+    unitPrice: order.details?.unitPrice || 0,
+    useValve: order.details?.useValve,
+    image: order.product?.images?.[0]?.url || null,
+  }];
+};
+
 export default function CustomerPortalOrderDetailModal({
   formatCurrency,
   formatDate,
@@ -84,12 +109,16 @@ export default function CustomerPortalOrderDetailModal({
   getStatusLabel,
   onClose,
   onOpenPayment,
+  onCancelOrder,
   order,
 }) {
   if (!order) return null;
   const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
+  const canCancel = !order.isPaid && !['Completed', 'Shipping', 'Quality Control', 'Cancelled'].includes(order.status);
   const payments = normalizePaymentHistory(order);
   const stepTimestamps = getStepTimestamps(order, payments);
+  const itemRows = getItemRows(order);
+  const isMultiItem = itemRows.length > 1;
  
   return (
     <ModalWrapper onClose={onClose} wide>
@@ -150,17 +179,44 @@ export default function CustomerPortalOrderDetailModal({
         </div>
       </div>
  
-      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="space-y-4">
-          <InfoBlock label="Produk" value={order.product?.name} />
-          <InfoBlock label="Kategori" value={order.product?.category} />
-          <InfoBlock label="Kuantitas" value={`${order.details?.quantity?.toLocaleString()} pcs`} />
+      <div className="mb-6 rounded-3xl border border-slate-100 bg-white overflow-hidden">
+        <div className="px-5 py-4 bg-slate-50 border-b border-slate-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Item Pesanan</p>
         </div>
-        <div className="space-y-4">
-          <InfoBlock label="Valve" value={order.details?.useValve ? 'Ya' : 'Tidak'} />
-          <InfoBlock label="Pembayaran" value={order.isPaid ? '✓ Lunas' : '✗ Belum Bayar'} />
-          <InfoBlock label="Total" value={formatCurrency(order.totalPrice)} highlight />
+        <div className="divide-y divide-slate-50">
+          {itemRows.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-4 px-5 py-4">
+              <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                {item.image ? (
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300">
+                    <span className="material-symbols-outlined text-xl">image</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-slate-800">{item.name}</p>
+                <p className="text-xs text-slate-400">
+                  {item.size && <>{item.size} • </>}{item.color || ''}
+                  {item.useValve ? ' • Valve' : ''}
+                </p>
+                <p className="text-xs text-slate-400">{item.quantity.toLocaleString()} pcs @ {formatCurrency(item.unitPrice)}</p>
+              </div>
+              <p className="text-sm font-extrabold text-primary shrink-0">{formatCurrency(item.quantity * item.unitPrice)}</p>
+            </div>
+          ))}
         </div>
+        <div className="px-5 py-4 bg-primary/5 border-t border-primary/10 flex items-center justify-between">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-primary">Total Pesanan</span>
+          <span className="text-lg font-extrabold text-primary">{formatCurrency(order.totalPrice)}</span>
+        </div>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <InfoBlock label="Pembayaran" value={order.isPaid ? '✓ Lunas' : '✗ Belum Bayar'} />
+        <InfoBlock label="Valve" value={order.details?.useValve || itemRows.some(r => r.useValve) ? 'Ya' : 'Tidak'} />
+        <InfoBlock label="Total Kuantitas" value={`${itemRows.reduce((s, r) => s + r.quantity, 0).toLocaleString()} pcs`} />
       </div>
 
       <div className="mb-8 rounded-3xl border border-slate-100 bg-white p-5">
@@ -193,8 +249,17 @@ export default function CustomerPortalOrderDetailModal({
         )}
       </div>
  
-      {canPay && (
-        <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        {canCancel && (
+          <button
+            type="button"
+            onClick={() => onCancelOrder(order._id)}
+            className="rounded-full border-2 border-error px-6 py-3 text-sm font-black text-error transition hover:bg-error/5"
+          >
+            Batalkan Pesanan
+          </button>
+        )}
+        {canPay && (
           <button
             type="button"
             onClick={() => onOpenPayment(order._id)}
@@ -202,8 +267,8 @@ export default function CustomerPortalOrderDetailModal({
           >
             Bayar dengan Midtrans
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </ModalWrapper>
   );
 }

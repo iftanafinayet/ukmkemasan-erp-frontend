@@ -64,11 +64,47 @@ export const upsertCartItem = (cartItem) => {
       totalPrice: nextQuantity * (Number(cartItem.unitPrice) || 0)
     };
   } else {
-    existingCart.push(cartItem);
+    existingCart.push({ ...cartItem, selected: true });
   }
 
   setCartItems(existingCart);
   return existingCart;
+};
+
+export const toggleCartSelection = (index) => {
+  const items = getCartItems();
+  if (items[index]) {
+    items[index].selected = !items[index].selected;
+    setCartItems(items);
+  }
+  return items;
+};
+
+export const selectAllCartItems = (selected = true) => {
+  const items = getCartItems().map((item) => ({ ...item, selected }));
+  setCartItems(items);
+  return items;
+};
+
+export const getSelectedCartItems = () => {
+  return getCartItems().filter((item) => item.selected !== false);
+};
+
+export const getSelectedCount = () => {
+  return getSelectedCartItems().length;
+};
+
+export const getSelectedTotal = () => {
+  return getSelectedCartItems().reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0);
+};
+
+export const getSelectedQuantity = () => {
+  return getSelectedCartItems().reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+};
+
+export const isAllSelected = () => {
+  const items = getCartItems();
+  return items.length > 0 && items.every((item) => item.selected !== false);
 };
 
 export { CART_STORAGE_KEY, CART_EVENT };

@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Loader2, Pencil } from 'lucide-react';
 import { updateCartItem } from '../../utils/cart';
 
+import { CheckSquare, Square } from 'lucide-react';
+
 export default function CustomerCartSection({
     cartItems = [],
     cartTotal = 0,
@@ -13,6 +15,10 @@ export default function CustomerCartSection({
     onClearCart,
     onRemoveItem,
     onCheckout,
+    onToggleSelect,
+    onSelectAll,
+    selectedCount = 0,
+    allSelected = false,
 }) {
     const [editingId, setEditingId] = useState(null);
     const [editSize, setEditSize] = useState('');
@@ -70,6 +76,19 @@ export default function CustomerCartSection({
                 <p className="text-on-secondary-container font-medium font-body">Review pesanan Anda sebelum memproses ke pembayaran.</p>
             </header>
 
+            <div className="flex items-center justify-between mb-6">
+                <button
+                    onClick={onSelectAll}
+                    className="flex items-center gap-2 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-colors"
+                >
+                    {allSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                    {allSelected ? 'Semua Terpilih' : 'Pilih Semua'}
+                </button>
+                <p className="text-sm text-secondary font-body">
+                    <span className="font-bold text-on-surface">{selectedCount}</span> dari {cartItems.length} produk dipilih
+                </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/15 relative overflow-hidden group">
                     <div className="relative z-10">
@@ -109,7 +128,7 @@ export default function CustomerCartSection({
                 {cartItems.map((item, index) => {
                     const isEditing = editingId === index;
                     return (
-                        <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+                        <div key={`${item.productId}-${item.variantId}-${item.useValve}-${index}`} className={`bg-surface-container-lowest p-6 rounded-xl shadow-sm border transition-shadow ${item.selected !== false ? 'border-outline-variant/10 hover:shadow-md' : 'border-error/20 opacity-60'}`}>
                             {isEditing ? (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
@@ -157,7 +176,16 @@ export default function CustomerCartSection({
                                     )}
                                 </div>
                             ) : (
-                                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                                    <button
+                                        onClick={() => onToggleSelect?.(index)}
+                                        className="shrink-0 p-1 text-outline-variant hover:text-primary transition-colors"
+                                        title={item.selected !== false ? 'Batalkan pilihan' : 'Pilih item'}
+                                    >
+                                        {item.selected !== false
+                                            ? <CheckSquare size={20} className="text-primary" />
+                                            : <Square size={20} />}
+                                    </button>
                                     <div className="w-32 h-32 rounded-lg overflow-hidden bg-surface-container shrink-0">
                                         {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                                             : <div className="flex h-full w-full items-center justify-center text-primary/30"><span className="material-symbols-outlined !text-4xl text-outline-variant">image</span></div>}
@@ -193,18 +221,18 @@ export default function CustomerCartSection({
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
                     <div className="flex items-center gap-4 sm:gap-8 w-full md:w-auto overflow-hidden">
                         <div>
-                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-secondary mb-1 font-label">Items Selected</p>
-                            <p className="text-on-surface font-bold text-sm sm:text-base font-body">{cartItems.length} Products <span className="text-outline-variant mx-1 sm:mx-2">|</span> {cartQuantity} Units</p>
+                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-secondary mb-1 font-label">Dipilih</p>
+                            <p className="text-on-surface font-bold text-sm sm:text-base font-body">{selectedCount} Products <span className="text-outline-variant mx-1 sm:mx-2">|</span> {cartQuantity} Units</p>
                         </div>
                         <div>
-                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-secondary mb-1 font-label">Total Payable</p>
+                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-secondary mb-1 font-label">Total Dibayar</p>
                             <p className="text-xl sm:text-2xl font-extrabold text-primary font-headline truncate">{formatCurrency(cartTotal)}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <button onClick={onClearCart} disabled={cartItems.length === 0} className="flex-1 md:flex-none px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-outline text-secondary font-bold hover:bg-surface-container transition-all active:scale-95 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">Hapus Semua</button>
-                        <button onClick={onCheckout} disabled={cartItems.length === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] hover:shadow-[0_12px_32px_-4px_rgba(0,106,98,0.4)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
-                            {checkingOutCart ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-4 animate-spin" /> : 'Checkout Keranjang'}
+                        <button onClick={onCheckout} disabled={selectedCount === 0 || checkingOutCart} className="flex-1 md:flex-none px-8 sm:px-12 py-3 sm:py-4 rounded-full bg-primary text-on-primary font-bold shadow-[0_8px_24px_-4px_rgba(0,106,98,0.3)] hover:shadow-[0_12px_32px_-4px_rgba(0,106,98,0.4)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap disabled:opacity-50">
+                            {checkingOutCart ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-4 animate-spin" /> : `Checkout ${selectedCount} Item`}
                             {!checkingOutCart && <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>}
                         </button>
                     </div>

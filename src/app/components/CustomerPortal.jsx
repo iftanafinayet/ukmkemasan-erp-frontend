@@ -28,8 +28,9 @@ import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/Carousel';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
+import { XCircle } from 'lucide-react';
 import { formatCurrency, formatDate, formatDateTime } from '../utils/formatters';
-import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart } from '../utils/cart';
+import { clearCart, getCartItems, removeCartItem, setCartItems as persistCartItems, subscribeCart, toggleCartSelection, selectAllCartItems, getSelectedCartItems, getSelectedCount, getSelectedTotal, getSelectedQuantity, isAllSelected } from '../utils/cart';
 import { createEmptyLandingContent, normalizeLandingContent } from '../utils/landingContent';
 import { EmptyState, LoadingState } from './customer-dashboard/shared';
 import useSocket from '../hooks/useSocket';
@@ -224,6 +225,20 @@ export default function CustomerPortal() {
     navigate(`/portal/orders/${orderId}/payment`);
   };
 
+  const handleCancelOrder = async (orderId) => {
+    const confirmed = window.confirm('Yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');
+    if (!confirmed) return;
+
+    try {
+      await api.put(ENDPOINTS.CANCEL_ORDER(orderId));
+      toast.success('Pesanan berhasil dibatalkan.');
+      setIsDetailOpen(false);
+      await fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Gagal membatalkan pesanan.');
+    }
+  };
+
   const handleSaveProfile = async (event) => {
     event.preventDefault();
     setSavingProfile(true);
@@ -285,6 +300,17 @@ export default function CustomerPortal() {
     toast.success('Item dihapus dari keranjang.');
   };
 
+  const handleToggleSelect = (index) => {
+    toggleCartSelection(index);
+    setCartItems(getCartItems());
+  };
+
+  const handleSelectAll = () => {
+    const allSelected = isAllSelected();
+    selectAllCartItems(!allSelected);
+    setCartItems(getCartItems());
+  };
+
   const handleCheckoutCart = async () => {
     const token = storage.getToken();
     if (!token) {
@@ -293,51 +319,34 @@ export default function CustomerPortal() {
       return;
     }
 
-    const items = getCartItems();
-    if (items.length === 0) {
-      toast.error('Keranjang masih kosong.');
+    const selectedItems = getSelectedCartItems();
+    if (selectedItems.length === 0) {
+      toast.error('Pilih minimal 1 produk untuk di-checkout.');
       return;
     }
 
     setCheckingOutCart(true);
-    const failedItems = [];
-    let successCount = 0;
 
     try {
-      for (const item of items) {
-        try {
-          await api.post(ENDPOINTS.ORDERS, {
-            productId: item.productId,
-            variantId: item.variantId || undefined,
-            quantity: Number(item.quantity) || 0,
-            useValve: Boolean(item.useValve),
-          });
-          successCount += 1;
-        } catch (error) {
-          failedItems.push({
-            ...item,
-            failureMessage: error.response?.data?.message || 'Gagal membuat order untuk item ini.',
-          });
-        }
-      }
+      const orderPayload = {
+        items: selectedItems.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId || undefined,
+          quantity: Number(item.quantity) || 0,
+          useValve: Boolean(item.useValve),
+        }))
+      };
 
-      persistCartItems(failedItems);
-      setCartItems(failedItems);
-      setActiveMenu(successCount > 0 ? 'orders' : 'cart');
+      const response = await api.post(ENDPOINTS.ORDERS, orderPayload);
 
-      if (successCount > 0 && failedItems.length === 0) {
-        toast.success(`Checkout berhasil. ${successCount} order dibuat.`);
-      } else if (successCount > 0) {
-        toast.warning(`${successCount} order berhasil dibuat, ${failedItems.length} item tetap di keranjang.`);
-      } else {
-        toast.error('Checkout gagal untuk semua item di keranjang.');
-      }
-
-      if (failedItems.length > 0) {
-        toast.error(failedItems[0].failureMessage);
-      }
-
+      const remainingItems = getCartItems().filter((item) => item.selected === false);
+      persistCartItems(remainingItems);
+      setCartItems(remainingItems);
+      setActiveMenu('orders');
+      toast.success(`Checkout berhasil! ${selectedItems.length} item dalam 1 pesanan.`);
       await fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Checkout gagal. Silakan coba lagi.');
     } finally {
       setCheckingOutCart(false);
     }
@@ -411,6 +420,7 @@ export default function CustomerPortal() {
         onNavigateToCreateOrder={() => navigate('/portal/orders/create')}
         onNavigateToPayment={handleNavigateToPayment}
         onViewOrder={handleViewOrder}
+        onCancelOrder={handleCancelOrder}
         orderFilter={orderFilter}
         orders={orders}
         setOrderFilter={setOrderFilter}
@@ -443,11 +453,16 @@ export default function CustomerPortal() {
     return <CustomerInquiriesSection />;
   };
 
+  const cartSelectedCount = getSelectedCount();
+  const cartSelectedTotal = getSelectedTotal();
+  const cartSelectedQty = getSelectedQuantity();
+  const cartAllSelected = isAllSelected();
+
   const renderCart = () => (
     <CustomerCartSection
       cartItems={cartItems}
-      cartTotal={cartTotal}
-      cartQuantity={cartQuantity}
+      cartTotal={cartSelectedTotal}
+      cartQuantity={cartSelectedQty}
       checkingOutCart={checkingOutCart}
       formatCurrency={formatCurrency}
       products={products}
@@ -455,6 +470,10 @@ export default function CustomerPortal() {
       onClearCart={handleClearCart}
       onCheckout={handleCheckoutCart}
       onRemoveItem={handleRemoveCartItem}
+      onToggleSelect={handleToggleSelect}
+      onSelectAll={handleSelectAll}
+      selectedCount={cartSelectedCount}
+      allSelected={cartAllSelected}
     />
   );
 
@@ -549,8 +568,8 @@ export default function CustomerPortal() {
         return (
           <MobileCartPage
             cartItems={cartItems}
-            cartTotal={cartTotal}
-            cartQuantity={cartQuantity}
+            cartTotal={cartSelectedTotal}
+            cartQuantity={cartSelectedQty}
             checkingOutCart={checkingOutCart}
             formatCurrency={formatCurrency}
             onAddItem={() => setActiveMenu('catalog')}
@@ -558,6 +577,10 @@ export default function CustomerPortal() {
             onRemoveItem={handleRemoveCartItem}
             onCheckout={handleCheckoutCart}
             onBack={() => setActiveMenu('dashboard')}
+            onToggleSelect={handleToggleSelect}
+            onSelectAll={handleSelectAll}
+            selectedCount={cartSelectedCount}
+            allSelected={cartAllSelected}
           />
         );
       case 'profile':
@@ -682,6 +705,7 @@ export default function CustomerPortal() {
               getStatusLabel={getStatusLabel}
               onClose={() => setIsDetailOpen(false)}
               onOpenPayment={handleNavigateToPayment}
+              onCancelOrder={handleCancelOrder}
               order={selectedOrder}
             />
           </div>
