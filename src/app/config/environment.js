@@ -25,7 +25,7 @@ export const CURRENT_ENV = isDevelopment
 export const API_CONFIG = {
   // Development
   [ENV_MODES.DEVELOPMENT]: {
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || '/api',
     timeout: 10000,
     withCredentials: false
   },
@@ -181,7 +181,7 @@ export const ENDPOINTS = {
   EXPORT_INVOICES: '/sales/invoices/export',
 
   // Conversations / Inquiries
-  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || (isDevelopment ? 'http://localhost:5000' : 'https://ukmkemasan-erp-backend.onrender.com'),
+  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || (isDevelopment ? '' : 'https://ukmkemasan-erp-backend.onrender.com'),
   INQUIRIES: '/conversations',
   INQUIRY_BY_ID: (id) => `/conversations/${id}`,
   INQUIRY_MESSAGES: (id) => `/conversations/${id}/messages`,

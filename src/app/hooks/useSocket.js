@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { storage } from '../config/environment';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? 'http://localhost:5000' : 'https://ukmkemasan-erp-backend.onrender.com');
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? '' : 'https://ukmkemasan-erp-backend.onrender.com');
 
 let sharedSocket = null;
 let subscriberCount = 0;

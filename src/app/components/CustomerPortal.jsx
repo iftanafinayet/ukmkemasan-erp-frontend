@@ -23,6 +23,7 @@ import MobileOrdersPage from './customer-portal/mobile/MobileOrdersPage';
 import MobileOrderDetailPage from './customer-portal/mobile/MobileOrderDetailPage';
 import MobileProfilePage from './customer-portal/mobile/MobileProfilePage';
 import MobileCartPage from './customer-portal/mobile/MobileCartPage';
+import MobileInquiriesPage from './customer-portal/mobile/MobileInquiriesPage';
 import MobilePageSkeleton from './customer-portal/mobile/MobilePageSkeleton';
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/Carousel';
@@ -576,11 +577,7 @@ export default function CustomerPortal() {
           />
         );
       case 'inquiries':
-        return (
-          <div className="p-4">
-            <CustomerInquiriesSection />
-          </div>
-        );
+        return <MobileInquiriesPage prefillProduct={prefillProduct} />;
       default:
         return <EmptyState text="Halaman sedang dikembangkan." />;
     }
@@ -655,6 +652,7 @@ export default function CustomerPortal() {
         />
         <main className="pt-[56px] pb-[56px] flex-1">
           {renderMobilePage()}
+          {['dashboard', 'catalog'].includes(activeMenu) && <CustomerFooter />}
         </main>
         <MobileBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
       </div>
@@ -668,6 +666,7 @@ export default function CustomerPortal() {
               getStatusLabel={getStatusLabel}
               onBack={() => setIsDetailOpen(false)}
               onOpenPayment={handleNavigateToPayment}
+              onCancelOrder={handleCancelOrder}
               order={selectedOrder}
             />
           </div>

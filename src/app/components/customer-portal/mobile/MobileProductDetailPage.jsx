@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { formatCurrency } from '../../../utils/formatters';
 import { ArrowLeft, ShoppingCart, MessageSquare } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { getCartItems } from '../../../utils/cart';
+import { Carousel, CarouselContent, CarouselItem } from '../../ui/Carousel';
+import useScrollToTop from '../../../hooks/useScrollToTop';
 
 export default function MobileProductDetailPage({
   product,
@@ -30,6 +32,23 @@ export default function MobileProductDetailPage({
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
   const cartCount = getCartItems().length;
+  const [imageApi, setImageApi] = useState(null);
+  useScrollToTop();
+
+  useEffect(() => {
+    if (!imageApi) return;
+    const sync = () => setActiveImageIdx(imageApi.selectedScrollSnap());
+    sync();
+    imageApi.on('select', sync);
+    return () => imageApi.off('select', sync);
+  }, [imageApi, setActiveImageIdx]);
+
+  useEffect(() => {
+    if (!imageApi) return;
+    if (imageApi.selectedScrollSnap() !== activeImageIdx) {
+      imageApi.scrollTo(activeImageIdx);
+    }
+  }, [imageApi, activeImageIdx]);
 
   if (!product) return null;
 
@@ -50,13 +69,10 @@ export default function MobileProductDetailPage({
         </button>
         <h1 className="text-[16px] font-bold text-on-surface truncate max-w-[180px] font-headline">{product.name}</h1>
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-on-surface-variant text-[24px]">share</span>
           <button onClick={() => navigate('/portal?menu=cart')} className="relative">
-            <span className="material-symbols-outlined text-on-surface-variant text-[24px]">shopping_cart</span>
+            <span className="material-symbols-outlined text-on-surface-variant text-[24px]">shopping_bag</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-white">
-                {cartCount}
-              </span>
+              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container-lowest" />
             )}
           </button>
         </div>
@@ -65,14 +81,24 @@ export default function MobileProductDetailPage({
       <main className="pt-14">
         {/* Image Carousel */}
         <section className="bg-surface-container-lowest">
-          <div className="aspect-square w-full relative">
-            <img
-              src={product.images?.[activeImageIdx]?.url || "https://via.placeholder.com/400"}
-              alt={product.name}
-              className="w-full h-full object-contain"
-            />
+          <div className="relative">
+            <Carousel className="w-full" opts={{ loop: true, align: 'start' }} setApi={setImageApi}>
+              <CarouselContent className="ml-0">
+                {(product.images?.length > 0 ? product.images : [{ url: "https://via.placeholder.com/400" }]).map((img, idx) => (
+                  <CarouselItem key={idx} className="pl-0 basis-full">
+                    <div className="aspect-square w-full overflow-hidden bg-surface-container-low">
+                      <img
+                        src={img.url}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
             {product.images?.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                 {product.images.map((_, idx) => (
                   <div
                     key={idx}
@@ -84,12 +110,12 @@ export default function MobileProductDetailPage({
             )}
           </div>
           {product.images?.length > 1 && (
-            <div className="grid grid-cols-5 gap-2 px-4 py-4 overflow-hidden">
+            <div className="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIdx(idx)}
-                  className={`aspect-square rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeImageIdx === idx ? 'border-primary scale-105' : 'border-transparent opacity-60'
+                  className={`w-14 h-14 shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeImageIdx === idx ? 'border-primary' : 'border-transparent opacity-60'
                     }`}
                 >
                   <img src={img.url} className="w-full h-full object-cover" />
@@ -101,9 +127,9 @@ export default function MobileProductDetailPage({
 
         {/* Product Info */}
         <section className="bg-surface-container-lowest px-4 py-6 border-b border-outline-variant/20">
-          <h1 className="text-[18px] font-bold text-on-surface leading-tight mb-3 font-headline">{product.name}</h1>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-primary text-[22px] font-bold font-headline">{formatCurrency(unitPrice)}</span>
+          <h1 className="text-[18px] font-bold text-on-surface leading-tight mb-1">{product.name}</h1>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-primary text-[22px] font-extrabold">{formatCurrency(unitPrice)}</span>
             <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {quantity >= 1000 ? 'Grosir' : 'Retail'}
             </span>
@@ -116,16 +142,16 @@ export default function MobileProductDetailPage({
         </section>
 
         {/* Variant Selection */}
-        <section className="bg-surface-container-lowest px-4 py-6 mt-2 border-y border-outline-variant/20">
-          <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Pilih Ukuran</h3>
-            <div className="flex flex-wrap gap-2">
+        <section className="bg-surface-container-lowest px-4 py-5 mt-2 border-y border-outline-variant/20">
+          <div className="flex items-center gap-3 mb-4">
+            <h3 className="shrink-0 w-16 text-[10px] font-bold text-muted uppercase tracking-wider">Ukuran</h3>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
               {sizeOptions.map((size) => (
                 <button
                   key={size}
                   disabled={isSizeDisabled(size)}
                   onClick={() => onSelectSize(size)}
-                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedSize === size
+                  className={`shrink-0 px-3.5 py-1.5 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedSize === size
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
@@ -136,15 +162,15 @@ export default function MobileProductDetailPage({
             </div>
           </div>
 
-          <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Pilih Warna</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <h3 className="shrink-0 w-16 text-[10px] font-bold text-muted uppercase tracking-wider">Warna</h3>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
               {colorOptions.map((color) => (
                 <button
                   key={color}
                   disabled={isColorDisabled(color)}
                   onClick={() => onSelectColor(color)}
-                  className={`px-4 py-2 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedColor === color
+                  className={`shrink-0 px-3.5 py-1.5 rounded-lg text-[12px] font-bold border-2 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selectedColor === color
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-outline-variant/30 text-on-surface-variant disabled:opacity-30'
                     }`}
@@ -155,8 +181,8 @@ export default function MobileProductDetailPage({
             </div>
           </div>
 
-          <div className="mb-6">
-            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Add-ons: Valve</h3>
+          <div className="mb-6 mt-6">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-3">Add-ons: Valve</h3>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -188,13 +214,13 @@ export default function MobileProductDetailPage({
           </div>
 
           <div>
-            <h3 className="text-[14px] font-bold text-on-surface mb-3 uppercase tracking-wider text-[10px] text-muted">Jumlah Pesanan</h3>
-            <div className="flex items-center gap-4 bg-surface-container-low rounded-xl p-1">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-3">Jumlah Pesanan</h3>
+            <div className="flex items-center gap-2 bg-surface-container-low rounded-xl p-1">
               <button
                 onClick={() => setQuantity(Math.max(product.minOrder, (Number(quantity) || product.minOrder) - 100))}
-                className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="w-10 h-10 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
-                <span className="material-symbols-outlined">remove</span>
+                <span className="material-symbols-outlined text-[20px]">remove</span>
               </button>
               <input
                 type="text"
@@ -211,13 +237,13 @@ export default function MobileProductDetailPage({
                     setQuantity(product.minOrder);
                   }
                 }}
-                className="flex-1 text-center font-bold text-on-surface border-none bg-transparent text-lg outline-none"
+                className="flex-1 text-center font-bold text-on-surface border-none bg-transparent text-base outline-none"
               />
               <button
                 onClick={() => setQuantity((Number(quantity) || product.minOrder) + 100)}
-                className="w-12 h-12 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="w-10 h-10 rounded-lg bg-surface-container-lowest shadow-card flex items-center justify-center text-primary cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
-                <span className="material-symbols-outlined">add</span>
+                <span className="material-symbols-outlined text-[20px]">add</span>
               </button>
             </div>
             <p className="text-[11px] text-muted mt-3 italic">* Minimal order {product.minOrder} pcs</p>
@@ -226,18 +252,26 @@ export default function MobileProductDetailPage({
 
         {/* Specifications */}
         <section className="bg-surface-container-lowest px-4 py-5 mt-2 border-y border-outline-variant/20">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px]">
-            <span className="text-on-surface font-semibold">{product.category}</span>
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-3">Spesifikasi</h3>
+          <div className="divide-y divide-outline-variant/20">
+            <div className="flex items-center justify-between py-2">
+              <span className="text-[12px] text-on-surface-variant">Kategori</span>
+              <span className="text-[12px] font-semibold text-on-surface">{product.category || '-'}</span>
+            </div>
             {product.material && (
-              <>
-                <span className="text-outline-variant">·</span>
-                <span className="text-on-surface-variant">{product.material}</span>
-              </>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-[12px] text-on-surface-variant">Bahan</span>
+                <span className="text-[12px] font-semibold text-on-surface">{product.material}</span>
+              </div>
             )}
-            <span className="text-outline-variant">·</span>
-            <span className="text-on-surface-variant">{product.variants?.length || 0} varian</span>
-            <span className="text-outline-variant">·</span>
-            <span className="text-on-surface-variant">Min. {product.minOrder?.toLocaleString()} pcs</span>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-[12px] text-on-surface-variant">Jumlah Varian</span>
+              <span className="text-[12px] font-semibold text-on-surface">{product.variants?.length || 0} varian</span>
+            </div>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-[12px] text-on-surface-variant">Minimal Order</span>
+              <span className="text-[12px] font-semibold text-on-surface">{product.minOrder?.toLocaleString() || 0} pcs</span>
+            </div>
           </div>
         </section>
 
@@ -263,7 +297,7 @@ export default function MobileProductDetailPage({
           className="flex-1 bg-primary text-on-primary px-5 py-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 shadow-card cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <ShoppingCart size={16} />
-          Beli
+          Tambah ke Keranjang
         </button>
         <button
           onClick={() => navigate(`/portal/orders/create?orderType=Sample&productId=${product._id}&variantId=${selectedVariant?._id || ''}&size=${selectedSize}&color=${selectedColor}`)}

@@ -2,6 +2,7 @@ import React from 'react';
 import { formatCurrency } from '../../../utils/formatters';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
+import useScrollToTop from '../../../hooks/useScrollToTop';
 
 export default function MobileOrdersPage({
   orders,
@@ -10,6 +11,7 @@ export default function MobileOrdersPage({
   onViewOrder,
   getStatusLabel
 }) {
+  useScrollToTop();
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
   const user = storage.getUser();
@@ -87,25 +89,24 @@ export default function MobileOrdersPage({
   };
 
   return (
-    <div className="lg:hidden bg-gradient-to-b from-primary/5 to-background min-h-screen">
-      <main className="px-5 py-6 pb-24">
+    <div className="lg:hidden bg-gradient-to-b from-primary/5 to-background h-[100dvh] flex flex-col">
+      <main className="flex-1 flex flex-col min-h-0 px-5 pt-6">
         {/* Page Header */}
-        <div className="mb-6">
-          <h2 className="text-[28px] font-extrabold text-on-surface mb-1 font-headline">My Orders</h2>
+        <div className="mb-6 shrink-0">
+          <h2 className="text-[28px] font-black text-on-surface mb-1">My Orders</h2>
           <p className="text-on-surface-variant text-sm">{orders.length} order total</p>
         </div>
-        
+
         {/* Scrollable Tabs */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2 -mx-5 px-5">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-2 -mx-5 px-5 shrink-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setOrderFilter(tab.id)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
-                orderFilter === tab.id
-                  ? 'bg-primary text-white shadow-md shadow-primary/20'
-                  : 'bg-surface-container-low text-on-surface-variant'
-              }`}
+              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${orderFilter === tab.id
+                ? 'bg-primary text-white shadow-md shadow-primary/20'
+                : 'bg-surface-container-low text-on-surface-variant'
+                }`}
             >
               {tab.label}
               <span className={`px-2 py-0.5 rounded-full text-[10px] ${orderFilter === tab.id ? 'bg-white/20' : 'bg-on-surface-variant/10'}`}>
@@ -116,38 +117,56 @@ export default function MobileOrdersPage({
         </div>
 
         {/* Orders List */}
-        <div className="space-y-4">
+        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-3 pb-24">
           {displayedOrders.length > 0 ? displayedOrders.map((order) => (
             <div
               key={order._id}
               onClick={() => onViewOrder(order._id)}
-              className="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100 cursor-pointer active:scale-[0.98] transition-transform"
+              className="bg-white rounded-2xl p-3.5 shadow-sm border border-gray-100 cursor-pointer active:scale-[0.98] transition-transform"
             >
-              <div className="flex justify-between items-center mb-4">
-                <div className={`text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-2 ${getStatusColor(order.status)}`}>
+              <div className="flex justify-between items-center mb-2.5">
+                <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${getStatusColor(order.status)}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(order.status)}`}></span>
                   {getStatusLabel(order.status)}
                 </div>
-                <div className="text-primary font-bold text-[15px]">
+                <div className="text-primary font-black text-[14px]">
                   {formatCurrency(order.totalPrice)}
                 </div>
               </div>
-              
-              <div className="mb-4">
-                <h3 className="text-[16px] font-bold text-gray-900 mb-1 leading-tight line-clamp-1">
-                  {order.product?.name || 'Custom Packaging'}
-                </h3>
-                <p className="text-gray-500 text-[13px]">
-                  {order.shipping?.recipient?.name || user?.name || 'UKM Kemasan'}
-                </p>
+
+              <div className="mb-2.5">
+                {order.items?.length > 0 ? (
+                  <>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 leading-tight line-clamp-1">
+                      {order.items[0].product?.name || 'Produk'}
+                      {order.items.length > 1 && (
+                        <span className="text-primary font-semibold"> +{order.items.length - 1} produk lainnya</span>
+                      )}
+                    </h3>
+                    <p className="text-gray-500 text-[12px]">
+                      {order.shipping?.recipient?.name || user?.name || 'UKM Kemasan'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 leading-tight line-clamp-1">
+                      {order.product?.name || 'Custom Packaging'}
+                    </h3>
+                    <p className="text-gray-500 text-[12px]">
+                      {order.shipping?.recipient?.name || user?.name || 'UKM Kemasan'}
+                    </p>
+                  </>
+                )}
               </div>
-              
-              <div className="flex justify-between items-center pt-4 border-t border-gray-50">
-                <div className="text-gray-400 text-[12px] font-medium">
+
+              <div className="flex justify-between items-center pt-2.5 border-t border-gray-50">
+                <div className="text-gray-400 text-[11px] font-medium">
                   {formatDate(order.createdAt)}
                 </div>
-                <div className="text-gray-400 text-[12px] font-semibold flex items-center gap-1">
-                  {order.quantity || order.items?.length || 1} Items • #{order._id.slice(-6).toUpperCase()} 
+                <div className="text-gray-400 text-[11px] font-semibold flex items-center gap-1">
+                  {order.items?.length > 0
+                    ? `${order.items.length} Produk`
+                    : `${(order.quantity || order.details?.quantity || 1).toLocaleString()} pcs`} • #{order._id.slice(-6).toUpperCase()}
                   <span className="material-symbols-outlined text-[14px]">chevron_right</span>
                 </div>
               </div>

@@ -63,16 +63,19 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
                   <button
                     key={item.id}
                     onClick={() => handleMenuClick(item.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${isActive
-                        ? 'text-primary bg-primary/5'
-                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                    className={`relative flex items-center gap-2 px-3 py-2 transition-all duration-200 cursor-pointer ${isActive
+                        ? 'text-primary'
+                        : 'text-on-surface-variant hover:text-on-surface'
                       }`}
                   >
                     {item.label}
                     {item.badge > 0 && (
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? 'bg-primary/20 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
                         {item.badge}
                       </span>
+                    )}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-primary" />
                     )}
                   </button>
                 );

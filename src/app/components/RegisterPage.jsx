@@ -84,11 +84,11 @@ export default function RegisterPage() {
           <img src={logoUrl} alt="" aria-hidden="true" className="w-[520px] xl:w-[660px] max-w-none h-auto object-contain blur-[1px]" />
         </div>
 
-        <div className="w-full max-w-[440px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="bg-surface-container-lowest rounded-3xl shadow-modal p-5 md:p-8 border border-outline-variant/20">
+        <div className="w-full max-w-xs lg:max-w-[440px] z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-surface-container-lowest rounded-3xl shadow-modal p-4 md:p-8 border border-outline-variant/20">
             <div className="text-center mb-4">
-              <div className="mb-2 inline-flex items-center justify-center rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-2.5 shadow-sm lg:hidden">
-                <img src={logoUrl} alt="Logo UKM Kemasan" className="h-9 w-auto object-contain" />
+              <div className="mb-2 inline-flex items-center justify-center rounded-2xl border border-outline-variant bg-surface-container-low px-3 py-2 shadow-sm lg:hidden">
+                <img src={logoUrl} alt="Logo UKM Kemasan" className="h-8 w-auto object-contain" />
               </div>
               <h3 className="text-xl md:text-2xl font-bold text-on-surface tracking-tight">Create Account</h3>
               <div className="mt-1 text-on-surface-variant font-medium text-xs">
@@ -103,7 +103,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3 md:space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-xs text-on-surface-variant ml-1 font-medium">Full Name / Business Name</label>
                 <div className="relative">
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                   <input
                     type="text" name="name" value={formData.name} onChange={handleChange}
                     placeholder="Your name or business name" data-testid="register-name"
-                    className="w-full text-on-surface p-3 pl-12 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted"
+                    className="w-full text-on-surface p-2.5 pl-10 md:pl-12 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted text-sm"
                     required
                   />
                 </div>
@@ -124,13 +124,13 @@ export default function RegisterPage() {
                   <input
                     type="email" name="email" value={formData.email} onChange={handleChange}
                     placeholder="Enter your business email" data-testid="register-email"
-                    className="w-full text-on-surface p-3 pl-12 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted"
+                    className="w-full text-on-surface p-2.5 pl-10 md:pl-12 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted text-sm"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs text-on-surface-variant ml-1 font-medium">Password</label>
                   <div className="relative">
@@ -186,7 +186,7 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-1">
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}
@@ -205,7 +205,7 @@ export default function RegisterPage() {
               <div className="pt-1">
                 <button
                   type="submit" disabled={loading || !agree} data-testid="register-submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-on-primary py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-card hover:shadow-card-hover active:scale-[0.98] disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="w-full bg-primary hover:bg-primary/90 text-on-primary py-3 rounded-xl font-bold text-sm tracking-wide shadow-card hover:shadow-card-hover active:scale-[0.98] disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   {loading ? (
                     <>
@@ -219,7 +219,7 @@ export default function RegisterPage() {
               </div>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-4 md:mt-6 text-center">
               <p className="text-on-surface-variant text-sm font-medium">
                 Sudah punya akun?{' '}
                 <Link to="/login" className="text-primary font-bold hover:underline transition-colors">
@@ -227,7 +227,7 @@ export default function RegisterPage() {
                 </Link>
               </p>
 
-              <div className="relative flex items-center gap-3 py-4 lg:hidden">
+              <div className="relative flex items-center gap-3 py-3 lg:hidden">
                 <div className="flex-1 h-px bg-outline-variant/30"></div>
                 <span className="text-[9px] font-bold text-muted uppercase">ATAU</span>
                 <div className="flex-1 h-px bg-outline-variant/30"></div>
@@ -235,14 +235,14 @@ export default function RegisterPage() {
 
               <button
                 onClick={() => navigate('/portal')}
-                className="w-full lg:hidden bg-surface-container-low border border-outline-variant text-on-surface-variant py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="w-full lg:hidden bg-surface-container-low border border-outline-variant text-on-surface-variant py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Masuk Sebagai Tamu
               </button>
             </div>
           </div>
 
-          <div className="mt-8 text-center space-y-2">
+          <div className="mt-5 lg:mt-8 text-center space-y-2">
             <div className="flex items-center justify-center gap-1.5 opacity-30">
               <div className="w-1.5 h-1.5 bg-muted rounded-full"></div>
               <div className="w-6 h-0.5 bg-surface-container-high rounded-full"></div>

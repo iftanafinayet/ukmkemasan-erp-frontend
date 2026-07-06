@@ -74,7 +74,8 @@ export default function CustomerFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-outline-variant/15 bg-surface">
+    <>
+    <footer className="hidden lg:block border-t border-outline-variant/15 bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-8 md:px-8">
         <div className="overflow-hidden rounded-[2rem] border border-outline-variant/10 bg-surface-container-lowest shadow-[0_20px_60px_-40px_rgba(0,106,98,0.35)]">
           <div className="border-b border-outline-variant/10 bg-gradient-to-r from-primary/[0.08] via-transparent to-primary/[0.03] px-6 pt-8 pb-14 md:px-10">
@@ -196,5 +197,92 @@ export default function CustomerFooter() {
         </div>
       </div>
     </footer>
+
+    {/* Mobile Footer */}
+    <footer className="lg:hidden border-t border-outline-variant/15 bg-surface-container-lowest px-5 pt-8 pb-8">
+      {/* Brand */}
+      <div className="space-y-3 mb-6">
+        <span className="inline-flex items-center rounded-full border border-primary/10 bg-primary/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-primary">
+          Packaging Solution
+        </span>
+        <Link to="/portal" className="block">
+          <h3 className="font-headline text-2xl font-black tracking-tight text-on-surface">UKM Kemasan</h3>
+        </Link>
+        <p className="text-[13px] leading-relaxed text-on-surface-variant">
+          Solusi kemasan yang rapi, cepat, dan siap membantu brand UKM tampil lebih kuat di rak maupun marketplace.
+        </p>
+      </div>
+
+      {/* Contact */}
+      <div className="space-y-2 mb-6">
+        {contactItems.map((item) => {
+          const Icon = item.icon;
+          const content = (
+            <div className="flex items-center gap-3 rounded-2xl border border-outline-variant/10 bg-surface p-3">
+              <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-on-surface/45">{item.label}</p>
+                <p className="text-[13px] font-semibold text-on-surface truncate">{item.value}</p>
+              </div>
+            </div>
+          );
+          return item.href ? (
+            <a key={item.label} href={item.href} className="block">{content}</a>
+          ) : (
+            <div key={item.label}>{content}</div>
+          );
+        })}
+      </div>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="space-y-3">
+          <h4 className="font-headline text-[12px] font-black tracking-[0.18em] text-on-surface">Produk</h4>
+          <div className="space-y-2.5">
+            {productLinks.map((link) => (
+              <FooterLink key={link.label} to={link.to} href={link.href}>{link.label}</FooterLink>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3">
+          <h4 className="font-headline text-[12px] font-black tracking-[0.18em] text-on-surface">Perusahaan</h4>
+          <div className="space-y-2.5">
+            {companyLinks.map((link) => (
+              <FooterLink key={link.label} to={link.to} href={link.href}>{link.label}</FooterLink>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Social */}
+      <div className="flex gap-3 mb-6">
+        {socialLinks.map((item) => {
+          const Icon = item.icon;
+          return (
+            <a
+              key={item.label}
+              href={item.href}
+              aria-label={item.label}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-outline-variant/10 bg-surface-container-low text-on-surface-variant active:scale-95 transition-transform"
+            >
+              <Icon className="h-4.5 w-4.5" />
+            </a>
+          );
+        })}
+      </div>
+
+      {/* Bottom */}
+      <div className="border-t border-outline-variant/10 pt-5 space-y-3">
+        <div className="flex flex-wrap items-center gap-4 text-[12px] text-on-surface-variant">
+          <Link to="/portal" className="active:text-primary">Privasi</Link>
+          <Link to="/portal" className="active:text-primary">Syarat</Link>
+          <Link to="/portal" className="active:text-primary">Sitemap</Link>
+        </div>
+        <p className="text-[11px] text-on-surface-variant">© {currentYear} UKM Kemasan. Semua hak dilindungi.</p>
+      </div>
+    </footer>
+    </>
   );
 }

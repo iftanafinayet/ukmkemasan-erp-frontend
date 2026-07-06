@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { formatCurrency } from '../../../utils/formatters';
 import FilterOverlay from '../../FilterOverlay';
 import { getInventoryPagination } from '../../customer-dashboard/utils';
+import useScrollToTop from '../../../hooks/useScrollToTop';
 
 export default function MobileCatalogPage({
   products,
@@ -16,6 +17,7 @@ export default function MobileCatalogPage({
   isFilterOpen,
   setIsFilterOpen
 }) {
+  useScrollToTop();
   const [searchParams] = useSearchParams();
   const urlSearchTerm = searchParams.get('search') || '';
 
@@ -61,38 +63,47 @@ export default function MobileCatalogPage({
     setCurrentPage(1);
   };
 
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="lg:hidden bg-background min-h-screen">
 
-      <main className="px-4 pt-4 pb-4">
-        {/* Search Bar */}
-        <div className="relative mb-4">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setCurrentPage(1); }}
-            placeholder="Cari kemasan..."
-            className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl py-2.5 pl-10 pr-4 text-sm text-on-surface placeholder:text-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200"
-          />
+      <main className="pb-4">
+        {/* Sticky Search + Filter */}
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md px-4 pt-4 pb-2 border-b border-outline-variant/20">
+          {/* Search Bar */}
+          <div className="relative mb-3">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => { setSearchText(e.target.value); setCurrentPage(1); }}
+              placeholder="Cari kemasan..."
+              className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl py-2.5 pl-10 pr-4 text-sm text-on-surface placeholder:text-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200"
+            />
+          </div>
+
+          {/* Category Filter Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
+                className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 cursor-pointer ${selectedCategory === cat
+                    ? 'bg-primary text-on-primary shadow-card'
+                    : 'bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant'
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Category Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
-              className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 cursor-pointer ${selectedCategory === cat
-                  ? 'bg-primary text-on-primary shadow-card'
-                  : 'bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant'
-                }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
+        <div className="px-4 pt-4">
         {/* Result Stats */}
         <div className="flex items-center justify-between mb-4 px-1">
           <p className="text-[11px] font-bold text-muted uppercase tracking-wider">
@@ -129,6 +140,14 @@ export default function MobileCatalogPage({
                     <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">
                       {catalog.variants?.length || 0} Opsi
                     </div>
+                    {(() => {
+                      const totalStock = catalog.variants?.reduce((sum, v) => sum + (v.stock || 0), 0) || 0;
+                      return (
+                        <div className={`px-1.5 py-0.5 rounded-md text-[8px] font-bold ${totalStock > 0 ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error'}`}>
+                          {totalStock > 0 ? `Stok ${totalStock.toLocaleString()}` : 'Stok habis'}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
@@ -160,7 +179,7 @@ export default function MobileCatalogPage({
           <div className="flex items-center justify-center gap-2 mb-10">
             <button
               type="button"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => goToPage(Math.max(1, safePage - 1))}
               disabled={safePage === 1}
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant disabled:opacity-30 active:scale-90 transition-all duration-200"
             >
@@ -173,7 +192,7 @@ export default function MobileCatalogPage({
               ) : (
                 <button
                   key={num}
-                  onClick={() => setCurrentPage(num)}
+                  onClick={() => goToPage(num)}
                   className={`w-8 h-8 flex items-center justify-center rounded-lg text-[12px] font-bold transition-all active:scale-90 ${safePage === num
                     ? 'bg-primary text-on-primary shadow-md'
                     : 'bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant'
@@ -186,7 +205,7 @@ export default function MobileCatalogPage({
 
             <button
               type="button"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => goToPage(Math.min(totalPages, safePage + 1))}
               disabled={safePage === totalPages}
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant disabled:opacity-30 active:scale-90 transition-all duration-200"
             >
@@ -226,6 +245,7 @@ export default function MobileCatalogPage({
             </div>
           </div>
         </section>
+        </div>
       </main>
 
       <FilterOverlay

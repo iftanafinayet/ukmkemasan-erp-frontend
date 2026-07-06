@@ -89,22 +89,55 @@ export default function MobilePaymentPage({
             {/* Order Summary */}
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#bbc9c7]/20 mb-4">
               <h3 className="font-headline text-[14px] font-bold text-[#131b2e] mb-4">Ringkasan Pesanan</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-[12px]">
-                  <span className="text-[#6c7a77] font-bold">Produk</span>
-                  <span className="font-bold text-[#131b2e]">{order?.product?.name || '-'}</span>
+              {order?.items?.length > 0 ? (
+                <div className="space-y-3">
+                  {order.items.map((item, idx) => (
+                    <div key={item._id || item.sku || idx} className="border-b border-[#bbc9c7]/20 last:border-0 pb-3 last:pb-0">
+                      <div className="flex justify-between items-start gap-3 mb-1">
+                        <span className="text-[13px] font-bold text-[#131b2e] flex-1">{item.product?.name || 'Produk'}</span>
+                        <span className="text-[13px] font-bold text-[#4dbace] shrink-0">{formatCurrency(item.subtotal)}</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-[#6c7a77]">
+                        <span>{item.quantity?.toLocaleString() || 0} pcs × {formatCurrency(item.unitPrice)}</span>
+                        {(item.size || item.color) && <span>• {[item.size, item.color].filter(Boolean).join(' / ')}</span>}
+                        {item.material && <span>• {item.material}</span>}
+                        {item.useValve && <span>• Valve</span>}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between items-center text-[12px]">
-                  <span className="text-[#6c7a77] font-bold">Jumlah</span>
-                  <span className="font-bold text-[#131b2e]">{order?.details?.quantity?.toLocaleString() || 0} pcs</span>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-[12px]">
+                    <span className="text-[#6c7a77] font-bold">Produk</span>
+                    <span className="font-bold text-[#131b2e]">{order?.product?.name || '-'}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[12px]">
+                    <span className="text-[#6c7a77] font-bold">Jumlah</span>
+                    <span className="font-bold text-[#131b2e]">{order?.details?.quantity?.toLocaleString() || 0} pcs</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[12px]">
+                    <span className="text-[#6c7a77] font-bold">Material</span>
+                    <span className="font-bold text-[#131b2e]">{order?.details?.material || order?.product?.material || '-'}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[12px]">
+                    <span className="text-[#6c7a77] font-bold">Valve</span>
+                    <span className="font-bold text-[#131b2e]">{order?.details?.useValve ? 'Ya' : 'Tidak'}</span>
+                  </div>
                 </div>
+              )}
+
+              {/* Ongkir & Total */}
+              <div className="mt-3 pt-3 border-t border-[#bbc9c7]/20 space-y-2">
                 <div className="flex justify-between items-center text-[12px]">
-                  <span className="text-[#6c7a77] font-bold">Material</span>
-                  <span className="font-bold text-[#131b2e]">{order?.details?.material || order?.product?.material || '-'}</span>
+                  <span className="text-[#6c7a77] font-bold">Ongkos Kirim {order?.shipping?.courierCode ? `(${order.shipping.courierCode.toUpperCase()})` : ''}</span>
+                  <span className="font-bold text-[#131b2e]">
+                    {order?.shipping?.cost > 0 ? formatCurrency(order.shipping.cost) : 'Gratis'}
+                  </span>
                 </div>
-                <div className="flex justify-between items-center text-[12px]">
-                  <span className="text-[#6c7a77] font-bold">Valve</span>
-                  <span className="font-bold text-[#131b2e]">{order?.details?.useValve ? 'Ya' : 'Tidak'}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[12px] text-[#6c7a77] font-bold">Total</span>
+                  <span className="text-[15px] font-black text-[#4dbace]">{formatCurrency(order?.totalPrice ?? summary?.totalAmount)}</span>
                 </div>
               </div>
             </div>

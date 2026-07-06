@@ -1,12 +1,6 @@
 import React from 'react';
 import { EmptyState } from '../customer-dashboard/shared';
 
-const getOrderItems = (order) => {
-  if (order.items && order.items.length > 0) return order.items;
-  if (order.product) return [order.product];
-  return [];
-};
-
 const getFirstItemName = (order) => {
   if (order.items && order.items.length > 0) {
     const first = order.items[0];
@@ -17,8 +11,7 @@ const getFirstItemName = (order) => {
 
 const getFirstItemImage = (order) => {
   if (order.items && order.items.length > 0) {
-    const first = order.items[0];
-    return first.product?.images?.[0]?.url || null;
+    return order.items[0].product?.images?.[0]?.url || null;
   }
   return order.product?.images?.[0]?.url || null;
 };
@@ -37,6 +30,32 @@ const getOrderMaterial = (order) => {
   return order.product?.material || '';
 };
 
+const getStatusChip = (status) => {
+  if (['Quotation', 'Payment'].includes(status)) return 'bg-amber-100 text-amber-700';
+  if (['Production', 'Quality Control'].includes(status)) return 'bg-blue-100 text-blue-700';
+  if (status === 'Shipping') return 'bg-primary/10 text-primary';
+  if (status === 'Completed') return 'bg-emerald-100 text-emerald-700';
+  if (status === 'Cancelled') return 'bg-red-100 text-red-600';
+  return 'bg-surface-container-high text-on-surface-variant';
+};
+
+const getStatusDot = (status) => {
+  if (['Quotation', 'Payment'].includes(status)) return 'bg-amber-500';
+  if (['Production', 'Quality Control'].includes(status)) return 'bg-blue-500';
+  if (status === 'Shipping') return 'bg-primary';
+  if (status === 'Completed') return 'bg-emerald-500';
+  if (status === 'Cancelled') return 'bg-red-500';
+  return 'bg-gray-400';
+};
+
+const FILTERS = [
+  { id: 'all', label: 'Semua Pesanan' },
+  { id: 'payment', label: 'Payment' },
+  { id: 'production', label: 'Production' },
+  { id: 'completed', label: 'Completed' },
+  { id: 'cancelled', label: 'Dibatalkan' },
+];
+
 export default function CustomerPortalOrdersSection({
   orders,
   orderFilter,
@@ -46,86 +65,90 @@ export default function CustomerPortalOrdersSection({
   onNavigateToCreateOrder,
   onViewOrder,
   onNavigateToPayment,
-  onCancelOrder
+  onCancelOrder,
 }) {
+  const filteredOrders = orders.filter((order) => {
+    if (orderFilter === 'all') return true;
+    if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
+    if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
+    if (orderFilter === 'completed') return order.status === 'Completed';
+    if (orderFilter === 'cancelled') return order.status === 'Cancelled';
+    return true;
+  });
+
+  const countFor = (id) => orders.filter((order) => {
+    if (id === 'all') return true;
+    if (id === 'payment') return ['Quotation', 'Payment'].includes(order.status);
+    if (id === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
+    if (id === 'completed') return order.status === 'Completed';
+    if (id === 'cancelled') return order.status === 'Cancelled';
+    return true;
+  }).length;
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <header className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
+      {/* Header */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2 block font-label">Track Your Progress</span>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface font-headline">Pesanan Saya</h1>
+          <span className="text-primary font-bold text-[11px] uppercase tracking-[0.2em] mb-1 block">Track Your Progress</span>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-surface font-headline">Pesanan Saya</h1>
         </div>
-        <div className="flex gap-3">
-          <div className="bg-surface-container-low px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-on-secondary-container text-sm font-medium">Total Pesanan:</span>
-            <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-bold">{orders.length}</span>
-          </div>
-          <button
-            type="button"
-            onClick={onNavigateToCreateOrder}
-            className="flex items-center gap-2 bg-primary px-4 py-2 rounded-lg text-white text-sm font-bold shadow-card hover:scale-105 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-          >
-            <span className="material-symbols-outlined text-sm">add</span> Buat
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onNavigateToCreateOrder}
+          className="flex items-center justify-center gap-2 bg-primary px-5 py-3 rounded-xl text-on-primary text-sm font-bold shadow-card-hover shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        >
+          <span className="material-symbols-outlined text-[18px]">add</span> Buat Pesanan
+        </button>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-3 space-y-6 lg:sticky lg:top-28 lg:self-start">
-          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-card">
-            <h3 className="font-extrabold text-sm uppercase tracking-widest mb-6 text-on-surface/40 font-headline">Tracker App</h3>
-            <div className="space-y-3">
-              {[
-                { id: 'all', label: 'Semua Pesanan' },
-                { id: 'payment', label: 'Payment' },
-                { id: 'production', label: 'Production' },
-                { id: 'completed', label: 'Completed' },
-                { id: 'cancelled', label: 'Dibatalkan' }
-              ].map(statusBtn => {
-                const isActive = statusBtn.id === orderFilter;
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Filter Sidebar */}
+        <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-28 lg:self-start">
+          <div className="bg-surface-container-lowest rounded-[20px] shadow-card border border-outline-variant/20 overflow-hidden">
+            <h3 className="px-5 pt-5 pb-2 text-[10px] font-black uppercase tracking-widest text-muted">Filter Status</h3>
+            <div className="flex flex-col p-2">
+              {FILTERS.map((f) => {
+                const isActive = f.id === orderFilter;
                 return (
                   <button
-                    key={statusBtn.id}
-                    onClick={() => setOrderFilter(statusBtn.id)}
-                    className={`focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 w-full text-left px-5 py-3 rounded-xl text-sm font-bold transition-all duration-200 ${
-                      isActive
-                        ? 'bg-primary text-white shadow-card-hover shadow-primary/20 translate-x-1'
-                        : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface-variant'
+                    key={f.id}
+                    onClick={() => setOrderFilter(f.id)}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                      isActive ? 'bg-primary text-white shadow-card shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low'
                     }`}
                   >
-                    {statusBtn.label}
+                    {f.label}
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20' : 'bg-surface-container-high text-on-surface-variant'}`}>
+                      {countFor(f.id)}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
-          <div className="bg-primary p-6 rounded-xl text-white relative overflow-hidden group hidden lg:block">
-            <div className="relative z-10">
-              <h3 className="font-bold text-xl mb-2 font-headline">Butuh Bantuan?</h3>
-              <p className="text-primary-fixed text-sm mb-4 leading-relaxed font-body">Hubungi admin untuk pertanyaan mengenai produksi.</p>
-              <button className="bg-surface-container-lowest text-primary px-6 py-2 rounded-full text-sm font-bold hover:scale-105 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">WhatsApp Admin</button>
-            </div>
-            <div className="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-              <span className="material-symbols-outlined !text-9xl">support_agent</span>
-            </div>
+
+          <div className="bg-surface-container-lowest rounded-[20px] shadow-card border border-outline-variant/20 p-5 hidden lg:block">
+            <h3 className="font-headline text-[15px] font-bold text-on-surface mb-1">Butuh Bantuan?</h3>
+            <p className="text-[13px] text-on-surface-variant mb-4 leading-relaxed">Hubungi admin untuk pertanyaan mengenai produksi pesanan Anda.</p>
+            <a
+              href="https://wa.me/6281226733221"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary/15 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">chat</span>
+              WhatsApp Admin
+            </a>
           </div>
         </div>
 
-        <div className="lg:col-span-9 space-y-8 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
-          {orders
-            .filter(order => {
-              if (orderFilter === 'all') return true;
-              if (orderFilter === 'payment') return ['Quotation', 'Payment'].includes(order.status);
-              if (orderFilter === 'production') return ['Production', 'Quality Control', 'Shipping'].includes(order.status);
-              if (orderFilter === 'completed') return order.status === 'Completed';
-              if (orderFilter === 'cancelled') return order.status === 'Cancelled';
-              return true;
-            })
-            .map((order) => {
+        {/* Orders List */}
+        <div className="lg:col-span-8 space-y-4">
+          {filteredOrders.map((order) => {
             const isCompleted = order.status === 'Completed';
-            const isPending = order.status === 'Quotation' || order.status === 'Payment';
+            const isPending = ['Quotation', 'Payment'].includes(order.status);
             const orderDate = new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-            const items = getOrderItems(order);
             const itemCount = order.items?.length || 1;
             const firstImage = getFirstItemImage(order);
             const firstName = getFirstItemName(order);
@@ -133,69 +156,62 @@ export default function CustomerPortalOrdersSection({
             const material = getOrderMaterial(order);
 
             return (
-              <article key={order._id} onClick={() => onViewOrder(order._id)} className={`cursor-pointer group bg-surface-container-lowest rounded-xl overflow-hidden shadow-card transition-opacity ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}>
-                <div className="bg-surface-container-high px-6 py-4 flex flex-col md:flex-row justify-between md:items-center gap-3">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm font-bold text-primary tracking-wider">#{order.orderNumber || order._id.slice(-6)}</span>
-                    <span className="text-xs text-on-secondary-container bg-surface-container-highest px-3 py-1 rounded-full font-bold">{orderDate}</span>
-                    {order.orderType === 'Sample' && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Sample</span>}
-                    {itemCount > 1 && (
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{itemCount} item</span>
+              <article
+                key={order._id}
+                onClick={() => onViewOrder(order._id)}
+                className="cursor-pointer bg-surface-container-lowest rounded-2xl shadow-card border border-outline-variant/20 p-3.5 transition-all hover:shadow-card-hover active:scale-[0.99]"
+              >
+                {/* Top row */}
+                <div className="flex items-center justify-between gap-3 mb-2.5">
+                  <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1.5 ${getStatusChip(order.status)}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${getStatusDot(order.status)}`} />
+                    {getStatusLabel(order.status)}
+                  </div>
+                  <span className="text-primary font-black text-[14px]">{formatCurrency(order.totalPrice)}</span>
+                </div>
+
+                {/* Body */}
+                <div className="flex gap-3">
+                  <div className="w-14 h-14 rounded-lg bg-surface-container-low overflow-hidden shrink-0 border border-outline-variant/20">
+                    {firstImage ? (
+                      <img src={firstImage} alt={firstName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted"><span className="material-symbols-outlined text-[20px]">image</span></div>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
-                     <span className={`material-symbols-outlined text-sm ${isCompleted ? 'text-green-600' : 'text-primary'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
-                       {isCompleted ? 'check_circle' : 'schedule'}
-                     </span>
-                     <span className={`text-sm font-bold ${isCompleted ? 'text-green-600' : 'text-primary'}`}>Status: {getStatusLabel(order.status)}</span>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-[14px] font-bold text-on-surface font-headline leading-tight line-clamp-1">
+                      {firstName}
+                      {itemCount > 1 && <span className="text-primary font-semibold"> +{itemCount - 1} lainnya</span>}
+                    </h2>
+                    <p className="text-[11px] text-on-surface-variant mt-0.5">{totalQty.toLocaleString()} pcs {material && `• ${material}`}</p>
+                    <div className="flex items-center gap-1.5 mt-1 text-[10px] text-muted">
+                      <span>#{order.orderNumber || order._id.slice(-6)}</span>
+                      <span className="w-1 h-1 rounded-full bg-outline-variant" />
+                      <span>{orderDate}</span>
+                      {order.orderType === 'Sample' && <span className="text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded-full font-bold">Sample</span>}
+                      {order.isPaid && <span className="text-[9px] text-emerald-600 font-bold flex items-center gap-0.5"><span className="material-symbols-outlined text-[11px]">check</span>Lunas</span>}
+                    </div>
                   </div>
                 </div>
-                <div className="p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row gap-6 md:gap-8 cursor-pointer">
-                    <div className={`w-24 h-24 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-card border border-outline-variant/10 ${isCompleted ? 'grayscale opacity-80' : ''}`}>
-                      {firstImage ? (
-                        <img src={firstImage} alt={firstName} className="w-full h-full object-cover" />
-                      ) : (
-                         <div className="w-full h-full flex items-center justify-center text-primary/30"><span className="material-symbols-outlined">image</span></div>
-                      )}
-                    </div>
-                    <div className="flex-grow">
-                      <h2 className="text-xl md:text-2xl font-bold mb-1 text-on-surface font-headline">
-                        {firstName}
-                        {itemCount > 1 && <span className="text-base font-medium text-on-secondary-container"> +{itemCount - 1} lainnya</span>}
-                      </h2>
-                      <p className="text-on-secondary-container text-sm mb-4">{totalQty.toLocaleString()} pcs {material && `• ${material}`}</p>
-                      <div className="flex flex-wrap gap-8">
-                        <div>
-                          <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Total</p>
-                          <p className="text-lg font-extrabold text-on-surface font-headline">{formatCurrency(order.totalPrice)}</p>
-                        </div>
-                        {order.isPaid && (
-                          <div>
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-on-secondary-container mb-1 font-label">Payment</p>
-                            <p className="text-sm font-bold text-green-600 flex items-center gap-1 font-body"><span className="material-symbols-outlined text-xs">check</span> Lunas</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-end shrink-0 gap-2">
-                       {isPending ? (
-                         <>
-                          <button onClick={(e) => { e.stopPropagation(); onCancelOrder?.(order._id); }} className="px-4 py-2.5 rounded-full border-2 border-error text-error text-xs font-bold hover:bg-error/5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Batalkan</button>
-                          <button onClick={(e) => { e.stopPropagation(); onNavigateToPayment(order._id); }} className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-container transition-all duration-200 shadow-card-hover shadow-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Bayar Sekarang</button>
-                         </>
-                       ) : isCompleted ? (
-                           <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-6 py-2.5 rounded-full bg-surface-container-high text-on-secondary-container text-sm font-bold hover:bg-surface-container-highest transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Pesan Lagi</button>
-                       ) : (
-                           <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-6 py-2.5 rounded-full border-2 border-primary text-primary text-sm font-bold hover:scale-[1.02] hover:shadow-card-hover active:scale-95 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Detail Progress</button>
-                       )}
-                    </div>
-                  </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-2 mt-3">
+                  {isPending ? (
+                    <>
+                      <button onClick={(e) => { e.stopPropagation(); onCancelOrder?.(order._id); }} className="px-3.5 py-1.5 rounded-full border border-error text-error text-[11px] font-bold hover:bg-error/5 transition-colors">Batalkan</button>
+                      <button onClick={(e) => { e.stopPropagation(); onNavigateToPayment(order._id); }} className="px-4 py-1.5 rounded-full bg-primary text-white text-[11px] font-bold hover:bg-primary/90 transition-colors">Bayar Sekarang</button>
+                    </>
+                  ) : isCompleted ? (
+                    <button onClick={(e) => { e.stopPropagation(); onNavigateToCreateOrder(); }} className="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold hover:bg-surface-container-highest transition-colors">Pesan Lagi</button>
+                  ) : (
+                    <button onClick={(e) => { e.stopPropagation(); onViewOrder(order._id); }} className="px-4 py-1.5 rounded-full border border-primary text-primary text-[11px] font-bold hover:bg-primary/5 transition-colors">Detail Progress</button>
+                  )}
                 </div>
               </article>
             );
           })}
-          {orders.length === 0 && <EmptyState text="Belum ada pesanan." />}
+          {filteredOrders.length === 0 && <EmptyState text="Belum ada pesanan." />}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { formatCurrency } from '../../../utils/formatters';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem } from '../../ui/Carousel';
+import useScrollToTop from '../../../hooks/useScrollToTop';
 
 export default function MobileHomePage({
   stats,
@@ -15,6 +16,7 @@ export default function MobileHomePage({
   onNavigateToCreateOrder,
   onNavigateToInquiries,
 }) {
+  useScrollToTop();
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
   const articles = Array.isArray(landingContent?.articles) ? landingContent.articles : [];
@@ -131,24 +133,29 @@ export default function MobileHomePage({
               </div>
               <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Stok Kemasan</span>
             </div>
-            <div onClick={onNavigateToInquiries} className="flex flex-col items-center gap-1.5 cursor-pointer">
+            <a href="https://wa.me/6281226733221" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 cursor-pointer">
               <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary text-2xl">architecture</span>
               </div>
               <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Kustom Desain</span>
-            </div>
+            </a>
             <div onClick={() => handleAction(onViewAllOrders)} className="flex flex-col items-center gap-1.5 cursor-pointer">
               <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-2xl">local_shipping</span>
+                <span className="material-symbols-outlined text-primary text-2xl">receipt_long</span>
               </div>
-              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Lacak Kirim</span>
+              <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Pesanan Saya</span>
             </div>
-            <div className="flex flex-col items-center gap-1.5">
+            <a
+              href="https://wa.me/6281226733221?text=Halo%20UKM%20Kemasan%2C%20saya%20butuh%20bantuan%20terkait%20produk%2Fpesanan.%20Bisa%20dibantu%3F"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1.5 cursor-pointer"
+            >
               <div className="w-11 h-11 bg-error-container rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-error text-2xl">support_agent</span>
               </div>
               <span className="text-[10px] text-center font-medium leading-tight text-on-surface">Bantuan</span>
-            </div>
+            </a>
           </div>
         </section>
 
@@ -156,7 +163,7 @@ export default function MobileHomePage({
         <section className="bg-surface-container-lowest py-6 border-y border-outline-variant/20">
           <div className="px-4 flex justify-between items-end mb-4">
             <div>
-              <h2 className="text-xs font-bold text-on-surface font-headline">Pilihan Terbaik</h2>
+              <h2 className="text-xs font-bold mb-1 font-headline uppercase tracking-wider text-on-surface-variant">Pilihan Terbaik</h2>
               <p className="text-[10px] text-on-surface-variant">Produk kemasan paling laris bulan ini</p>
             </div>
             <button onClick={onNavigateToCatalog} className="text-primary text-[10px] font-bold focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Lihat Semua</button>
@@ -166,21 +173,44 @@ export default function MobileHomePage({
               <div
                 key={product._id}
                 onClick={() => onViewProduct(product._id)}
-                className="min-w-[140px] max-w-[140px] bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden shadow-card cursor-pointer transition-all duration-200"
+                className="group flex flex-col min-w-[150px] max-w-[150px] bg-surface-container-lowest rounded-[1rem] overflow-hidden shadow-card hover:shadow-md transition-all duration-200 cursor-pointer border border-outline-variant/40"
               >
-                <img
-                  className="w-full aspect-square object-cover"
-                  src={product.images?.[0]?.url || "https://via.placeholder.com/150"}
-                  alt={product.name}
-                />
-                <div className="p-2.5">
-                  <p className="text-[11px] text-on-surface line-clamp-2 min-h-[32px]">{product.name}</p>
-                  <p className="text-[13px] font-bold text-on-surface mt-1">
-                    {product.priceB2B > 0 ? formatCurrency(product.priceB2B) : 'Hubungi Admin'}
-                  </p>
-                  <div className="flex flex-col gap-1 mt-1">
-                    <div className="text-[9px] text-on-surface-variant font-medium">Varian: {product.variants?.length || 0} opsi</div>
-                    <div className="text-[9px] text-on-surface-variant">Terjual {product.totalSold || 0}+</div>
+                <div className="relative aspect-square overflow-hidden bg-surface-container-low">
+                  {product.images?.length > 0 ? (
+                    <img
+                      src={product.images[0].url}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-all duration-200 group-hover:scale-[1.05]"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-on-surface-variant opacity-40">
+                      <span className="material-symbols-outlined text-xl mb-1">image</span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-2.5 flex flex-col flex-grow">
+                  <span className="text-[8px] font-bold text-primary uppercase tracking-widest block mb-0.5 font-label">{product.category}</span>
+                  <h3 className="text-[12px] font-bold text-on-surface tracking-tight font-headline line-clamp-1 leading-tight mb-1.5">{product.name}</h3>
+
+                  <div className="space-y-1 mb-2.5 flex-grow">
+                    <div className="text-[14px] font-black text-primary flex items-baseline gap-0.5">
+                      {product.priceB2B > 0 ? (
+                        <>
+                          {formatCurrency(product.priceB2B)} <span className="text-[8px] font-bold text-on-surface-variant/70 uppercase tracking-tighter">/ pcs</span>
+                        </>
+                      ) : (
+                        <span className="text-[11px]">Hubungi Admin</span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">
+                        {product.variants?.length || 0} Opsi
+                      </div>
+                      <div className="px-1.5 py-0.5 bg-surface-container-high rounded-md text-[8px] font-bold text-on-surface/60">
+                        Terjual {product.totalSold || 0}+
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

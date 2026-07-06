@@ -54,7 +54,7 @@ export default function MobileHeader({ activeMenu, onMenuChange, onToggleFilter,
           className="relative p-1 transition-colors cursor-pointer"
           aria-label="Keranjang"
         >
-          <span className="material-symbols-outlined text-[24px]">shopping_cart</span>
+          <span className="material-symbols-outlined text-[24px]">shopping_bag</span>
           {cartCount > 0 && (
             <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 border-2 border-surface-container-lowest">
               {cartCount > 99 ? '99+' : cartCount}
@@ -85,9 +85,10 @@ export default function MobileHeader({ activeMenu, onMenuChange, onToggleFilter,
         ) : (
           <button
             onClick={() => navigate('/login')}
-            className="bg-primary text-white text-sm font-bold px-3 py-1.5 rounded-lg cursor-pointer"
+            className="relative w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors cursor-pointer"
+            aria-label="Masuk"
           >
-            Masuk
+            <span className="material-symbols-outlined text-[18px]">person</span>
           </button>
         )}
       </div>
