@@ -44,8 +44,14 @@ export default function ShippingSelector({ items = [], itemValue = 0, value, onC
     setDest({ id: d.id, label: d.label });
     setDestinations([]);
     setKeyword(d.label);
-    if (!recipient.address) setRecipient((r) => ({ ...r, address: d.label }));
   };
+
+  const composedAddress = (() => {
+    const base = (recipient.address || '').trim();
+    const label = dest?.label || '';
+    if (label && base && !base.includes(label)) return `${base}, ${label}`;
+    return base || label;
+  })();
 
   const handleCalc = async () => {
     if (!dest?.id) return toast.error('Pilih alamat tujuan terlebih dahulu.');
@@ -67,7 +73,8 @@ export default function ShippingSelector({ items = [], itemValue = 0, value, onC
   const selectCourier = (opt) => {
     onChange({
       destinationId: dest.id,
-      recipient,
+      destinationLabel: dest?.label || '',
+      recipient: { ...recipient, address: composedAddress },
       courierCode: opt.code,
       courierService: opt.service,
       cost: opt.cost,
@@ -96,8 +103,17 @@ export default function ShippingSelector({ items = [], itemValue = 0, value, onC
       <label className="block space-y-1">
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Alamat Lengkap</span>
         <textarea value={recipient.address} onChange={(e) => setRecipient({ ...recipient, address: e.target.value })} rows={2}
+          placeholder="Cukup tulis nama jalan & no. bangunan"
           className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none focus:border-primary" />
+        <span className="text-[10px] font-medium text-slate-400">Kota/kecamatan otomatis ditambahkan dari tujuan ekspedisi di bawah.</span>
       </label>
+
+      {dest && composedAddress && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Alamat Pengiriman Lengkap</p>
+          <p className="text-xs font-medium leading-relaxed text-slate-700">{composedAddress}</p>
+        </div>
+      )}
 
       <div>
         <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-400">Kota / Kecamatan / Kode Pos Tujuan</span>

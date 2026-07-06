@@ -186,6 +186,14 @@ export default function MobileOrderDetailPage({
                 <span className="w-20 shrink-0 text-[11px] text-on-surface-variant">Alamat</span>
                 <span className="flex-1 text-[13px] text-on-surface leading-relaxed">{order.shipping.recipient?.address || order.customer?.address || '-'}</span>
               </div>
+              {(order.shipping.courierCode || order.shipping.courierService) && (
+                <div className="flex gap-3">
+                  <span className="w-20 shrink-0 text-[11px] text-on-surface-variant">Ekspedisi</span>
+                  <span className="flex-1 text-[13px] font-semibold text-on-surface">
+                    {[order.shipping.courierCode?.toUpperCase(), order.shipping.courierService].filter(Boolean).join(' • ')}
+                  </span>
+                </div>
+              )}
               {order.shipping.recipient?.pinPoint && (
                 <a
                   href={order.shipping.recipient.pinPoint}
@@ -303,7 +311,7 @@ export default function MobileOrderDetailPage({
       </main>
 
       {(canPay || canCancel) && (
-        <div className="fixed bottom-14 left-0 right-0 p-4 bg-surface-container-lowest border-t border-outline-variant/20 backdrop-blur-md">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-surface-container-lowest border-t border-outline-variant/20 backdrop-blur-md pb-[calc(env(safe-area-inset-bottom,0px)+16px)]">
           <div className="flex items-center gap-3">
             {canCancel && (
               <button

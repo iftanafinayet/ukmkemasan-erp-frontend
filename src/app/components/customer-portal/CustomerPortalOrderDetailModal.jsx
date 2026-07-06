@@ -187,6 +187,14 @@ export default function CustomerPortalOrderDetailModal({
                   <span className="w-20 shrink-0 text-[11px] text-on-surface-variant">Alamat</span>
                   <span className="flex-1 text-[13px] text-on-surface leading-relaxed">{order.shipping.recipient?.address || order.customer?.address || '-'}</span>
                 </div>
+                {(order.shipping.courierCode || order.shipping.courierService) && (
+                  <div className="flex gap-3">
+                    <span className="w-20 shrink-0 text-[11px] text-on-surface-variant">Ekspedisi</span>
+                    <span className="flex-1 text-[13px] font-semibold text-on-surface">
+                      {[order.shipping.courierCode?.toUpperCase(), order.shipping.courierService].filter(Boolean).join(' • ')}
+                    </span>
+                  </div>
+                )}
                 {order.shipping.recipient?.pinPoint && (
                   <a
                     href={order.shipping.recipient.pinPoint}
