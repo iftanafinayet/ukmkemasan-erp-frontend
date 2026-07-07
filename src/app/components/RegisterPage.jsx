@@ -49,15 +49,14 @@ export default function RegisterPage() {
         role: 'customer'
       });
 
-      if (response.data && response.data.token) {
-        storage.setToken(response.data.token);
-        storage.setUser({
-          _id: response.data._id,
-          name: response.data.name,
-          role: response.data.role
+      if (response.data && response.data._id) {
+        toast.success('Registrasi berhasil! Silakan cek email Anda untuk kode OTP.');
+        navigate('/verify-otp', {
+          state: {
+            email: formData.email,
+            name: formData.name,
+          },
         });
-        toast.success('Account created successfully. Welcome aboard.');
-        navigate('/portal');
       } else {
         throw new Error('Server response invalid.');
       }

@@ -124,6 +124,8 @@ export const ENDPOINTS = {
   // Auth
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
+  SEND_OTP: '/auth/send-otp',
+  VERIFY_OTP: '/auth/verify-otp',
   LOGOUT: '/auth/logout',
   PROFILE: '/auth/profile',
   CHANGE_PASSWORD: '/auth/password',
