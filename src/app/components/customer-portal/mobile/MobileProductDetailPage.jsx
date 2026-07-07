@@ -3,7 +3,7 @@ import { formatCurrency } from '../../../utils/formatters';
 import { ArrowLeft, ShoppingCart, MessageSquare } from 'lucide-react';
 import { storage } from '../../../config/environment';
 import { useNavigate } from 'react-router-dom';
-import { getCartItems } from '../../../utils/cart';
+import { getCartItems, subscribeCart } from '../../../utils/cart';
 import { Carousel, CarouselContent, CarouselItem } from '../../ui/Carousel';
 import useScrollToTop from '../../../hooks/useScrollToTop';
 
@@ -31,9 +31,16 @@ export default function MobileProductDetailPage({
 }) {
   const navigate = useNavigate();
   const isLoggedIn = !!storage.getToken();
-  const cartCount = getCartItems().length;
+  const [cartCount, setCartCount] = useState(getCartItems().length);
   const [imageApi, setImageApi] = useState(null);
   useScrollToTop();
+
+  useEffect(() => {
+    const unsubscribe = subscribeCart((items) => {
+      setCartCount(items.length);
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (!imageApi) return;
@@ -72,7 +79,9 @@ export default function MobileProductDetailPage({
           <button onClick={() => navigate('/portal?menu=cart')} className="relative">
             <span className="material-symbols-outlined text-on-surface-variant text-[24px]">shopping_bag</span>
             {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container-lowest" />
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-error rounded-full border-2 border-surface-container-lowest flex items-center justify-center px-1">
+                <span className="text-[10px] font-bold text-on-error leading-none">{cartCount}</span>
+              </span>
             )}
           </button>
         </div>
