@@ -39,10 +39,10 @@ export function useOrders() {
     }
   }, []);
 
-  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+  const handleUpdateOrderStatus = async (orderId, newStatus, extra = {}) => {
     setUpdatingStatus(true);
     try {
-      await api.put(ENDPOINTS.UPDATE_ORDER_STATUS(orderId), { status: newStatus });
+      await api.put(ENDPOINTS.UPDATE_ORDER_STATUS(orderId), { status: newStatus, ...extra });
       toast.success(`Status diubah ke ${newStatus}`);
       const response = await api.get(ENDPOINTS.ORDER_BY_ID(orderId));
       setSelectedOrder(response.data);

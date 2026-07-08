@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Package, Printer, XCircle, RefreshCw, Loader2, ExternalLink, MapPin } from 'lucide-react';
+import { Truck, Package, Printer, XCircle, RefreshCw, Loader2, ExternalLink, MapPin, Save, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../../utils/api';
 
@@ -45,8 +45,26 @@ export default function AdminShippingSection({ order, formatDateTime, onRefreshO
   const [busy, setBusy] = useState('');
   const [pickup, setPickup] = useState({ date: defaultPickupDate(), time: defaultPickupTime(), vehicle: 'Motor' });
   const [tracking, setTracking] = useState(null);
+  const [awbInput, setAwbInput] = useState(sp.awb || '');
+  const [editingAwb, setEditingAwb] = useState(false);
 
   const canCreate = CREATE_ALLOWED.includes(order.status);
+
+  const handleSaveAwb = async () => {
+    const trimmed = awbInput.trim();
+    if (!trimmed) return toast.error('No. Resi tidak boleh kosong.');
+    setBusy('awb');
+    try {
+      await api.put(`/orders/${order._id}/status`, { awb: trimmed });
+      toast.success('No. Resi disimpan');
+      setEditingAwb(false);
+      await refresh();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Gagal menyimpan resi.');
+    } finally {
+      setBusy('');
+    }
+  };
 
   const refresh = async () => {
     if (onRefreshOrder) await onRefreshOrder(order._id);
@@ -112,7 +130,38 @@ export default function AdminShippingSection({ order, formatDateTime, onRefreshO
         </div>
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No. Resi (AWB)</p>
-          <p className="font-bold text-slate-800">{sp.awb || '-'}</p>
+          {editingAwb ? (
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                type="text"
+                value={awbInput}
+                onChange={(e) => setAwbInput(e.target.value)}
+                placeholder="Masukkan no resi..."
+                className="flex-1 rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-bold text-slate-800 outline-none focus:border-primary"
+                autoFocus
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveAwb(); }}
+              />
+              <button
+                type="button"
+                onClick={handleSaveAwb}
+                disabled={busy === 'awb'}
+                className="rounded-xl bg-primary p-1.5 text-white transition-all hover:bg-primary/90 disabled:opacity-50"
+              >
+                {busy === 'awb' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-slate-800">{sp.awb || '-'}</p>
+              <button
+                type="button"
+                onClick={() => { setAwbInput(sp.awb || ''); setEditingAwb(true); }}
+                className="rounded-lg p-1 text-slate-400 transition-all hover:bg-slate-200 hover:text-slate-600"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

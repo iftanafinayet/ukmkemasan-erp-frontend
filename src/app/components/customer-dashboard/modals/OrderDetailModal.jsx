@@ -21,6 +21,8 @@ export default function OrderDetailModal({
 }) {
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  const [payments, setPayments] = useState([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !selectedOrder?._id) return undefined;
@@ -40,9 +42,36 @@ export default function OrderDetailModal({
     return () => { active = false; };
   }, [isOpen, selectedOrder?._id]);
 
-  if (!isOpen || !selectedOrder) return null;
+  useEffect(() => {
+    if (!isOpen || !selectedOrder?._id) return undefined;
+    let active = true;
+    const loadPayments = async () => {
+      setPaymentsLoading(true);
+      try {
+        const res = await api.get(`/payments/orders/${selectedOrder._id}`);
+        if (active) {
+          const raw = res.data?.payments || [];
+          setPayments(raw.map((p) => ({
+            id: p._id,
+            paymentNumber: p.paymentNumber,
+            amount: p.amount,
+            paymentDate: p.paymentDate || p.createdAt,
+            method: p.method || 'Transfer',
+            note: p.notes || '',
+            status: 'Recorded',
+          })));
+        }
+      } catch {
+        if (active) setPayments([]);
+      } finally {
+        if (active) setPaymentsLoading(false);
+      }
+    };
+    loadPayments();
+    return () => { active = false; };
+  }, [isOpen, selectedOrder?._id]);
 
-  const payments = normalizePaymentHistory(selectedOrder);
+  if (!isOpen || !selectedOrder) return null;
 
   return (
     <ModalWrapper onClose={onClose} wide>
@@ -99,7 +128,9 @@ export default function OrderDetailModal({
             {payments.length} transaksi
           </span>
         </div>
-        {payments.length > 0 ? (
+        {paymentsLoading ? (
+          <p className="text-sm font-medium text-slate-400">Loading...</p>
+        ) : payments.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {payments.map((payment) => (
               <div key={payment.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
