@@ -87,7 +87,7 @@ export default function CustomerCartSection({
                             <span className="material-symbols-outlined text-primary text-[22px]">{card.icon}</span>
                         </div>
                         <div className="min-w-0">
-                            <p className="text-2xl font-black text-on-surface leading-none font-headline">{card.value}</p>
+                            <p className="text-2xl font-bold text-on-surface leading-none">{card.value}</p>
                             <p className="text-[10px] text-muted mt-1.5 uppercase tracking-wider font-bold">{card.label}</p>
                         </div>
                     </div>
@@ -96,8 +96,8 @@ export default function CustomerCartSection({
                     <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                     <div className="relative">
                         <p className="text-[10px] font-black uppercase tracking-widest text-white/80 mb-1">Estimasi Total</p>
-                        <p className="text-2xl font-black text-white font-headline">{formatCurrency(cartTotal)}</p>
-                        <p className="text-[11px] text-white/70 mt-1.5">Termasuk biaya dasar produksi</p>
+                        <p className="text-2xl font-black text-white">{formatCurrency(cartTotal)}</p>
+                        <p className="text-[11px] font-bold text-white/70 mt-1.5">Termasuk biaya dasar produksi</p>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@ export default function CustomerCartSection({
                             {isEditing ? (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-bold text-on-surface font-headline">Edit Item</h4>
+                                        <h4 className="font-bold text-on-surface">Edit Item</h4>
                                         <div className="flex gap-2">
                                             <button onClick={cancelEdit} className="px-4 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
                                             <button onClick={saveEdit} disabled={!matchedVariant} className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary/90 transition-colors disabled:opacity-50">Simpan</button>
@@ -200,12 +200,12 @@ export default function CustomerCartSection({
                                         <div className="flex justify-between items-start gap-4">
                                             <div className="min-w-0">
                                                 <span className="text-[9px] font-black tracking-widest uppercase text-primary px-2 py-0.5 rounded bg-primary/10 mb-1.5 inline-block">{item.productCategory || 'Custom'}</span>
-                                                <h4 className="text-[16px] font-bold text-on-surface font-headline leading-tight line-clamp-1">{item.name}</h4>
+                                                <h4 className="text-[16px] font-bold text-on-surface leading-tight line-clamp-1">{item.name}</h4>
                                                 <p className="text-[12px] text-on-surface-variant mt-0.5">{item.selectedSize || 'Standard'} • {item.selectedColor || 'Mix'} {item.sku ? `• ${item.sku}` : ''}</p>
                                                 <p className="mt-1 text-[11px] font-bold text-primary">{item.quantity} pcs {item.useValve ? '• Dengan valve' : ''}</p>
                                                 {item.failureMessage && <p className="mt-2 text-xs font-bold text-error">{item.failureMessage}</p>}
                                             </div>
-                                            <p className="text-lg font-black text-primary font-headline shrink-0">{formatCurrency(item.totalPrice)}</p>
+                                            <p className="text-lg font-black text-primary shrink-0">{formatCurrency(item.totalPrice)}</p>
                                         </div>
                                         <div className="flex items-center gap-2 mt-3">
                                             <button onClick={() => startEdit(index, item)} className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-colors">
@@ -234,7 +234,7 @@ export default function CustomerCartSection({
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-wider text-muted mb-0.5">Total Dibayar</p>
-                                <p className="text-xl font-black text-primary font-headline truncate">{formatCurrency(cartTotal)}</p>
+                                <p className="text-xl font-black text-primary truncate">{formatCurrency(cartTotal)}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 w-full sm:w-auto">

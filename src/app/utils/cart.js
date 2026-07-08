@@ -27,7 +27,7 @@ export const subscribeCart = (listener) => {
   };
 };
 
-export const getCartCount = () => getCartItems().reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+export const getCartCount = () => getCartItems().length;
 
 export const removeCartItem = (matcher) => {
   const nextItems = getCartItems().filter((item) => !matcher(item));

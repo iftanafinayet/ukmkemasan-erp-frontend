@@ -15,8 +15,7 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
 
   useEffect(() => {
     return subscribeCart((items) => {
-      const nextCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
-      setCartCount(nextCount);
+      setCartCount(items.length);
     });
   }, []);
 
@@ -64,13 +63,13 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
                     key={item.id}
                     onClick={() => handleMenuClick(item.id)}
                     className={`relative flex items-center gap-2 px-3 py-2 transition-all duration-200 cursor-pointer ${isActive
-                        ? 'text-primary'
-                        : 'text-on-surface-variant hover:text-on-surface'
+                      ? 'text-primary'
+                      : 'text-on-surface-variant hover:text-on-surface'
                       }`}
                   >
                     {item.label}
                     {item.badge > 0 && (
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
+                      <span className={`rounded-full min-w-[22px] text-center px-1.5 py-0.5 text-[10px] font-black leading-tight whitespace-nowrap ${isActive ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
                         {item.badge}
                       </span>
                     )}
@@ -107,13 +106,13 @@ export default function CustomerNavbar({ activeMenu = 'dashboard', onMenuChange,
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => navigate('/login')}
-                  className="px-4 py-2 text-primary font-semibold text-sm hover:text-primary/80 transition-colors duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="px-4 py-2 text-primary font-bold text-sm hover:text-primary/80 transition-colors duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   Masuk
                 </button>
                 <button
                   onClick={() => navigate('/register')}
-                  className="px-5 py-2.5 bg-primary text-on-primary font-semibold text-sm rounded-full shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="px-5 py-2.5 bg-primary text-on-primary font-bold text-sm rounded-full shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   Daftar
                 </button>

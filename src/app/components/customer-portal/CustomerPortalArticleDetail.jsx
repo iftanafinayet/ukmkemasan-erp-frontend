@@ -73,7 +73,7 @@ export default function CustomerPortalArticleDetail() {
             <img 
               src={url} 
               alt={alt} 
-              className="w-full h-auto rounded-[2rem] shadow-card-hover object-cover max-h-[600px]" 
+              className="w-full h-auto rounded-[2rem] shadow-card-hover object-contain max-h-[600px]" 
             />
             {alt && <p className="text-center text-sm text-muted mt-3 italic">{alt}</p>}
           </div>

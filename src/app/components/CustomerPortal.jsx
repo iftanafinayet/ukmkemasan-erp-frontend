@@ -128,7 +128,7 @@ export default function CustomerPortal() {
         }
         case 'cart':
           setCartItems(getCartItems());
-          api.get(ENDPOINTS.PRODUCTS).then((res) => setProducts(res.data || [])).catch(() => {});
+          api.get(ENDPOINTS.PRODUCTS).then((res) => setProducts(res.data || [])).catch(() => { });
           break;
         case 'profile':
         case 'settings': {
@@ -380,7 +380,7 @@ export default function CustomerPortal() {
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
             <RefreshCw size={40} />
           </div>
-          <h3 className="text-xl font-black text-on-surface mb-2">Login Required</h3>
+          <h3 className="text-xl font-black text-on-surface mb-2">Pesanan Saya</h3>
           <p className="text-on-surface-variant max-w-sm mx-auto mb-8 font-medium">Silahkan login untuk melihat riwayat pesanan Anda.</p>
           <button
             onClick={() => navigate('/login?redirect=/portal?menu=orders')}
@@ -630,11 +630,6 @@ export default function CustomerPortal() {
         />
         <CustomerNavbar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
         <main className="pt-20 pb-20 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 flex-1 w-full">
-          {!['dashboard', 'catalog', 'orders', 'inquiries'].includes(activeMenu) && (
-            <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
-            </header>
-          )}
-
           {renderDesktopPage()}
         </main>
         {['dashboard', 'catalog'].includes(activeMenu) && <CustomerFooter />}
