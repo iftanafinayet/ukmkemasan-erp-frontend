@@ -230,6 +230,17 @@ export default function CustomerPortal() {
     setConfirm({ isOpen: true, type: 'cancelOrder', item: orderId });
   };
 
+  const handleCompleteOrder = async (orderId) => {
+    try {
+      await api.put(ENDPOINTS.UPDATE_ORDER_STATUS(orderId), { status: 'Completed' });
+      toast.success('Pesanan telah diselesaikan. Terima kasih!');
+      setIsDetailOpen(false);
+      await fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Gagal menyelesaikan pesanan.');
+    }
+  };
+
   const confirmCancelOrder = async () => {
     const orderId = confirm.item;
     setConfirm({ isOpen: false, type: '', item: null });
@@ -662,6 +673,7 @@ export default function CustomerPortal() {
               onBack={() => setIsDetailOpen(false)}
               onOpenPayment={handleNavigateToPayment}
               onCancelOrder={handleCancelOrder}
+              onCompleteOrder={handleCompleteOrder}
               order={selectedOrder}
             />
           </div>
@@ -676,6 +688,7 @@ export default function CustomerPortal() {
               onClose={() => setIsDetailOpen(false)}
               onOpenPayment={handleNavigateToPayment}
               onCancelOrder={handleCancelOrder}
+              onCompleteOrder={handleCompleteOrder}
               order={selectedOrder}
             />
           </div>

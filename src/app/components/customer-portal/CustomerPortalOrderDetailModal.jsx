@@ -30,12 +30,14 @@ export default function CustomerPortalOrderDetailModal({
   onClose,
   onOpenPayment,
   onCancelOrder,
+  onCompleteOrder,
   order,
 }) {
   if (!order) return null;
 
   const canPay = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
   const canCancel = !order.isPaid && ['Quotation', 'Payment'].includes(order.status);
+  const canComplete = order.status === 'Shipping';
   const payments = normalizePaymentHistory(order);
   const sp = order.shippingProvider || {};
   const shippingHistory = sp.statusHistory || [];
@@ -312,7 +314,7 @@ export default function CustomerPortalOrderDetailModal({
         </div>
       </main>
 
-      {(canPay || canCancel) && (
+      {(canPay || canCancel || canComplete) && (
         <div className="border-t border-outline-variant/20 bg-surface-container-lowest/90 backdrop-blur-md">
           <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-6 py-4">
             {canCancel && (
@@ -332,6 +334,16 @@ export default function CustomerPortalOrderDetailModal({
               >
                 <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
                 Lanjutkan Pembayaran
+              </button>
+            )}
+            {canComplete && (
+              <button
+                type="button"
+                onClick={() => onCompleteOrder?.(order._id)}
+                className="flex-1 flex justify-center items-center gap-2 rounded-xl bg-green-500 py-3.5 text-sm font-bold text-white shadow-card transition hover:bg-green-600 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <span className="material-symbols-outlined text-[20px]">task_alt</span>
+                Selesaikan Pesanan
               </button>
             )}
           </div>
