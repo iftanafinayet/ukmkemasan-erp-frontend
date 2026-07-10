@@ -119,7 +119,7 @@ export default function CustomerPortalHomePage({
       )}
 
       {/* Hero Banner Carousel */}
-      <section className="relative w-full h-[35vh] md:h-[50vh] overflow-hidden rounded-3xl">
+      <section className="pt-10 relative w-full h-[35vh] md:h-[50vh] overflow-hidden rounded-3xl">
         <Carousel
           className="w-full h-full"
           opts={{
@@ -143,7 +143,7 @@ export default function CustomerPortalHomePage({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
             {banners.map((_, i) => (
               <button
                 key={i}
@@ -158,7 +158,7 @@ export default function CustomerPortalHomePage({
 
       {/* About Section */}
       {aboutSection.isVisible !== false && (
-        <section className="px-4 md:px-0 pt-4">
+        <section className="px-4 md:px-0">
           <div className="bg-surface-container-lowest/95 backdrop-blur-sm rounded-[20px] overflow-hidden border border-outline-variant/20 shadow-card">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               <div className="p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
@@ -221,7 +221,7 @@ export default function CustomerPortalHomePage({
         <div className="flex items-end justify-between">
           <div>
             <span className="text-primary font-bold text-[11px] uppercase tracking-[0.2em] mb-1 block">Top Sellers</span>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-on-surface font-headline">Katalog Populer</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface">Katalog Populer</h2>
           </div>
           <button onClick={onNavigateToCatalog} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary/15 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
             Semua Katalog <span className="material-symbols-outlined text-[16px]">open_in_new</span>
@@ -282,7 +282,7 @@ export default function CustomerPortalHomePage({
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
               {landingContent?.portfolioSectionConfig?.pillText || 'Hasil Karya'}
             </span>
-            <h2 className="text-3xl md:text-4xl font-black font-headline text-on-surface leading-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-on-surface leading-tight">
               {landingContent?.portfolioSectionConfig?.title || 'Portofolio Client Kami'}
             </h2>
             <p className="text-on-surface-variant font-medium max-w-2xl text-sm md:text-base leading-relaxed">
@@ -425,7 +425,7 @@ export default function CustomerPortalHomePage({
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
               {landingContent?.gallerySectionConfig?.pillText || 'Galeri'}
             </span>
-            <h2 className="text-3xl md:text-4xl font-black font-headline text-on-surface leading-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-on-surface leading-tight">
               {landingContent?.gallerySectionConfig?.title || 'Momen Berharga & Aktivitas Terbaru'}
             </h2>
             <p className="text-on-surface-variant font-medium max-w-2xl text-sm md:text-base leading-relaxed">

@@ -3,7 +3,9 @@ import { RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import AdminSalesWorkspace from './AdminSalesWorkspace';
+import BarcodeScanner from './BarcodeScanner';
 import Sidebar from './Sidebar';
+import MobileAdminBottomNav from './customer-dashboard/MobileAdminBottomNav';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import {
@@ -556,6 +558,9 @@ export default function CustomerDashboard() {
       case 'inquiries':
         return <AdminInboxPage />;
 
+      case 'scanner':
+        return <BarcodeScanner />;
+
       case 'customers':
         return (
           <CustomersPage
@@ -616,11 +621,11 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen">
+    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20">
       <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
 
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
+        <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8 lg:pt-8">
           <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">{PAGE_TITLES[activeMenu] || activeMenu}</h1>
@@ -694,6 +699,7 @@ export default function CustomerDashboard() {
         selectedOrder={selectedOrder}
         updatingStatus={updatingStatus}
       />
+      <MobileAdminBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
     </div>
   );
 }

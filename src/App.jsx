@@ -17,6 +17,7 @@ const ProductDetailPage = lazy(() => import('./app/components/ProductDetailPage'
 const CustomerPaymentPage = lazy(() => import('./app/components/customer-portal/CustomerPaymentPage'));
 const CustomerPortalArticleDetail = lazy(() => import('./app/components/customer-portal/CustomerPortalArticleDetail'));
 const FaqPage = lazy(() => import('./app/components/FaqPage'));
+const BarcodeScanner = lazy(() => import('./app/components/BarcodeScanner'));
 
 /**
  * RoleRedirect: redirect ke portal yang sesuai berdasarkan role user
@@ -192,6 +193,16 @@ function AppRoutes() {
 
           {/* FAQ Page */}
           <Route path="/faq" element={<FaqPage />} />
+
+          {/* Barcode Scanner */}
+          <Route
+            path="/admin/scanner"
+            element={
+              <AuthWrapper adminOnly>
+                <BarcodeScanner />
+              </AuthWrapper>
+            }
+          />
 
           {/* Legacy /dashboard redirect berdasarkan role */}
           <Route

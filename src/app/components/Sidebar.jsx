@@ -18,7 +18,8 @@ import {
   Truck,
   Database,
   Cog,
-  MessageSquare
+  MessageSquare,
+  QrCode
 } from 'lucide-react';
 import { storage } from '../config/environment';
 import logoUrl from '../../assets/LogoUKM.svg';
@@ -80,6 +81,7 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
       ]
     },
     { id: 'inquiries', label: 'Inquiries', icon: MessageSquare },
+    { id: 'scanner', label: 'Scan Resi', icon: QrCode },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
