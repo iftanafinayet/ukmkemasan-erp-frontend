@@ -129,6 +129,8 @@ export const ENDPOINTS = {
   LOGOUT: '/auth/logout',
   PROFILE: '/auth/profile',
   CHANGE_PASSWORD: '/auth/password',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  RESET_PASSWORD: '/auth/reset-password',
 
   // Dashboard (Admin)
   DASHBOARD_STATS: '/dashboard/stats',

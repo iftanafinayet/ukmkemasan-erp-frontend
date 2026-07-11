@@ -8,6 +8,7 @@ import { Toaster, toast } from 'sonner';
 
 const LoginPage = lazy(() => import('./app/components/LoginPage'));
 const RegisterPage = lazy(() => import('./app/components/RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('./app/components/ForgotPasswordPage'));
 const VerifyOtpPage = lazy(() => import('./app/components/VerifyOtpPage'));
 const CustomerDashboard = lazy(() => import('./app/components/CustomerDashboard'));
 const CustomerPortal = lazy(() => import('./app/components/CustomerPortal'));
@@ -35,6 +36,7 @@ const AUTH_ROUTE_ORDER = {
   '/login': 0,
   '/register': 1,
   '/verify-otp': 2,
+  '/forgot-password': 3,
 };
 
 const authPageVariants = {
@@ -122,6 +124,7 @@ function AppRoutes() {
           {/* Rute publik */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
           {/* Admin Dashboard — khusus admin */}

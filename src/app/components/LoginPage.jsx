@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Loader2, AlertCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { storage, ENDPOINTS, getAPIUrl } from '../config/environment';
@@ -147,15 +147,18 @@ export default function LoginPage() {
                   <label className="block text-xs text-on-surface-variant ml-1 font-medium">
                     Email / Username
                   </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    data-testid="login-email"
-                    className="w-full text-on-surface p-3 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted"
-                    required
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      data-testid="login-email"
+                      className="w-full text-on-surface p-2.5 pl-10 md:pl-12 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted text-sm"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
@@ -166,13 +169,14 @@ export default function LoginPage() {
                     </Link>
                   </div>
                   <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       data-testid="login-password"
-                      className="w-full text-on-surface p-3 pr-10 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted"
+                      className="w-full text-on-surface p-2.5 pl-10 pr-10 bg-surface-container-low border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 font-medium placeholder:text-muted text-sm"
                       required
                     />
                     <button
