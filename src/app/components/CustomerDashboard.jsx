@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { Menu, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import AdminSalesWorkspace from './AdminSalesWorkspace';
 import BarcodeScanner from './BarcodeScanner';
 import Sidebar from './Sidebar';
-import MobileAdminBottomNav from './customer-dashboard/MobileAdminBottomNav';
 import { ENDPOINTS, storage } from '../config/environment';
 import api from '../utils/api';
 import {
@@ -190,6 +189,7 @@ export default function CustomerDashboard() {
     handleSaveLandingContent,
   } = useUserSettings();
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({});
   const unreadHandler = useCallback((data) => {
     setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
@@ -622,16 +622,48 @@ export default function CustomerDashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20">
-      <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
+      <Sidebar
+        activeMenu={activeMenu}
+        onMenuChange={setActiveMenu}
+        inquiryBadge={inquiryBadge}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen((v) => !v)}
+      />
 
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
-        <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:p-8 lg:pt-8">
-          <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-start sm:justify-between">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Mobile header */}
+        <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-4 py-3" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)' }}>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Buka menu"
+          >
+            <Menu size={20} />
+          </button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base font-black text-slate-900 truncate">
+              {PAGE_TITLES[activeMenu] || activeMenu}
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={fetchData}
+            className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Segarkan data"
+          >
+            <RefreshCw size={20} className={loading ? 'animate-spin text-primary' : ''} />
+          </button>
+        </header>
+
+        <div className="mx-auto max-w-7xl px-3 pb-4 pt-3 sm:px-5 sm:pb-6 lg:p-6">
+          {/* Desktop header */}
+          <header className="hidden lg:flex mb-6 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">{PAGE_TITLES[activeMenu] || activeMenu}</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-slate-500 text-sm font-medium italic">
+              <h1 className="text-2xl font-black tracking-tighter text-slate-900 sm:text-3xl">{PAGE_TITLES[activeMenu] || activeMenu}</h1>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-slate-500 text-xs font-medium italic">
                   {isAdmin ? 'Admin Panel' : 'Customer Portal'} · UKM Kemasan v1.0
                 </p>
               </div>
@@ -639,9 +671,9 @@ export default function CustomerDashboard() {
             <button
               type="button"
               onClick={fetchData}
-              className="self-end rounded-2xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
+              className="self-end rounded-xl border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-all duration-500 hover:rotate-180 hover:bg-slate-100 sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
             >
-              <RefreshCw size={24} className={loading ? 'animate-spin text-primary' : ''} />
+              <RefreshCw size={20} className={loading ? 'animate-spin text-primary' : ''} />
             </button>
           </header>
 
@@ -699,7 +731,6 @@ export default function CustomerDashboard() {
         selectedOrder={selectedOrder}
         updatingStatus={updatingStatus}
       />
-      <MobileAdminBottomNav activeMenu={activeMenu} onMenuChange={setActiveMenu} inquiryBadge={inquiryBadge} />
     </div>
   );
 }

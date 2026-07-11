@@ -36,39 +36,40 @@ const STAT_CARD_STYLES = {
 
 export function LoadingState() {
   return (
-    <div className="flex flex-col items-center justify-center py-32">
-      <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-      <p className="text-on-surface-variant font-semibold uppercase tracking-widest text-xs">
+    <div className="flex flex-col items-center justify-center py-20">
+      <Loader2 className="w-10 h-10 text-primary animate-spin mb-3" />
+      <p className="text-on-surface-variant font-semibold uppercase tracking-widest text-[10px]">
         Menghubungkan ke Server...
       </p>
     </div>
   );
 }
 
-export function DashboardSkeleton() {
+export function DashboardSkeleton({ isAdmin }) {
+  const cardCount = isAdmin ? 4 : 2;
   return (
-    <div className="space-y-8 animate-pulse">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-card">
-            <div className="flex items-center gap-3 mb-3">
-              <SkeletonCircle className="w-8 h-8" />
-              <Skeleton className="h-3 w-20" />
+    <div className="space-y-4 animate-pulse">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[...Array(cardCount)].map((_, i) => (
+          <div key={i} className="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30 shadow-card">
+            <div className="flex items-center gap-2 mb-2">
+              <SkeletonCircle className="w-6 h-6" />
+              <Skeleton className="h-2.5 w-16" />
             </div>
-            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-6 w-20" />
           </div>
         ))}
       </div>
-      <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant/30 h-96">
-        <div className="flex justify-between mb-8">
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-6 w-32" />
+      <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 h-72">
+        <div className="flex justify-between mb-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-24" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-7 h-64 bg-surface-container rounded-2xl" />
-          <div className="lg:col-span-5 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-7 h-48 bg-surface-container rounded-xl" />
+          <div className="lg:col-span-5 space-y-2">
             {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-14 w-full rounded-2xl" />
+              <Skeleton key={i} className="h-10 w-full rounded-xl" />
             ))}
           </div>
         </div>
@@ -79,20 +80,20 @@ export function DashboardSkeleton() {
 
 export function TableSkeleton({ rows = 5 }) {
   return (
-    <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/30 overflow-hidden animate-pulse">
-      <div className="p-6 border-b border-outline-variant/30 flex justify-between">
-        <Skeleton className="h-8 w-64 rounded-xl" />
-        <Skeleton className="h-8 w-32 rounded-xl" />
+    <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 overflow-hidden animate-pulse">
+      <div className="p-4 border-b border-outline-variant/30 flex justify-between">
+        <Skeleton className="h-6 w-48 rounded-lg" />
+        <Skeleton className="h-6 w-24 rounded-lg" />
       </div>
       <div className="p-0">
         {[...Array(rows)].map((_, i) => (
-          <div key={i} className="px-6 py-5 border-b border-outline-variant/30 flex gap-4 items-center">
-            <SkeletonCircle className="w-10 h-10" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-1/3" />
-              <Skeleton className="h-3 w-1/4" />
+          <div key={i} className="px-4 py-3 border-b border-outline-variant/30 flex gap-3 items-center">
+            <SkeletonCircle className="w-8 h-8" />
+            <div className="flex-1 space-y-1.5">
+              <Skeleton className="h-3 w-1/3" />
+              <Skeleton className="h-2.5 w-1/4" />
             </div>
-            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-5 w-16 rounded-full" />
           </div>
         ))}
       </div>
@@ -102,9 +103,9 @@ export function TableSkeleton({ rows = 5 }) {
 
 export function EmptyState({ text }) {
   return (
-    <div className="col-span-full py-20 flex flex-col items-center justify-center opacity-30 text-on-surface">
-      <AlertCircle size={60} strokeWidth={1} className="mb-4" />
-      <p className="font-bold uppercase tracking-[0.3em] text-[10px] text-center">{text}</p>
+    <div className="col-span-full py-12 flex flex-col items-center justify-center opacity-30 text-on-surface">
+      <AlertCircle size={40} strokeWidth={1} className="mb-3" />
+      <p className="font-bold uppercase tracking-[0.3em] text-[9px] text-center">{text}</p>
     </div>
   );
 }
@@ -114,32 +115,32 @@ export function StatCard({ icon, color = 'primary', label, value, border = false
   const styles = STAT_CARD_STYLES[color] || STAT_CARD_STYLES.primary;
 
   const cardClasses = neumo
-    ? `neumo p-6 ${border ? `border-l-4 ${styles.border}` : ''}`
-    : `bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-card transition-all duration-200 ${border ? `border-l-4 ${styles.border}` : ''}`;
+    ? `neumo p-4 ${border ? `border-l-4 ${styles.border}` : ''}`
+    : `bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-card transition-all duration-200 ${border ? `border-l-4 ${styles.border}` : ''}`;
 
   return (
     <div className={cardClasses}>
-      <div className="flex items-center gap-3 mb-3">
-        <div className={neumo ? `neumo-icon p-2 ${styles.iconBg}` : `p-2 rounded-xl ${styles.iconBg}`}>
-          <Icon className={`w-5 h-5 ${styles.iconText}`} />
+      <div className="flex items-center gap-2 mb-2">
+        <div className={neumo ? `neumo-icon p-1.5 ${styles.iconBg}` : `p-1.5 rounded-lg ${styles.iconBg}`}>
+          <Icon className={`w-4 h-4 ${styles.iconText}`} />
         </div>
         <p className={`text-[10px] font-bold uppercase tracking-wider ${styles.labelText}`}>{label}</p>
       </div>
-      <h3 className="text-2xl font-bold text-on-surface">{value}</h3>
+      <h3 className="text-xl font-bold text-on-surface">{value}</h3>
     </div>
   );
 }
 
 export function ModalWrapper({ children, onClose, wide = false }) {
   return (
-    <div className="fixed inset-0 z-modal flex items-start justify-center bg-black/40 backdrop-blur-sm p-3 animate-fade-in sm:items-center sm:p-4">
-      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-5 pt-14 shadow-modal sm:rounded-3xl sm:p-10 ${wide ? 'max-w-5xl' : 'max-w-lg'}`}>
+    <div className="fixed inset-0 z-modal flex items-start justify-center bg-black/40 backdrop-blur-sm p-2 animate-fade-in sm:items-center sm:p-4">
+      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-4 pt-12 shadow-modal sm:rounded-2xl sm:p-6 ${wide ? 'max-w-5xl' : 'max-w-lg'}`}>
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-2 text-on-surface-variant transition-colors duration-200 hover:bg-surface-container-low cursor-pointer focus-visible:ring-2 focus-visible:ring-primary sm:right-6 sm:top-6"
+          className="absolute right-3 top-3 rounded-full p-1.5 text-on-surface-variant transition-colors duration-200 hover:bg-surface-container-low cursor-pointer focus-visible:ring-2 focus-visible:ring-primary sm:right-4 sm:top-4"
         >
-          <X size={20} />
+          <X size={18} />
         </button>
         {children}
       </div>
@@ -157,8 +158,8 @@ export function FormInput({
   dataTestId,
 }) {
   return (
-    <div className="space-y-2">
-      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
+    <div className="space-y-1.5">
+      <label className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
         {label}{required && <span className="text-error ml-0.5">*</span>}
       </label>
       <input
@@ -166,7 +167,7 @@ export function FormInput({
         required={required}
         placeholder={placeholder}
         data-testid={dataTestId}
-        className="w-full px-5 py-3.5 bg-surface-container-low border border-outline-variant rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-on-surface font-medium"
+        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-on-surface font-medium text-sm"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -185,18 +186,18 @@ export function InputField({
   dataTestId,
 }) {
   return (
-    <div className="space-y-2">
-      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
+    <div className="space-y-1.5">
+      <label className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
         {label}{required && <span className="text-error ml-0.5">*</span>}
       </label>
       <div className="relative">
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
+        <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant" />
         <input
           type={type}
           required={required}
           placeholder={placeholder}
           data-testid={dataTestId}
-          className="w-full pl-11 pr-4 py-3.5 bg-surface-container-low border border-outline-variant rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-on-surface font-medium"
+          className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-on-surface font-medium text-sm"
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -229,32 +230,32 @@ export function SearchBar({
   sortOptions = [],
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 lg:flex-row">
+    <div className="mb-4 flex flex-col gap-3 lg:flex-row">
       <div className="flex-1 relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
         <input
           type="text"
           placeholder={placeholder}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-on-surface text-sm"
+          className="w-full pl-10 pr-3 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-on-surface text-sm"
         />
       </div>
       {(showStatusFilter || showSortFilter) && (
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row">
           {showStatusFilter && (
             <div className="relative">
               <select
                 value={statusFilter}
                 onChange={(event) => onStatusFilterChange(event.target.value)}
-                className="w-full appearance-none px-5 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-2xl text-sm font-semibold text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer"
+                className="w-full appearance-none px-4 pr-8 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>{status}</option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
             </div>
           )}
           {showSortFilter && (
@@ -262,13 +263,13 @@ export function SearchBar({
               <select
                 value={sortValue}
                 onChange={(event) => onSortChange?.(event.target.value)}
-                className="w-full appearance-none px-5 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-2xl text-sm font-semibold text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer"
+                className="w-full appearance-none px-4 pr-8 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
             </div>
           )}
         </div>

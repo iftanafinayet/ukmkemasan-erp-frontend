@@ -43,15 +43,15 @@ export default function ReportsPage({
   const valveColors = ['#22c55e', '#94a3b8'];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-8 shadow-card">
-        <h3 className="mb-2 flex items-center gap-2 font-black text-on-surface">
-          <TrendingUp className="h-5 w-5 text-primary" />
+    <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
+        <h3 className="mb-1 flex items-center gap-2 font-black text-on-surface text-sm">
+          <TrendingUp className="h-4 w-4 text-primary" />
           Revenue Trends
         </h3>
-        <p className="mb-6 text-xs text-muted">Pergerakan omzet dan jumlah pesanan dari data dashboard.</p>
+        <p className="mb-4 text-[10px] text-muted">Pergerakan omzet dan jumlah pesanan dari data dashboard.</p>
         {trendData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={360}>
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart data={trendData} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="label" tick={{ fontSize: 11, fontWeight: 700, fill: '#64748b' }} />
@@ -68,35 +68,35 @@ export default function ReportsPage({
         )}
       </div>
 
-      <div className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-8 shadow-card">
-        <div className="mb-6 flex items-center justify-between gap-4">
+      <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <h3 className="mb-2 flex items-center gap-2 font-black text-on-surface">
-              <Activity className="h-5 w-5 text-primary" />
+            <h3 className="mb-1 flex items-center gap-2 font-black text-on-surface text-sm">
+              <Activity className="h-4 w-4 text-primary" />
               Performa Kategori
             </h3>
-            <p className="text-xs text-muted">Ringkasan revenue, pesanan, dan average order value per kategori.</p>
+            <p className="text-[10px] text-muted">Ringkasan revenue, pesanan, dan average order value per kategori.</p>
           </div>
-          <span className="rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-on-surface-variant">
-            Scroll Horizontal
+          <span className="rounded-full border border-outline-variant bg-surface-container-low px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-on-surface-variant whitespace-nowrap">
+            Scroll
           </span>
         </div>
         {categoryStats.length > 0 ? (
-          <div className="overflow-x-auto pb-2">
-            <div className="flex min-w-max gap-4">
+          <div className="overflow-x-auto pb-1">
+            <div className="flex min-w-max gap-3">
               {categoryStats.map((category, index) => (
-                <div key={`${category._id}-${index}`} className="w-[280px] flex-shrink-0 rounded-2xl border border-outline-variant bg-surface-container-low p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: REPORT_CHART_COLORS[index % REPORT_CHART_COLORS.length] }} />
+                <div key={`${category._id}-${index}`} className="w-[240px] flex-shrink-0 rounded-xl border border-outline-variant bg-surface-container-low p-3.5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: REPORT_CHART_COLORS[index % REPORT_CHART_COLORS.length] }} />
                       <div>
-                        <p className="text-sm font-black text-on-surface">{category._id || 'Tanpa Kategori'}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted">{toNumber(category.totalOrders).toLocaleString()} pesanan</p>
+                        <p className="text-xs font-black text-on-surface">{category._id || 'Tanpa Kategori'}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted">{toNumber(category.totalOrders).toLocaleString()} pesanan</p>
                       </div>
                     </div>
-                    <p className="text-sm font-black text-primary">{formatCurrency(toNumber(category.revenue))}</p>
+                    <p className="text-xs font-black text-primary">{formatCurrency(toNumber(category.revenue))}</p>
                   </div>
-                  <div className="mt-4 space-y-2 text-xs font-bold text-on-surface-variant">
+                  <div className="mt-3 space-y-1.5 text-[10px] font-bold text-on-surface-variant">
                     <div className="flex items-center justify-between">
                       <span>Terjual</span>
                       <span className="text-on-surface">{toNumber(category.totalQtySold).toLocaleString()} pcs</span>
@@ -115,14 +115,14 @@ export default function ReportsPage({
         )}
       </div>
 
-      <div className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-8 shadow-card">
-        <h3 className="mb-2 flex items-center gap-2 font-black text-on-surface">
-          <BarChart3 className="h-5 w-5 text-primary" />
+      <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
+        <h3 className="mb-1 flex items-center gap-2 font-black text-on-surface text-sm">
+          <BarChart3 className="h-4 w-4 text-primary" />
           Revenue per Kategori
         </h3>
-        <p className="mb-6 text-xs text-muted">Pendapatan dan volume pesanan antar kategori produk.</p>
+        <p className="mb-4 text-[10px] text-muted">Pendapatan dan volume pesanan antar kategori produk.</p>
         {categoryPerformance.length > 0 ? (
-          <ResponsiveContainer width="100%" height={350}>
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={categoryPerformance} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 700, fill: '#64748b' }} />
@@ -138,12 +138,12 @@ export default function ReportsPage({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
-        <div className="rounded-[2rem] border border-outline-variant bg-surface-container-lowest p-6 shadow-card">
-          <h3 className="mb-6 font-black text-on-surface">Penggunaan Valve</h3>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
+          <h3 className="mb-4 font-black text-on-surface text-sm">Penggunaan Valve</h3>
           {(valveUsage.withValve || valveUsage.withoutValve) ? (
-            <div className="inline-flex w-full justify-center rounded-[1.75rem] border border-outline-variant bg-surface-container-low px-4 py-5">
-              <ResponsiveContainer width="100%" height={250}>
+            <div className="inline-flex w-full justify-center rounded-2xl border border-outline-variant bg-surface-container-low px-3 py-4">
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
                     data={valveData}
@@ -170,20 +170,20 @@ export default function ReportsPage({
           )}
         </div>
 
-        <div className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-8 shadow-card">
-          <h3 className="mb-6 flex items-center gap-2 font-black text-on-surface">
-            <DollarSign className="h-5 w-5 text-primary" />
+        <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-5 shadow-card">
+          <h3 className="mb-4 flex items-center gap-2 font-black text-on-surface text-sm">
+            <DollarSign className="h-4 w-4 text-primary" />
             Average Order Value
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {categoryPerformance.map((category, index) => (
-              <div key={`${category.fullName}-${index}`} className="flex items-center gap-3 rounded-2xl border border-outline-variant bg-surface-container-low p-3">
-                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: REPORT_CHART_COLORS[index % REPORT_CHART_COLORS.length] }} />
+              <div key={`${category.fullName}-${index}`} className="flex items-center gap-2.5 rounded-xl border border-outline-variant bg-surface-container-low p-2.5">
+                <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: REPORT_CHART_COLORS[index % REPORT_CHART_COLORS.length] }} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-on-surface">{category.fullName}</p>
-                  <p className="text-[10px] text-muted">{category.Pesanan} pesanan</p>
+                  <p className="truncate text-xs font-bold text-on-surface">{category.fullName}</p>
+                  <p className="text-[9px] text-muted">{category.Pesanan} pesanan</p>
                 </div>
-                <p className="whitespace-nowrap text-sm font-black text-primary">{formatCurrency(category.AOV)}</p>
+                <p className="whitespace-nowrap text-xs font-black text-primary">{formatCurrency(category.AOV)}</p>
               </div>
             ))}
             {categoryPerformance.length === 0 && <EmptyState text="Belum ada data AOV." />}

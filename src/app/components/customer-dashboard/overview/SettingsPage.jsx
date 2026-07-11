@@ -45,38 +45,38 @@ export default function SettingsPage({
   user,
 }) {
   return (
-    <div className={`space-y-8 animate-in fade-in duration-500 ${isAdmin ? 'max-w-5xl' : 'max-w-2xl'}`}>
-      <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant shadow-card">
-        <h3 className="font-black text-on-surface mb-6 flex items-center gap-2">
-          <User className="w-5 h-5 text-primary" />
+    <div className={`space-y-4 animate-in fade-in duration-500 ${isAdmin ? 'max-w-5xl' : 'max-w-2xl'}`}>
+      <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant shadow-card">
+        <h3 className="font-black text-on-surface text-sm mb-4 flex items-center gap-2">
+          <User className="w-4 h-4 text-primary" />
           Profil Saya
         </h3>
-        <form onSubmit={onSaveProfile} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <form onSubmit={onSaveProfile} className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <InputField icon={User} label="Nama" value={profile.name} onChange={(value) => setProfile({ ...profile, name: value })} required />
             <InputField icon={Mail} label="Email" type="email" value={profile.email} onChange={(value) => setProfile({ ...profile, email: value })} required />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <InputField icon={Phone} label="No. Telepon" value={profile.phone} onChange={(value) => setProfile({ ...profile, phone: value })} />
             <InputField icon={MapPin} label="Alamat" value={profile.address} onChange={(value) => setProfile({ ...profile, address: value })} />
           </div>
           <button
             type="submit"
             disabled={savingProfile}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
-            {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {savingProfile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
             Simpan Profil
           </button>
         </form>
       </div>
 
-      <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant shadow-card">
-        <h3 className="font-black text-on-surface mb-6 flex items-center gap-2">
-          <Lock className="w-5 h-5 text-primary" />
+      <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant shadow-card">
+        <h3 className="font-black text-on-surface text-sm mb-4 flex items-center gap-2">
+          <Lock className="w-4 h-4 text-primary" />
           Ganti Password
         </h3>
-        <form onSubmit={onChangePassword} className="space-y-4">
+        <form onSubmit={onChangePassword} className="space-y-3">
           <InputField
             icon={Lock}
             label="Password Lama"
@@ -85,7 +85,7 @@ export default function SettingsPage({
             onChange={(value) => setPasswords({ ...passwords, currentPassword: value })}
             required
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <InputField
               icon={Lock}
               label="Password Baru"
@@ -107,17 +107,17 @@ export default function SettingsPage({
           <button
             type="submit"
             disabled={savingPassword}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-8 py-3 text-sm font-bold text-on-secondary shadow-card transition-all duration-200 hover:bg-secondary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-6 py-2.5 text-xs font-bold text-on-secondary shadow-card transition-all duration-200 hover:bg-secondary/90 active:scale-95 disabled:opacity-50 sm:w-auto cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
-            {savingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+            {savingPassword ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
             Ubah Password
           </button>
         </form>
       </div>
 
-      <div className="bg-surface-container-low p-6 rounded-3xl border border-outline-variant">
-        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Info Akun</p>
-        <p className="text-sm text-on-surface-variant">
+      <div className="bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
+        <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Info Akun</p>
+        <p className="text-xs text-on-surface-variant">
           Role: <span className="font-bold text-primary uppercase">{user?.role}</span>
         </p>
       </div>

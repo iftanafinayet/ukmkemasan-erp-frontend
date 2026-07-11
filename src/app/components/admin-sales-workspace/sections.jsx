@@ -93,9 +93,9 @@ export function SalesProcessingSection({
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-outline-variant/30 overflow-hidden shadow-card">
+      <div className="bg-white rounded-2xl border border-outline-variant/30 overflow-hidden shadow-card">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1080px] text-left">
+          <table className="w-full min-w-[1000px] text-left">
             <thead className="bg-surface-container-low border-b border-outline-variant/30">
               <tr>
                 <TableHead>Order</TableHead>
@@ -110,23 +110,23 @@ export function SalesProcessingSection({
             <tbody className="divide-y divide-outline-variant/30">
               {filteredProcessing.map((order) => (
                 <tr key={order._id} className="hover:bg-surface-container-low/70 transition-colors">
-                  <td className="px-5 py-4">
-                    <p className="font-black text-on-surface text-sm">{order.orderNumber}</p>
-                    <p className="text-xs text-on-surface-variant font-medium mt-1">{order.product?.name || 'Produk tidak ditemukan'}</p>
-                    <p className="text-[11px] text-muted mt-1">{toNumber(order.details?.quantity).toLocaleString()} pcs</p>
+                  <td className="px-3 py-2.5">
+                    <p className="font-black text-on-surface text-xs">{order.orderNumber}</p>
+                    <p className="text-[10px] text-on-surface-variant font-medium mt-0.5">{order.product?.name || 'Produk tidak ditemukan'}</p>
+                    <p className="text-[9px] text-muted mt-0.5">{toNumber(order.details?.quantity).toLocaleString()} pcs</p>
                   </td>
-                  <td className="px-5 py-4">
-                    <p className="font-bold text-on-surface text-sm">{order.customer?.name || '-'}</p>
-                    <p className="text-xs text-muted">{order.customer?.email || '-'}</p>
+                  <td className="px-3 py-2.5">
+                    <p className="font-bold text-on-surface text-xs">{order.customer?.name || '-'}</p>
+                    <p className="text-[10px] text-muted">{order.customer?.email || '-'}</p>
                   </td>
-                  <td className="px-5 py-4">
-                    <div className="space-y-3">
+                  <td className="px-3 py-2.5">
+                    <div className="space-y-2">
                       <StatusBadge status={order.status} />
                       <select
                         value={order.status}
                         onChange={(event) => onUpdateOrderStatus(order._id, event.target.value)}
                         disabled={updatingStatus}
-                        className="w-full max-w-[180px] px-3 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest text-xs font-bold text-on-surface-variant outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary disabled:opacity-50"
+                        className="w-full max-w-[160px] px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-[10px] font-bold text-on-surface-variant outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary disabled:opacity-50"
                       >
                         {SALES_ORDER_STATUSES.map((status) => (
                           <option key={status} value={status}>{status}</option>
@@ -134,53 +134,53 @@ export function SalesProcessingSection({
                       </select>
                     </div>
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-3 py-2.5">
                     {order.invoice ? (
                       <div>
-                        <span className={`inline-flex px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] ${getInvoiceStatusClasses(order.invoice.status)}`}>
+                        <span className={`inline-flex px-2 py-1 rounded-full border text-[9px] font-black uppercase tracking-[0.2em] ${getInvoiceStatusClasses(order.invoice.status)}`}>
                           {order.invoice.status}
                         </span>
-                        <p className="font-bold text-on-surface text-sm mt-3">{order.invoice.invoiceNumber}</p>
-                        <p className="text-xs text-muted">Jatuh tempo {formatDate(order.invoice.dueDate)}</p>
+                        <p className="font-bold text-on-surface text-xs mt-2">{order.invoice.invoiceNumber}</p>
+                        <p className="text-[10px] text-muted">Jatuh tempo {formatDate(order.invoice.dueDate)}</p>
                       </div>
                     ) : (
                       <button
                         type="button"
                         onClick={() => onOpenInvoiceModal(order._id)}
-                        className="px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-black"
+                        className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-black"
                       >
                         Buat Invoice
                       </button>
                     )}
                   </td>
-                  <td className="px-5 py-4">
-                    <p className="font-black text-on-surface text-sm">
+                  <td className="px-3 py-2.5">
+                    <p className="font-black text-on-surface text-xs">
                       {formatCurrency(order.paymentTotal)} / {formatCurrency(order.invoice?.totalAmount || order.totalPrice)}
                     </p>
-                    <p className="text-xs text-on-surface-variant mt-1">Sisa {formatCurrency(order.outstandingAmount)}</p>
-                    <p className={`text-[11px] font-black mt-2 ${order.isPaid ? 'text-success' : 'text-warning'}`}>
+                    <p className="text-[10px] text-on-surface-variant mt-0.5">Sisa {formatCurrency(order.outstandingAmount)}</p>
+                    <p className={`text-[9px] font-black mt-1.5 ${order.isPaid ? 'text-success' : 'text-warning'}`}>
                       {order.isPaid ? 'Lunas' : 'Belum Lunas'}
                     </p>
                   </td>
-                  <td className="px-5 py-4">
-                    <p className="font-black text-on-surface text-sm">{toNumber(order.returnQuantity).toLocaleString()} pcs</p>
-                    <p className="text-xs text-on-surface-variant mt-1">{formatCurrency(order.returnAmount)}</p>
+                  <td className="px-3 py-2.5">
+                    <p className="font-black text-on-surface text-xs">{toNumber(order.returnQuantity).toLocaleString()} pcs</p>
+                    <p className="text-[10px] text-on-surface-variant mt-0.5">{formatCurrency(order.returnAmount)}</p>
                   </td>
-                  <td className="px-5 py-4">
-                    <div className="flex flex-wrap gap-2">
+                  <td className="px-3 py-2.5">
+                    <div className="flex flex-wrap gap-1.5">
                       <ActionButton onClick={() => onViewOrder(order._id)}>
-                        <Eye className="w-3.5 h-3.5" />
+                        <Eye className="w-3 h-3" />
                         Detail
                       </ActionButton>
                       {order.invoice && order.outstandingAmount > 0 && (
                         <ActionButton onClick={() => onOpenPaymentModal(order.invoice._id)}>
-                          <DollarSign className="w-3.5 h-3.5" />
+                          <DollarSign className="w-3 h-3" />
                           Bayar
                         </ActionButton>
                       )}
                       {Math.max(toNumber(order.details?.quantity) - toNumber(order.returnQuantity), 0) > 0 && (
                         <ActionButton onClick={() => onOpenReturnModal(order._id)}>
-                          <ArrowRightLeft className="w-3.5 h-3.5" />
+                          <ArrowRightLeft className="w-3 h-3" />
                           Retur
                         </ActionButton>
                       )}

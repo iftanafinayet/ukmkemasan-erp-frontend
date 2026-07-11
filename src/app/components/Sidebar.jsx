@@ -8,7 +8,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Menu,
   X,
   ChevronDown,
   Warehouse,
@@ -19,13 +18,12 @@ import {
   Database,
   Cog,
   MessageSquare,
-  QrCode
+  QrCode,
 } from 'lucide-react';
 import { storage } from '../config/environment';
 import logoUrl from '../../assets/LogoUKM.svg';
 
-export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0 }) {
-  const [isOpen, setIsOpen] = useState(false);
+export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inquiryBadge = 0, isOpen = false, onToggle }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState(['inventory', 'sales']);
 
@@ -95,14 +93,14 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
       );
     } else {
       if (onMenuChange) onMenuChange(item.id);
-      setIsOpen(false);
+      if (onToggle) onToggle();
     }
   };
 
   const handleSubMenuClick = (e, subId) => {
     e.stopPropagation();
     if (onMenuChange) onMenuChange(subId);
-    setIsOpen(false);
+    if (onToggle) onToggle();
   };
 
   const handleLogout = () => setShowLogoutConfirm(true);
@@ -119,23 +117,28 @@ export function Sidebar({ activeMenu = 'dashboard', onMenuChange, onLogout, inqu
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-sidebar p-2 bg-primary text-white rounded-lg shadow-card cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={() => setIsOpen(false)} />
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => onToggle && onToggle()}
+        />
       )}
 
-      <aside className={`fixed lg:static inset-y-0 left-0 z-sidebar w-64 bg-surface-container-lowest border-r border-outline-variant/30 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed lg:static inset-y-0 left-0 z-sidebar w-72 bg-surface-container-lowest border-r border-outline-variant/30 transform transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full font-sans">
           <div className="p-6 border-b border-outline-variant/30">
-            <div className="flex items-center gap-3">
-              <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
-              <h1 className="font-bold text-lg text-on-surface uppercase tracking-tight">UKM Kemasan</h1>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+                <h1 className="font-bold text-lg text-on-surface uppercase tracking-tight">UKM Kemasan</h1>
+              </div>
+              <button
+                onClick={() => onToggle && onToggle()}
+                className="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer"
+                aria-label="Tutup menu"
+              >
+                <X size={20} />
+              </button>
             </div>
           </div>
 

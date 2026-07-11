@@ -17,8 +17,8 @@ export default function OrdersPage({
   statusFilter,
 }) {
   return (
-    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex-1">
           <SearchBar
             value={searchTerm}
@@ -49,7 +49,7 @@ export default function OrdersPage({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.isArray(filteredOrders) && filteredOrders.map((order) => (
           <div key={order._id} onClick={() => onViewOrder(order._id)} className="cursor-pointer transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
             <OrderCard order={order} />
