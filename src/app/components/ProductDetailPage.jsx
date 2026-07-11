@@ -223,7 +223,7 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <div className={isAdmin ? "flex min-h-screen bg-slate-50 font-sans selection:bg-primary/20 lg:h-screen" : "min-h-screen bg-transparent font-sans text-on-surface"}>
+        <div className={isAdmin ? "flex h-screen overflow-hidden bg-slate-50 font-sans selection:bg-primary/20" : "min-h-screen bg-transparent font-sans text-on-surface"}>
             {!isAdmin && (
                 <div
                     className="hidden lg:block fixed inset-0 -z-10 opacity-20 pointer-events-none"
