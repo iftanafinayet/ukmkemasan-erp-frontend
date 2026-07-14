@@ -22,6 +22,7 @@ export default function BarcodeScanner() {
   const [scanMode, setScanMode] = useState('barcode');
   const [ocrCapturedImage, setOcrCapturedImage] = useState(null);
   const [ocrResult, setOcrResult] = useState('');
+  const [ocrCandidates, setOcrCandidates] = useState([]);
   const [ocrProcessing, setOcrProcessing] = useState(false);
   const [ocrProgress, setOcrProgress] = useState(0);
 
@@ -159,6 +160,41 @@ export default function BarcodeScanner() {
     }
   }, [selectedOrderId]);
 
+  const findResiCandidates = useCallback((rawText) => {
+    const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 4);
+    const noiseWords = [
+      'jalan', 'jl.', 'kota', 'kelurahan', 'kecamatan', 'kabupaten', 'provinsi',
+      'indonesia', 'telp', 'phone', 'hp', 'kode pos', 'email', 'kepada', 'penerima',
+      'pengirim', 'alamat', 'berat', 'kg', 'gram', 'total', 'harga', 'rp', 'cash',
+      'cod', 'barang', 'packing', 'kemasan', 'koli', 'ongkir', 'asuransi', 'dari',
+      'untuk', 'customer', 'pelanggan', 'order', 'nama', 'note', 'catatan', 'qty',
+      'subtotal', 'pcs', 'deskripsi', 'produk', 'halaman', 'page', 'invoice',
+    ];
+    return lines
+      .filter(line => {
+        const lower = line.toLowerCase();
+        return !noiseWords.some(k => lower.includes(k));
+      })
+      .map(line => {
+        const cleaned = line.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+        let score = 0;
+        const lineTrimmed = line.trim();
+        if (/^[A-Z]{1,5}-\d+[A-Z]+\/\d+$/i.test(lineTrimmed)) {
+          score += 100;
+        }
+        if (cleaned.length >= 8 && cleaned.length <= 25) score += 30;
+        else if (cleaned.length >= 6 && cleaned.length <= 30) score += 10;
+        if (/[A-Z]/.test(cleaned) && /[0-9]/.test(cleaned)) score += 25;
+        if (/^(?:JNE|JP|JT|CGK|JTR|IDX|NVP|SHOPEE|SG|SA|TIKI|POS|ANTERAJA|WAHANA|REX|RPX|SPX)[0-9]/i.test(cleaned)) score += 35;
+        if (/(?:resi|awb|tracking|no\.?|nomor|receipt)[:\s]*([A-Z0-9]{8,})/i.test(line)) score += 45;
+        if (/^[A-Z]{2,4}[0-9]{6,}$/i.test(cleaned)) score += 20;
+        return { text: line, cleaned, score };
+      })
+      .filter(c => c.score >= 10)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
+  }, []);
+
   const captureImage = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
@@ -188,8 +224,14 @@ export default function BarcodeScanner() {
       try {
         await initOCRWorker();
         const { data: { text } } = await ocrWorkerRef.current.recognize(canvas);
-        const cleaned = text.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, ' ').trim();
-        setOcrResult(cleaned);
+        const candidates = findResiCandidates(text);
+        setOcrCandidates(candidates);
+        if (candidates.length > 0) {
+          setOcrResult(candidates[0].text);
+        } else {
+          const fallback = text.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, ' ').trim();
+          setOcrResult(fallback);
+        }
       } catch {
         toast.error('Gagal membaca teks dari gambar.');
         setOcrResult('');
@@ -197,11 +239,11 @@ export default function BarcodeScanner() {
         setOcrProcessing(false);
       }
     })();
-  }, [stopOCRCamera, initOCRWorker]);
-
+  }, [stopOCRCamera, initOCRWorker, findResiCandidates]);
   const handleOcrRetry = useCallback(() => {
     setOcrCapturedImage(null);
     setOcrResult('');
+    setOcrCandidates([]);
     setOcrProcessing(false);
     setOcrProgress(0);
   }, []);
@@ -212,6 +254,7 @@ export default function BarcodeScanner() {
     submitResi(trimmed);
     setOcrCapturedImage(null);
     setOcrResult('');
+    setOcrCandidates([]);
     setOcrProcessing(false);
     setOcrProgress(0);
   }, [ocrResult, submitResi]);
@@ -225,6 +268,7 @@ export default function BarcodeScanner() {
       stopOCRCamera();
       setOcrCapturedImage(null);
       setOcrResult('');
+      setOcrCandidates([]);
       setOcrProcessing(false);
       setOcrProgress(0);
     } else {
@@ -396,6 +440,30 @@ export default function BarcodeScanner() {
                     placeholder="Hasil OCR..."
                     className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 text-sm font-bold text-white placeholder-white/30 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
                   />
+                  {ocrCandidates.length > 1 && (
+                    <div className="mt-2 space-y-1">
+                      <p className="text-[10px] font-bold text-white/40">
+                        Alternatif — tap untuk pilih:
+                      </p>
+                      {ocrCandidates.map((c, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setOcrResult(c.text)}
+                          className={`block w-full rounded-lg px-3 py-1.5 text-left text-sm font-bold transition-all ${
+                            c.text === ocrResult
+                              ? 'bg-primary/30 text-white'
+                              : 'text-white/60 hover:bg-white/10 hover:text-white/80'
+                          }`}
+                        >
+                          <span>{c.text}</span>
+                          {c.text !== c.cleaned && (
+                            <span className="ml-2 text-[10px] text-white/30">({c.cleaned})</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <div className="mt-3 flex gap-2">
                     <button
                       type="button"
