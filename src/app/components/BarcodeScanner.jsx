@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { QrCode, Loader2, Camera, ChevronDown, AlertTriangle, CheckCircle2, Search, X } from 'lucide-react';
+import { QrCode, Loader2, Camera, ChevronDown, AlertTriangle, CheckCircle2, Search, X, ScanText, RotateCcw, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { Html5Qrcode } from 'html5-qrcode';
+import Tesseract from 'tesseract.js';
 import api from '../utils/api';
 import { ENDPOINTS } from '../config/environment';
 
@@ -18,10 +19,19 @@ export default function BarcodeScanner() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [manualResi, setManualResi] = useState('');
   const [cameraError, setCameraError] = useState(null);
+  const [scanMode, setScanMode] = useState('barcode');
+  const [ocrCapturedImage, setOcrCapturedImage] = useState(null);
+  const [ocrResult, setOcrResult] = useState('');
+  const [ocrProcessing, setOcrProcessing] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
 
   const scannerRef = useRef(null);
   const dropdownRef = useRef(null);
   const resumeTimerRef = useRef(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const ocrWorkerRef = useRef(null);
+  const ocrStreamRef = useRef(null);
 
   const fetchOrders = useCallback(async () => {
     setLoadingOrders(true);
@@ -55,7 +65,7 @@ export default function BarcodeScanner() {
   const submitResi = useCallback(async (resiValue) => {
     if (!selectedOrderId || sending) return;
     setSending(true);
-    await stopScanner().catch(() => {});
+    if (scanMode === 'barcode') await stopScanner().catch(() => {});
     setScanResult({ resi: resiValue, status: 'processing' });
 
     try {
@@ -65,6 +75,7 @@ export default function BarcodeScanner() {
         toast.success(`Resi ${resiValue} tersimpan. Email terkirim.`);
         setSelectedOrderId('');
         setSearchTerm('');
+        setManualResi('');
       } else {
         setScanResult({ resi: resiValue, status: 'error', message: response.data?.message || 'Gagal memproses.' });
         toast.error(response.data?.message || 'Gagal memproses resi.');
@@ -78,7 +89,7 @@ export default function BarcodeScanner() {
       setScanResult(null);
       setSending(false);
     }, 2500);
-  }, [selectedOrderId, sending, stopScanner]);
+  }, [selectedOrderId, sending, stopScanner, scanMode]);
 
   const startScanner = useCallback(async () => {
     if (!selectedOrderId) return;
@@ -107,14 +118,141 @@ export default function BarcodeScanner() {
     }
   }, [selectedOrderId, sending, submitResi]);
 
-  useEffect(() => {
-    if (selectedOrderId && !isScanning && !sending) startScanner();
-    return () => { if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current); };
-  }, [selectedOrderId, sending, isScanning, startScanner]);
+  const stopOCRCamera = useCallback(() => {
+    if (ocrStreamRef.current) {
+      ocrStreamRef.current.getTracks().forEach((t) => t.stop());
+      ocrStreamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, []);
+
+  const initOCRWorker = useCallback(async () => {
+    if (ocrWorkerRef.current) return;
+    ocrWorkerRef.current = await Tesseract.createWorker('eng', 1, {
+      logger: (m) => {
+        if (m.status === 'recognizing text') {
+          setOcrProgress(Math.round(m.progress * 100));
+        }
+      },
+    });
+  }, []);
+
+  const startOCRCamera = useCallback(async () => {
+    if (!selectedOrderId || !videoRef.current) return;
+    setCameraError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
+      });
+      ocrStreamRef.current = stream;
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+    } catch (err) {
+      const msg = err?.message || err?.toString() || '';
+      if (msg.includes('NotAllowed') || err?.name === 'NotAllowedError') {
+        setCameraError({ title: 'Izin kamera ditolak', text: 'Silakan izinkan akses kamera di pengaturan browser lalu refresh halaman.' });
+      } else {
+        setCameraError({ title: 'Kamera tidak tersedia', text: `Error: ${msg}` });
+      }
+    }
+  }, [selectedOrderId]);
+
+  const captureImage = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    let w = video.videoWidth;
+    let h = video.videoHeight;
+    const maxDim = 1024;
+    if (w > h && w > maxDim) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+    else if (h > maxDim) { w = Math.round(w * (maxDim / h)); h = maxDim; }
+
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.filter = 'grayscale(1) contrast(1.3)';
+    ctx.drawImage(video, 0, 0, w, h);
+    ctx.filter = 'none';
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+    setOcrCapturedImage(dataUrl);
+    setOcrProcessing(true);
+    setOcrProgress(0);
+
+    stopOCRCamera();
+
+    (async () => {
+      try {
+        await initOCRWorker();
+        const { data: { text } } = await ocrWorkerRef.current.recognize(canvas);
+        const cleaned = text.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, ' ').trim();
+        setOcrResult(cleaned);
+      } catch {
+        toast.error('Gagal membaca teks dari gambar.');
+        setOcrResult('');
+      } finally {
+        setOcrProcessing(false);
+      }
+    })();
+  }, [stopOCRCamera, initOCRWorker]);
+
+  const handleOcrRetry = useCallback(() => {
+    setOcrCapturedImage(null);
+    setOcrResult('');
+    setOcrProcessing(false);
+    setOcrProgress(0);
+  }, []);
+
+  const handleOcrSubmit = useCallback(() => {
+    const trimmed = ocrResult.trim();
+    if (!trimmed) return toast.error('Hasil OCR kosong.');
+    submitResi(trimmed);
+    setOcrCapturedImage(null);
+    setOcrResult('');
+    setOcrProcessing(false);
+    setOcrProgress(0);
+  }, [ocrResult, submitResi]);
+
+  const handleModeSwitch = useCallback((mode) => {
+    if (mode === scanMode) return;
+    setScanMode(mode);
+    setScanResult(null);
+    setCameraError(null);
+    if (mode === 'barcode') {
+      stopOCRCamera();
+      setOcrCapturedImage(null);
+      setOcrResult('');
+      setOcrProcessing(false);
+      setOcrProgress(0);
+    } else {
+      stopScanner();
+    }
+  }, [scanMode, stopScanner, stopOCRCamera]);
 
   useEffect(() => {
-    return () => { stopScanner(); if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current); };
-  }, [stopScanner]);
+    if (scanMode === 'barcode' && selectedOrderId && !isScanning && !sending) {
+      startScanner();
+    }
+    return () => { if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current); };
+  }, [scanMode, selectedOrderId, sending, isScanning, startScanner]);
+
+  useEffect(() => {
+    if (scanMode === 'ocr' && selectedOrderId && !ocrCapturedImage && !ocrProcessing && !scanResult) {
+      startOCRCamera();
+    }
+  }, [scanMode, selectedOrderId, ocrCapturedImage, ocrProcessing, scanResult, startOCRCamera]);
+
+  useEffect(() => {
+    return () => {
+      stopScanner();
+      stopOCRCamera();
+      if (ocrWorkerRef.current) ocrWorkerRef.current.terminate();
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+  }, [stopScanner, stopOCRCamera]);
 
   const handleManualSubmit = async (e) => {
     e.preventDefault();
@@ -136,11 +274,34 @@ export default function BarcodeScanner() {
   return (
     <div className="mx-auto max-w-lg px-4 py-6 sm:px-6">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10"><QrCode className="h-5 w-5 text-primary" /></div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
+          {scanMode === 'ocr' ? <ScanText className="h-5 w-5 text-primary" /> : <QrCode className="h-5 w-5 text-primary" />}
+        </div>
         <div>
           <h2 className="text-lg font-extrabold text-slate-800">Scan Resi</h2>
-          <p className="text-xs font-medium text-slate-400">Arahkan kamera ke barcode resi pada label fisik</p>
+          <p className="text-xs font-medium text-slate-400">
+            {scanMode === 'ocr' ? 'Foto label resi & ekstrak nomor resi otomatis' : 'Arahkan kamera ke barcode resi pada label fisik'}
+          </p>
         </div>
+      </div>
+
+      <div className="mb-5 flex gap-1 rounded-2xl bg-slate-100 p-1">
+        <button
+          type="button"
+          onClick={() => handleModeSwitch('barcode')}
+          disabled={sending}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${scanMode === 'barcode' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <QrCode className="h-4 w-4" /> Barcode
+        </button>
+        <button
+          type="button"
+          onClick={() => handleModeSwitch('ocr')}
+          disabled={sending}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${scanMode === 'ocr' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <ScanText className="h-4 w-4" /> OCR (Teks)
+        </button>
       </div>
 
       <div className="mb-5">
@@ -195,7 +356,87 @@ export default function BarcodeScanner() {
       </div>
 
       <div className="mb-4 overflow-hidden rounded-3xl border border-slate-200 bg-black">
-        {cameraError ? (
+        {scanMode === 'ocr' ? (
+          cameraError ? (
+            <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/20"><AlertTriangle className="h-6 w-6 text-red-400" /></div>
+              <p className="text-sm font-bold text-slate-300">{cameraError.title}</p>
+              <p className="mt-1 text-xs text-slate-500">{cameraError.text}</p>
+              <button type="button" onClick={() => { setCameraError(null); startOCRCamera(); }}
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-white transition-all hover:bg-white/20">
+                <Camera className="h-4 w-4" /> Coba Lagi
+              </button>
+            </div>
+          ) : !selectedOrderId ? (
+            <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10"><Camera className="h-6 w-6 text-slate-400" /></div>
+              <p className="text-sm font-bold text-slate-300">Pilih Order Terlebih Dahulu</p>
+              <p className="mt-1 text-xs text-slate-500">Kamera akan aktif setelah Anda memilih order dari daftar di atas</p>
+            </div>
+          ) : ocrCapturedImage ? (
+            <div className="p-3 sm:p-4">
+              <div className="mb-3 overflow-hidden rounded-2xl border border-white/10">
+                <img src={ocrCapturedImage} alt="Captured" className="w-full object-cover" />
+              </div>
+              {ocrProcessing ? (
+                <div className="flex flex-col items-center py-4">
+                  <Loader2 className="mb-2 h-6 w-6 animate-spin text-white/80" />
+                  <p className="text-sm font-bold text-white/80">Memproses OCR...</p>
+                  {ocrProgress > 0 && <p className="mt-1 text-xs text-white/50">{ocrProgress}%</p>}
+                </div>
+              ) : (
+                <div>
+                  <label className="mb-1.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-white/60">
+                    <ScanText className="h-3.5 w-3.5" /> Hasil OCR — edit jika perlu
+                  </label>
+                  <input
+                    type="text"
+                    value={ocrResult}
+                    onChange={(e) => setOcrResult(e.target.value)}
+                    placeholder="Hasil OCR..."
+                    className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 text-sm font-bold text-white placeholder-white/30 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                  />
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleOcrRetry}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-white/10"
+                    >
+                      <RotateCcw className="h-4 w-4" /> Ambil Ulang
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleOcrSubmit}
+                      disabled={!ocrResult.trim() || sending}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      <Check className="h-4 w-4" /> Gunakan
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="relative">
+              <video
+                ref={videoRef}
+                className="w-full"
+                autoPlay
+                playsInline
+                muted
+              />
+              <div className="absolute inset-x-0 bottom-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={captureImage}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-800 shadow-xl transition-all hover:bg-white/90 active:scale-95"
+                >
+                  <Camera className="h-4 w-4" /> Ambil Gambar
+                </button>
+              </div>
+            </div>
+          )
+        ) : cameraError ? (
           <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/20"><AlertTriangle className="h-6 w-6 text-red-400" /></div>
             <p className="text-sm font-bold text-slate-300">{cameraError.title}</p>
@@ -215,6 +456,8 @@ export default function BarcodeScanner() {
           <div id="reader" className="w-full" />
         )}
       </div>
+
+      <canvas ref={canvasRef} className="hidden" />
 
       {scanResult && (
         <div className={`mb-4 rounded-2xl border p-4 ${
@@ -251,7 +494,9 @@ export default function BarcodeScanner() {
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Simpan'}
           </button>
         </form>
-        <p className="mt-2 text-[11px] font-medium text-slate-400">Gunakan input manual jika barcode rusak atau kamera tidak tersedia.</p>
+        <p className="mt-2 text-[11px] font-medium text-slate-400">
+          {scanMode === 'ocr' ? 'Gunakan input manual jika hasil OCR kurang akurat.' : 'Gunakan input manual jika barcode rusak atau kamera tidak tersedia.'}
+        </p>
       </div>
     </div>
   );
