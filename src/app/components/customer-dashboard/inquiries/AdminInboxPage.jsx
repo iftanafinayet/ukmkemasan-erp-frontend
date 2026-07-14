@@ -109,27 +109,20 @@ export default function AdminInboxPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!replyText.trim() || !selectedConv) return;
     setSending(true);
-    try {
-      const res = await api.post(ENDPOINTS.INQUIRY_MESSAGES(selectedConv._id), { text: replyText });
-      const newMsg = res.data.message;
-      setMessages((prev) => [...prev, newMsg]);
-      setReplyText('');
-      markRead(selectedConv._id);
-      setConversations((prev) =>
-        prev.map((c) =>
-          c._id === selectedConv._id
-            ? { ...c, lastMessageAt: new Date().toISOString(), lastMessagePreview: newMsg.text, status: 'Replied' }
-            : c
-        )
-      );
-    } catch {
-      toast.error('Gagal mengirim pesan');
-    } finally {
+    const text = replyText;
+    setReplyText('');
+    sendMessage(selectedConv._id, text, (result) => {
       setSending(false);
-    }
+      if (result.error) {
+        toast.error('Gagal mengirim pesan');
+        setReplyText(text);
+      } else {
+        markRead(selectedConv._id);
+      }
+    });
   };
 
   const handleKeyDown = (e) => {
