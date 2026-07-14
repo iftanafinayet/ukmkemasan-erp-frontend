@@ -60,9 +60,19 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
     setUnreadCounts((prev) => ({ ...prev, [data.conversationId]: data.count }));
   }, []);
 
+  const handleMessagesRead = useCallback((data) => {
+    setMessages((prev) =>
+      prev.map((m) => {
+        if (m.readAt || m.sender?._id === data.readBy) return m;
+        return { ...m, readAt: data.readAt };
+      })
+    );
+  }, []);
+
   const { joinConversation, leaveConversation, sendMessage, markRead } = useSocket({
     onNewMessage: handleNewMessage,
     onUnreadCount: handleUnreadCount,
+    onMessagesRead: handleMessagesRead,
   });
 
   const now = useNow();

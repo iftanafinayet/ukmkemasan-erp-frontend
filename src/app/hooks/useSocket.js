@@ -37,9 +37,9 @@ function subscribe(event, handler) {
   };
 }
 
-export default function useSocket({ onNewMessage, onUnreadCount, onConversationUpdated } = {}) {
-  const handlersRef = useRef({ onNewMessage, onUnreadCount, onConversationUpdated });
-  handlersRef.current = { onNewMessage, onUnreadCount, onConversationUpdated };
+export default function useSocket({ onNewMessage, onUnreadCount, onConversationUpdated, onMessagesRead } = {}) {
+  const handlersRef = useRef({ onNewMessage, onUnreadCount, onConversationUpdated, onMessagesRead });
+  handlersRef.current = { onNewMessage, onUnreadCount, onConversationUpdated, onMessagesRead };
 
   useEffect(() => {
     if (!storage.getToken()) return;
@@ -49,11 +49,13 @@ export default function useSocket({ onNewMessage, onUnreadCount, onConversationU
     const unsubNew = subscribe('new:message', (data) => handlersRef.current.onNewMessage?.(data));
     const unsubUnread = subscribe('unread:count', (data) => handlersRef.current.onUnreadCount?.(data));
     const unsubUpdated = subscribe('conversation:updated', (data) => handlersRef.current.onConversationUpdated?.(data));
+    const unsubRead = subscribe('read:updated', (data) => handlersRef.current.onMessagesRead?.(data));
 
     return () => {
       unsubNew();
       unsubUnread();
       unsubUpdated();
+      unsubRead();
       subscriberCount--;
       if (subscriberCount <= 0 && sharedSocket) {
         sharedSocket.disconnect();

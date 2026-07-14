@@ -45,8 +45,18 @@ export default function useCustomerInquiries({ prefillProduct } = {}) {
     }
   }, [selectedConv]);
 
+  const handleMessagesRead = useCallback((data) => {
+    setMessages((prev) =>
+      prev.map((m) => {
+        if (m.readAt || m.sender?._id === data.readBy) return m;
+        return { ...m, readAt: data.readAt };
+      })
+    );
+  }, []);
+
   const { joinConversation, leaveConversation, sendMessage, markRead } = useSocket({
     onNewMessage: handleNewMessage,
+    onMessagesRead: handleMessagesRead,
   });
 
   const fetchConversations = useCallback(async () => {
