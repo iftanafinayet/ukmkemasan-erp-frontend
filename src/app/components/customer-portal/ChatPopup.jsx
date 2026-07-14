@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { ENDPOINTS, storage } from '../../config/environment';
 import useSocket from '../../hooks/useSocket';
-import { formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatRelativeTime } from '../../utils/formatters';
+import useNow from '../../hooks/useNow';
 
 export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
   const user = storage.getUser();
@@ -63,6 +64,8 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
     onNewMessage: handleNewMessage,
     onUnreadCount: handleUnreadCount,
   });
+
+  const now = useNow();
 
   const totalUnread = Object.values(unreadCounts).reduce((sum, c) => sum + (c || 0), 0);
 
@@ -338,7 +341,7 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
                             <p className="text-xs">{msg.text}</p>
                             <div className={`flex items-center gap-1 mt-0.5 ${isMe ? 'justify-end' : 'justify-start'}`}>
                               {msg.readAt ? <CheckCheck size={10} className="opacity-50" /> : <Clock size={10} className="opacity-30" />}
-                              <span className={`text-[9px] ${isMe ? 'text-white/60' : 'text-slate-400'}`}>{formatDateTime(msg.createdAt)}</span>
+                              <span className={`text-[9px] ${isMe ? 'text-white/60' : 'text-slate-400'}`}>{formatRelativeTime(msg.createdAt, now)}</span>
                             </div>
                           </div>
                         </div>
@@ -399,7 +402,7 @@ export default function ChatPopup({ prefillProduct, isOpen, onClose }) {
                         )}
                         <div className="flex items-center justify-between mt-1">
                           <span className="text-[9px] text-slate-400">
-                            {conv.lastMessageAt ? formatDateTime(conv.lastMessageAt) : formatDateTime(conv.createdAt)}
+                            {conv.lastMessageAt ? formatRelativeTime(conv.lastMessageAt, now) : formatRelativeTime(conv.createdAt, now)}
                           </span>
                           {unread > 0 && (
                             <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">

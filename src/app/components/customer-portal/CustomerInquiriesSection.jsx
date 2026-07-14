@@ -1,8 +1,9 @@
 import { MessageSquare, Send, Plus, X, Loader2, CheckCheck, Clock, ChevronRight, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { storage } from '../../config/environment';
-import { formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatRelativeTime } from '../../utils/formatters';
 import useCustomerInquiries from '../../hooks/useCustomerInquiries';
+import useNow from '../../hooks/useNow';
 
 export default function CustomerInquiriesSection({ prefillProduct }) {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
     handleSendReply,
     handleKeyDown,
   } = useCustomerInquiries({ prefillProduct });
+  const now = useNow();
 
   const getStatusColor = (status) => ({
     Open: 'bg-yellow-100 text-yellow-700 border-yellow-200',
@@ -191,7 +193,7 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
                           <Clock size={12} className="opacity-30" />
                         )}
                         <span className={`text-[10px] ${isMe ? 'text-white/60' : 'text-muted'}`}>
-                          {formatDateTime(msg.createdAt)}
+                          {formatRelativeTime(msg.createdAt, now)}
                         </span>
                       </div>
                     </div>
@@ -255,7 +257,7 @@ export default function CustomerInquiriesSection({ prefillProduct }) {
                       <p className="text-xs text-on-surface-variant truncate">{conv.lastMessagePreview}</p>
                     )}
                     <p className="text-[10px] text-muted mt-1">
-                      {conv.lastMessageAt ? formatDateTime(conv.lastMessageAt) : formatDateTime(conv.createdAt)}
+                      {conv.lastMessageAt ? formatRelativeTime(conv.lastMessageAt, now) : formatRelativeTime(conv.createdAt, now)}
                     </p>
                   </div>
                   {conv.product?.images?.[0] && (

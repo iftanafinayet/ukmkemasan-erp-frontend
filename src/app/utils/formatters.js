@@ -41,3 +41,23 @@ export const formatDateTime = (dateValue) => {
     minute: '2-digit',
   }).format(new Date(dateValue));
 };
+
+export const formatRelativeTime = (dateValue, now = Date.now()) => {
+  if (!dateValue) return '-';
+  const then = new Date(dateValue).getTime();
+  if (Number.isNaN(then)) return '-';
+  const diff = now - then;
+  if (diff < 0) return 'baru saja';
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  if (seconds < 60) return 'baru saja';
+  if (minutes === 1) return '1 mnt lalu';
+  if (minutes < 60) return `${minutes} mnt lalu`;
+  if (hours === 1) return '1 jam lalu';
+  if (hours < 24) return `${hours} jam lalu`;
+  if (days === 1) return 'Kemarin';
+  if (days < 7) return `${days} hari lalu`;
+  return formatDateTime(dateValue);
+};

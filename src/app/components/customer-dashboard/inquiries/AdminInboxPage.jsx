@@ -5,6 +5,8 @@ import api from '../../../utils/api';
 import { ENDPOINTS } from '../../../config/environment';
 import useSocket from '../../../hooks/useSocket';
 import { formatDateTime } from '../utils';
+import { formatRelativeTime } from '../../../utils/formatters';
+import useNow from '../../../hooks/useNow';
 
 const STATUS_OPTIONS = ['', 'Open', 'Replied', 'Closed'];
 const STATUS_LABELS = { '': 'Semua Status', Open: 'Terbuka', Replied: 'Dibalas', Closed: 'Ditutup' };
@@ -61,6 +63,8 @@ export default function AdminInboxPage() {
     onUnreadCount: handleUnreadCount,
     onConversationUpdated: handleConvUpdated,
   });
+
+  const now = useNow();
 
   const fetchConversations = useCallback(async () => {
     setLoading(true);
@@ -208,7 +212,7 @@ export default function AdminInboxPage() {
                     <p className="text-[11px] text-muted truncate">{conv.lastMessagePreview}</p>
                   )}
                   <p className="text-[10px] text-muted mt-1">
-                    {conv.lastMessageAt ? formatDateTime(conv.lastMessageAt) : formatDateTime(conv.createdAt)}
+                    {conv.lastMessageAt ? formatRelativeTime(conv.lastMessageAt, now) : formatRelativeTime(conv.createdAt, now)}
                   </p>
                 </button>
               );
@@ -278,7 +282,7 @@ export default function AdminInboxPage() {
                             <Clock size={12} className="opacity-30" />
                           )}
                           <span className={`text-[10px] ${isAdmin ? 'text-white/60' : 'text-muted'}`}>
-                            {formatDateTime(msg.createdAt)}
+                            {formatRelativeTime(msg.createdAt, now)}
                           </span>
                         </div>
                       </div>
